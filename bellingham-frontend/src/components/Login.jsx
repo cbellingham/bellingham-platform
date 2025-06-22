@@ -42,7 +42,10 @@ const Login = () => {
     };
 
     return (
-        <div className="flex h-screen items-center justify-center bg-gray-100">
+        <div className="flex flex-col h-screen items-center justify-center bg-gray-100">
+            <h1 className="text-3xl font-bold mb-6 text-center">
+                Bellingham Data Futures
+            </h1>
             <form
                 onSubmit={handleLogin}
                 className="bg-white shadow-lg rounded-2xl p-8 w-96"
