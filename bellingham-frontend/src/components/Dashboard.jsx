@@ -40,15 +40,21 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="flex h-screen font-poppins bg-black text-white">
-            {/* Sidebar */}
-            <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold font-poppins">Bellingham Data Forwards</h1>
-                    <p className="text-sm text-gray-400 mt-1">
-                        Hedge Against Data Cost Volatility
-                    </p>
-                    <nav className="flex flex-col space-y-4 mt-8">
+        <div className="flex flex-col h-screen font-poppins bg-black text-white">
+            {/* Top Banner */}
+            <header className="bg-gray-800 p-4">
+                <h1 className="text-2xl font-bold">Bellingham Data Futures</h1>
+            </header>
+            <div className="flex flex-1">
+                {/* Sidebar */}
+                <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between">
+                    <nav className="flex flex-col space-y-4">
+                        <button
+                            onClick={() => navigate("/")}
+                            className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                        >
+                            Home
+                        </button>
                         <button
                             onClick={() => navigate("/buy")}
                             className="text-left hover:bg-gray-700 px-4 py-2 rounded"
@@ -62,22 +68,10 @@ const Dashboard = () => {
                             Sell
                         </button>
                         <button
-                            onClick={() => navigate("/")}
-                            className="text-left hover:bg-gray-700 px-4 py-2 rounded"
-                        >
-                            Existing Contracts
-                        </button>
-                        <button
                             onClick={() => alert("Reports screen not implemented yet")}
                             className="text-left hover:bg-gray-700 px-4 py-2 rounded"
                         >
                             Reports
-                        </button>
-                        <button
-                            onClick={() => alert("Account screen not implemented yet")}
-                            className="text-left hover:bg-gray-700 px-4 py-2 rounded"
-                        >
-                            Account
                         </button>
                         <button
                             onClick={() => alert("Settings screen not implemented yet")}
@@ -85,20 +79,25 @@ const Dashboard = () => {
                         >
                             Settings
                         </button>
+                        <button
+                            onClick={() => alert("Account screen not implemented yet")}
+                            className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                        >
+                            Account
+                        </button>
                     </nav>
-                </div>
-                <button
-                    onClick={handleLogout}
-                    className="mt-6 bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
-                >
-                    Log Out
-                </button>
-            </aside>
+                    <button
+                        onClick={handleLogout}
+                        className="mt-6 bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
+                    >
+                        Log Out
+                    </button>
+                </aside>
 
-            {/* Main Content */}
-            <main className="flex-1 p-8 overflow-auto bg-black">
-                <h2 className="text-3xl font-bold mb-6 text-white">Contracts</h2>
-                <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                {/* Main Content */}
+                <main className="flex-1 p-8 overflow-auto bg-black">
+                    <h2 className="text-3xl font-bold mb-6 text-white">Contracts</h2>
+                    <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                     <thead>
                     <tr className="bg-gray-700 text-left">
                         <th className="border p-2">Title</th>
@@ -119,8 +118,9 @@ const Dashboard = () => {
                         </tr>
                     ))}
                     </tbody>
-                </table>
-            </main>
+                    </table>
+                </main>
+            </div>
         </div>
     );
 };
