@@ -24,7 +24,7 @@ public class ForwardContractController {
     public ResponseEntity<ForwardContract> getById(@PathVariable Long id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
 
     @PostMapping
@@ -46,7 +46,7 @@ public class ForwardContractController {
                     ForwardContract saved = repository.save(updated);
                     return ResponseEntity.ok(saved);
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
 
     @DeleteMapping("/{id}")
@@ -64,12 +64,12 @@ public class ForwardContractController {
         return repository.findById(id)
                 .map(contract -> {
                     if (!"Available".equalsIgnoreCase(contract.getStatus())) {
-                        return ResponseEntity.badRequest().build();
+                        return ResponseEntity.badRequest().<ForwardContract>build();
                     }
                     contract.setStatus("Purchased");
                     ForwardContract saved = repository.save(contract);
                     return ResponseEntity.ok(saved);
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
 }
