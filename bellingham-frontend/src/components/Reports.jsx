@@ -1,0 +1,51 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const Reports = () => {
+    const [contracts, setContracts] = useState([]);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchPurchased = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:8080/api/contracts/purchased", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setContracts(res.data);
+            } catch {
+                setError("Failed to load purchased contracts.");
+            }
+        };
+        fetchPurchased();
+    }, []);
+
+    return (
+        <div className="p-8 text-white bg-black min-h-screen font-poppins">
+            <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+            <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                <thead>
+                    <tr className="bg-gray-700 text-left">
+                        <th className="border p-2">Title</th>
+                        <th className="border p-2">Seller</th>
+                        <th className="border p-2">Price</th>
+                        <th className="border p-2">Delivery</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {contracts.map((contract) => (
+                        <tr key={contract.id} className="hover:bg-gray-600">
+                            <td className="border p-2">{contract.title}</td>
+                            <td className="border p-2">{contract.seller}</td>
+                            <td className="border p-2">${contract.price}</td>
+                            <td className="border p-2">{contract.deliveryDate}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+export default Reports;

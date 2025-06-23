@@ -68,7 +68,7 @@ const Dashboard = () => {
                             Sell
                         </button>
                         <button
-                            onClick={() => alert("Reports screen not implemented yet")}
+                            onClick={() => navigate("/reports")}
                             className="text-left hover:bg-gray-700 px-4 py-2 rounded"
                         >
                             Reports
