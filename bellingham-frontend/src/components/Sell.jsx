@@ -80,7 +80,7 @@ const Sell = () => {
 
         try {
             await axios.post(
-                "http://localhost:8080/api/contracts",
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts`,
                 data,
                 config
             );

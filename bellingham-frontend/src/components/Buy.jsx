@@ -15,7 +15,7 @@ const Buy = () => {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    "http://localhost:8080/api/contracts/available",
+                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/available`,
                     config
                 );
                 setContracts(res.data);
@@ -32,7 +32,7 @@ const Buy = () => {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             await axios.post(
-                `http://localhost:8080/api/contracts/${contractId}/buy`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/buy`,
                 {},
                 config
             );

@@ -14,10 +14,13 @@ const Login = () => {
         setError(""); // Clear previous errors
 
         try {
-            const res = await axios.post("http://localhost:8080/api/authenticate", {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/authenticate`,
+                {
                 username,
                 password,
-            });
+                }
+            );
 
             console.log("✅ Login API success:", res.data);
 
