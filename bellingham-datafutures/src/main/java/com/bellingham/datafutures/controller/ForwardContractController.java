@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/contracts")
+@CrossOrigin(origins = "*")
 public class ForwardContractController {
 
     @Autowired
@@ -78,3 +79,4 @@ public class ForwardContractController {
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
 }
+

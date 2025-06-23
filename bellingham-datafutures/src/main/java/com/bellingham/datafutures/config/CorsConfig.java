@@ -13,7 +13,8 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
+                // Apply global CORS policy
+                registry.addMapping("/**")
                         // Open up CORS for development tools running on any host
                         .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
@@ -24,3 +25,4 @@ public class CorsConfig {
         };
     }
 }
+
