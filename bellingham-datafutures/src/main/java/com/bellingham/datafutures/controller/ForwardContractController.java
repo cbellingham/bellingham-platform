@@ -38,6 +38,11 @@ public class ForwardContractController {
         return repository.findByStatus("Available");
     }
 
+    @GetMapping("/purchased")
+    public List<ForwardContract> getPurchased() {
+        return repository.findByStatus("Purchased");
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ForwardContract> update(@PathVariable Long id, @RequestBody ForwardContract updated) {
         return repository.findById(id)
