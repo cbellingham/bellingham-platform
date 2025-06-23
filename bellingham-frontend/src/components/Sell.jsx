@@ -4,9 +4,9 @@ import axios from "axios";
 const Sell = () => {
     const [form, setForm] = useState({
         deliveryDate: "",
-        type: "",
+        title: "",
         price: "",
-        size: "",
+        dataDescription: "",
     });
     const [snippet, setSnippet] = useState(null);
     const [message, setMessage] = useState("");
@@ -23,22 +23,24 @@ const Sell = () => {
         e.preventDefault();
         const token = localStorage.getItem("token");
 
-        const data = new FormData();
-        data.append("deliveryDate", form.deliveryDate);
-        data.append("type", form.type);
-        data.append("price", form.price);
-        data.append("size", form.size);
-        if (snippet) data.append("snippet", snippet);
+        const data = {
+            title: form.title,
+            deliveryDate: form.deliveryDate,
+            price: parseFloat(form.price || 0),
+            dataDescription: form.dataDescription,
+        };
+        if (snippet) {
+            data.termsFileName = snippet.name;
+        }
 
         try {
             await axios.post("http://localhost:8080/api/contracts", data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
                 },
             });
             setMessage("✅ Data contract submitted!");
-            setForm({ deliveryDate: "", type: "", price: "", size: "" });
+            setForm({ deliveryDate: "", title: "", price: "", dataDescription: "" });
             setSnippet(null);
         } catch (err) {
             setMessage("❌ Submission failed.");
@@ -63,11 +65,11 @@ const Sell = () => {
                     />
                 </div>
                 <div>
-                    <label>Type of Data</label>
+                    <label>Title</label>
                     <input
                         type="text"
-                        name="type"
-                        value={form.type}
+                        name="title"
+                        value={form.title}
                         onChange={handleChange}
                         className="w-full p-2 mt-1 bg-gray-800 rounded"
                         required
@@ -85,11 +87,11 @@ const Sell = () => {
                     />
                 </div>
                 <div>
-                    <label>Size of Data (e.g. MB/GB)</label>
+                    <label>Data Description</label>
                     <input
                         type="text"
-                        name="size"
-                        value={form.size}
+                        name="dataDescription"
+                        value={form.dataDescription}
                         onChange={handleChange}
                         className="w-full p-2 mt-1 bg-gray-800 rounded"
                         required
