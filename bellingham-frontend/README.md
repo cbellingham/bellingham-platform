@@ -16,6 +16,19 @@ During development run:
 npm run dev
 ```
 
+### API configuration
+
+The frontend expects an API base URL provided via the `VITE_API_BASE_URL`
+environment variable. Copy `.env.example` as a starting point and adjust the value
+for your environment:
+
+```bash
+cp .env.example .env # if deploying
+# or edit .env directly
+```
+
+For local development the default value is `http://localhost:8080`.
+
 To create a production build:
 
 ```bash

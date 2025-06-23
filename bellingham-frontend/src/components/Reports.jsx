@@ -18,7 +18,7 @@ const Reports = () => {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    "http://localhost:8080/api/contracts/purchased",
+                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/purchased`,
                     config
                 );
                 setContracts(res.data);
