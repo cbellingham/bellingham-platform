@@ -13,9 +13,11 @@ const Buy = () => {
         const fetchContracts = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:8080/api/contracts/available", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+                const res = await axios.get(
+                    "http://localhost:8080/api/contracts/available",
+                    config
+                );
                 setContracts(res.data);
             } catch (err) {
                 console.error(err);
@@ -28,10 +30,11 @@ const Buy = () => {
     const handleBuy = async (contractId) => {
         try {
             const token = localStorage.getItem("token");
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             await axios.post(
                 `http://localhost:8080/api/contracts/${contractId}/buy`,
                 {},
-                { headers: { Authorization: `Bearer ${token}` } }
+                config
             );
             alert("Contract purchased successfully!");
         } catch (err) {

@@ -19,11 +19,13 @@ const Dashboard = () => {
                     return;
                 }
 
-                const res = await axios.get("http://localhost:8080/api/contracts", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const config = token
+                    ? { headers: { Authorization: `Bearer ${token}` } }
+                    : {};
+                const res = await axios.get(
+                    "http://localhost:8080/api/contracts",
+                    config
+                );
 
                 setContracts(res.data);
             } catch (err) {

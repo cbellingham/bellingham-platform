@@ -65,6 +65,7 @@ const Sell = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem("token");
+        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
         const data = {
             title: form.title,
@@ -78,11 +79,11 @@ const Sell = () => {
         }
 
         try {
-            await axios.post("http://localhost:8080/api/contracts", data, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await axios.post(
+                "http://localhost:8080/api/contracts",
+                data,
+                config
+            );
             setMessage("✅ Data contract submitted!");
             setForm({
                 deliveryDate: "",
