@@ -58,4 +58,18 @@ public class ForwardContractController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/{id}/buy")
+    public ResponseEntity<ForwardContract> buy(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(contract -> {
+                    if (!"Available".equalsIgnoreCase(contract.getStatus())) {
+                        return ResponseEntity.badRequest().build();
+                    }
+                    contract.setStatus("Purchased");
+                    ForwardContract saved = repository.save(contract);
+                    return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
