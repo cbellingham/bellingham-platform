@@ -16,9 +16,11 @@ const Reports = () => {
         const fetchPurchased = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:8080/api/contracts/purchased", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+                const res = await axios.get(
+                    "http://localhost:8080/api/contracts/purchased",
+                    config
+                );
                 setContracts(res.data);
             } catch {
                 setError("Failed to load purchased contracts.");
