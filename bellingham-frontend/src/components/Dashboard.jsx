@@ -97,7 +97,11 @@ const Dashboard = () => {
                 </aside>
 
                 {/* Main Content */}
-                <main className="flex-1 p-8 overflow-auto bg-black">
+                <main
+                    className={`flex-1 p-8 overflow-auto bg-black transition-all duration-300 ${
+                        selectedContract ? "sm:mr-96" : ""
+                    }`}
+                >
                     <h2 className="text-3xl font-bold mb-6 text-white">Contracts</h2>
                     <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                     <thead>
