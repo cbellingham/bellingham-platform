@@ -7,6 +7,11 @@ const Reports = () => {
     const [error, setError] = useState("");
     const [selectedContract, setSelectedContract] = useState(null);
 
+    const totalValue = contracts.reduce(
+        (sum, contract) => sum + Number(contract.price || 0),
+        0
+    );
+
     useEffect(() => {
         const fetchPurchased = async () => {
             try {
@@ -50,6 +55,9 @@ const Reports = () => {
                     ))}
                 </tbody>
             </table>
+            <p className="mt-4 text-lg font-semibold">
+                Total Value: ${totalValue.toFixed(2)}
+            </p>
             <ContractDetailsPanel
                 contract={selectedContract}
                 onClose={() => setSelectedContract(null)}
