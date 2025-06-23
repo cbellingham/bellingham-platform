@@ -47,7 +47,7 @@ const Dashboard = () => {
             <header className="bg-gray-800 p-4">
                 <h1 className="text-2xl font-bold">Bellingham Data Futures</h1>
             </header>
-            <div className="flex flex-1">
+            <div className="flex flex-1 relative">
                 {/* Sidebar */}
                 <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between">
                     <nav className="flex flex-col space-y-4">
