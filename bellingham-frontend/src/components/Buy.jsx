@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import ContractDetailsPanel from "./ContractDetailsPanel";
 
 const Buy = () => {
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
+    const [selectedContract, setSelectedContract] = useState(null);
 
     useEffect(() => {
         const fetchContracts = async () => {
@@ -16,6 +18,7 @@ const Buy = () => {
                 });
                 setContracts(res.data);
             } catch (err) {
+                console.error(err);
                 setError("Failed to fetch contracts.");
             }
         };
@@ -32,6 +35,7 @@ const Buy = () => {
             );
             alert("Contract purchased successfully!");
         } catch (err) {
+            console.error(err);
             alert("Failed to purchase contract.");
         }
     };
@@ -42,13 +46,17 @@ const Buy = () => {
             {error && <p className="text-red-500 mb-4">{error}</p>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {contracts.map((contract) => (
-                    <div key={contract.id} className="bg-gray-800 p-6 rounded shadow">
+                    <div
+                        key={contract.id}
+                        className="bg-gray-800 p-6 rounded shadow cursor-pointer"
+                        onClick={() => setSelectedContract(contract)}
+                    >
                         <h2 className="text-xl font-semibold mb-2">{contract.title}</h2>
                         <p className="text-sm text-gray-400 mb-1">Category: {contract.category}</p>
                         <p className="text-sm text-gray-400 mb-1">End Date: {contract.deliveryDate}</p>
                         <p className="text-sm text-gray-400 mb-4">Price: ${contract.price}</p>
                         <button
-                            onClick={() => handleBuy(contract.id)}
+                            onClick={(e) => { e.stopPropagation(); handleBuy(contract.id); }}
                             className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white"
                         >
                             Buy Contract
@@ -56,6 +64,10 @@ const Buy = () => {
                     </div>
                 ))}
             </div>
+            <ContractDetailsPanel
+                contract={selectedContract}
+                onClose={() => setSelectedContract(null)}
+            />
         </div>
     );
 };

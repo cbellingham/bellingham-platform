@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ContractDetailsPanel from "./ContractDetailsPanel";
 
 const Dashboard = () => {
     const [contracts, setContracts] = useState([]);
+    const [selectedContract, setSelectedContract] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -109,7 +111,11 @@ const Dashboard = () => {
                     </thead>
                     <tbody>
                     {contracts.map((contract) => (
-                        <tr key={contract.id} className="hover:bg-gray-600">
+                        <tr
+                            key={contract.id}
+                            className="hover:bg-gray-600 cursor-pointer"
+                            onClick={() => setSelectedContract(contract)}
+                        >
                             <td className="border p-2">{contract.title}</td>
                             <td className="border p-2">{contract.seller}</td>
                             <td className="border p-2">${contract.price}</td>
@@ -120,6 +126,10 @@ const Dashboard = () => {
                     </tbody>
                     </table>
                 </main>
+                <ContractDetailsPanel
+                    contract={selectedContract}
+                    onClose={() => setSelectedContract(null)}
+                />
             </div>
         </div>
     );

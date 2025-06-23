@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import ContractDetailsPanel from "./ContractDetailsPanel";
 
 const Reports = () => {
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
+    const [selectedContract, setSelectedContract] = useState(null);
 
     useEffect(() => {
         const fetchPurchased = async () => {
@@ -35,7 +37,11 @@ const Reports = () => {
                 </thead>
                 <tbody>
                     {contracts.map((contract) => (
-                        <tr key={contract.id} className="hover:bg-gray-600">
+                        <tr
+                            key={contract.id}
+                            className="hover:bg-gray-600 cursor-pointer"
+                            onClick={() => setSelectedContract(contract)}
+                        >
                             <td className="border p-2">{contract.title}</td>
                             <td className="border p-2">{contract.seller}</td>
                             <td className="border p-2">${contract.price}</td>
@@ -44,6 +50,10 @@ const Reports = () => {
                     ))}
                 </tbody>
             </table>
+            <ContractDetailsPanel
+                contract={selectedContract}
+                onClose={() => setSelectedContract(null)}
+            />
         </div>
     );
 };
