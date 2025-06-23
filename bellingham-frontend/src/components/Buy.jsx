@@ -21,7 +21,15 @@ const Buy = () => {
                 setContracts(res.data);
             } catch (err) {
                 console.error(err);
-                setError("Failed to fetch contracts.");
+                if (err.response) {
+                    const status = err.response.status;
+                    const message = err.response.data?.message || err.message || "";
+                    setError(
+                        `Failed to fetch contracts (${status}${message ? `: ${message}` : ""})`
+                    );
+                } else {
+                    setError("Failed to fetch contracts");
+                }
             }
         };
         fetchContracts();
