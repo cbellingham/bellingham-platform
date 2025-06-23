@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/authenticate", "/api/register-default").permitAll()
+                        .requestMatchers("/api/authenticate", "/api/register-default", "/api/contracts/available").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

@@ -29,7 +29,13 @@ public class ForwardContractController {
 
     @PostMapping
     public ForwardContract create(@RequestBody ForwardContract contract) {
+        contract.setStatus("Available");
         return repository.save(contract);
+    }
+
+    @GetMapping("/available")
+    public List<ForwardContract> getAvailable() {
+        return repository.findByStatus("Available");
     }
 
     @PutMapping("/{id}")
