@@ -16,7 +16,11 @@ const ContractDetailsPanel = ({ contract, onClose }) => {
                 {Object.entries(contract).map(([key, value]) => (
                     <li key={key}>
                         <span className="font-semibold capitalize mr-2">{key}:</span>
-                        {String(value)}
+                        {key === "agreementText" ? (
+                            <pre className="whitespace-pre-wrap">{value}</pre>
+                        ) : (
+                            String(value)
+                        )}
                     </li>
                 ))}
             </ul>

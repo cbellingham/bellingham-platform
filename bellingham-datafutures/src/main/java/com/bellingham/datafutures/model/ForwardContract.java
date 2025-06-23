@@ -17,6 +17,7 @@ public class ForwardContract {
     private LocalDate deliveryDate;
     private String dataDescription;
     private String termsFileName;
+    private String agreementText;
     private String status;
 
     // Getters and setters
@@ -75,6 +76,14 @@ public class ForwardContract {
 
     public void setTermsFileName(String termsFileName) {
         this.termsFileName = termsFileName;
+    }
+
+    public String getAgreementText() {
+        return agreementText;
+    }
+
+    public void setAgreementText(String agreementText) {
+        this.agreementText = agreementText;
     }
 
     public String getStatus() {
