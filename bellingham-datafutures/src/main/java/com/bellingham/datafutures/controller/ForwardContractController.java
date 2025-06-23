@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+// Use the older 'origins' attribute for broader compatibility
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/contracts")
 public class ForwardContractController {

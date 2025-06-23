@@ -14,6 +14,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 // Apply global CORS policy allowing any origin
+                // Use allowedOrigins instead of allowedOriginPatterns for
+                // compatibility with older Spring versions
                 registry.addMapping("/**")
                         .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
