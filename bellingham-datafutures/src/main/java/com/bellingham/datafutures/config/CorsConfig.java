@@ -14,12 +14,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        // Allow common local development hosts
-                        .allowedOrigins(
-                                "http://localhost:5173",
-                                "http://localhost:5174",
-                                "http://127.0.0.1:5173",
-                                "http://127.0.0.1:5174")
+                        // Open up CORS for development tools running on any host
+                        .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("Authorization", "Content-Type")
                         .exposedHeaders("Authorization")
