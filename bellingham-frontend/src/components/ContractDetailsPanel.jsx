@@ -4,7 +4,7 @@ const ContractDetailsPanel = ({ contract, onClose }) => {
     if (!contract) return null;
 
     return (
-        <div className="fixed top-0 right-0 w-full sm:w-96 h-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20">
+        <div className="absolute top-0 right-0 w-full sm:w-96 h-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 max-w-md">
             <button
                 className="mb-4 bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
                 onClick={onClose}
