@@ -2,6 +2,8 @@ package com.bellingham.datafutures.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -10,10 +12,24 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET = "my-very-secret-key-that-should-be-long-enough";
     private static final long EXPIRATION_TIME = 864_000_00; // 1 day in milliseconds
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    @Value("${jwt.secret:}")
+    private String secretProperty;
+
+    private Key key;
+
+    @PostConstruct
+    public void init() {
+        String secret = (secretProperty == null || secretProperty.isEmpty())
+                ? System.getenv("JWT_SECRET")
+                : secretProperty;
+        if (secret == null || secret.isEmpty()) {
+            throw new IllegalStateException(
+                    "JWT secret not configured. Set 'jwt.secret' or JWT_SECRET.");
+        }
+        key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()
