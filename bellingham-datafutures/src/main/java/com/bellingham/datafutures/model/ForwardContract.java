@@ -17,7 +17,6 @@ public class ForwardContract {
     private LocalDate deliveryDate;
     private String dataDescription;
     private String termsFileName;
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String agreementText;
     private String status;
