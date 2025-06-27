@@ -20,6 +20,7 @@ public class ForwardContract {
     @Column(columnDefinition = "TEXT")
     private String agreementText;
     private String status;
+    private String buyerUsername;
 
     // Getters and setters
 
@@ -93,5 +94,13 @@ public class ForwardContract {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getBuyerUsername() {
+        return buyerUsername;
+    }
+
+    public void setBuyerUsername(String buyerUsername) {
+        this.buyerUsername = buyerUsername;
     }
 }

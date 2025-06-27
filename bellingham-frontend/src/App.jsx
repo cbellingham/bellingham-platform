@@ -5,6 +5,7 @@ import Dashboard from "./components/Dashboard";
 import Buy from "./components/Buy";
 import Sell from "./components/Sell";
 import Reports from "./components/Reports";
+import Signup from "./components/Signup";
 
 const App = () => {
     const token = localStorage.getItem("token");
@@ -16,6 +17,7 @@ const App = () => {
                 element={token ? <Dashboard /> : <Navigate to="/login" />}
             />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route
                 path="/buy"
                 element={token ? <Buy /> : <Navigate to="/login" />}

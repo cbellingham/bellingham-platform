@@ -41,7 +41,9 @@ public class ForwardContractController {
 
     @GetMapping("/purchased")
     public List<ForwardContract> getPurchased() {
-        return repository.findByStatus("Purchased");
+        String username = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+        return repository.findByStatusAndBuyerUsername("Purchased", username);
     }
 
     @PutMapping("/{id}")
@@ -73,6 +75,9 @@ public class ForwardContractController {
                         return ResponseEntity.badRequest().<ForwardContract>build();
                     }
                     contract.setStatus("Purchased");
+                    String username = org.springframework.security.core.context.SecurityContextHolder
+                            .getContext().getAuthentication().getName();
+                    contract.setBuyerUsername(username);
                     ForwardContract saved = repository.save(contract);
                     return ResponseEntity.ok(saved);
                 })

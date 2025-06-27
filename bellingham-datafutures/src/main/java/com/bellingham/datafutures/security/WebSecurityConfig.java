@@ -55,7 +55,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/authenticate", "/api/register-default", "/api/contracts/available").permitAll()
+                        .requestMatchers("/api/authenticate", "/api/register", "/api/register-default", "/api/contracts/available").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
