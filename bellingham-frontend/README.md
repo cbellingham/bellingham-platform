@@ -39,3 +39,10 @@ npm run build
 Tailwind is configured via `tailwind.config.js` and `postcss.config.js`. Global
 styles and Tailwind directives are included in `src/index.css` and imported in
 `src/main.jsx`.
+
+## Signup and Login
+
+Users can create accounts via the **Sign Up** page at `/signup`. After
+registering and logging in, your username appears in the upper-right corner of
+all screens while your session is active. Purchases made while logged in are
+associated with your account and can be viewed from the **Reports** page.
