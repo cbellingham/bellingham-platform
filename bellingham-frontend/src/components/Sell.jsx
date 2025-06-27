@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Header from "./Header";
 
 const defaultAgreement = `DATA PURCHASE AGREEMENT
 
@@ -101,6 +102,7 @@ const Sell = () => {
 
     return (
         <div className="p-8 bg-black min-h-screen text-white font-poppins">
+            <Header />
             <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
             {message && <p className="mb-4">{message}</p>}
             <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">

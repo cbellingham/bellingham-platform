@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface ForwardContractRepository extends JpaRepository<ForwardContract, Long> {
     List<ForwardContract> findByStatus(String status);
+    List<ForwardContract> findByStatusAndBuyerUsername(String status, String buyerUsername);
+    List<ForwardContract> findByBuyerUsername(String buyerUsername);
 }
 

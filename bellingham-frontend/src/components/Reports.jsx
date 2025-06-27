@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ContractDetailsPanel from "./ContractDetailsPanel";
+import Header from "./Header";
 
 const Reports = () => {
     const [contracts, setContracts] = useState([]);
@@ -31,6 +32,7 @@ const Reports = () => {
 
     return (
         <div className="relative p-8 text-white bg-black min-h-screen font-poppins">
+            <Header />
             <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">

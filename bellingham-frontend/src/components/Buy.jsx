@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ContractDetailsPanel from "./ContractDetailsPanel";
+import Header from "./Header";
 
 const Buy = () => {
     const [contracts, setContracts] = useState([]);
@@ -53,6 +54,7 @@ const Buy = () => {
 
     return (
         <div className="relative p-8 text-white bg-black min-h-screen font-poppins">
+            <Header />
             <h1 className="text-3xl font-bold mb-6">Available Contracts</h1>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -27,6 +27,7 @@ const Login = () => {
             const token = res.data.id_token;
             if (token) {
                 localStorage.setItem("token", token);
+                localStorage.setItem("username", username);
 
                 // Force full page reload to refresh state
                 window.location.href = "/";
@@ -73,6 +74,13 @@ const Login = () => {
                     className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
                 >
                     Sign In
+                </button>
+                <button
+                    type="button"
+                    className="w-full mt-2 text-blue-600"
+                    onClick={() => (window.location.href = "/signup")}
+                >
+                    Create Account
                 </button>
             </form>
         </div>

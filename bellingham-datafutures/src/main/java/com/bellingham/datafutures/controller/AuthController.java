@@ -61,4 +61,22 @@ public class AuthController {
         userRepository.save(user);
         return "✅ Default user created";
     }
+
+    @PostMapping("/register")
+    public String registerUser(@RequestBody Map<String, String> creds) {
+        String username = creds.get("username");
+        String password = creds.get("password");
+        if (username == null || password == null) {
+            return "Username and password required";
+        }
+        if (userRepository.findByUsername(username).isPresent()) {
+            return "Username already exists";
+        }
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(encoder.encode(password));
+        user.setRole("ROLE_USER");
+        userRepository.save(user);
+        return "User registered";
+    }
 }

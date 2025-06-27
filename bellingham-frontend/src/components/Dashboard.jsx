@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ContractDetailsPanel from "./ContractDetailsPanel";
+import Header from "./Header";
 
 const Dashboard = () => {
     const [contracts, setContracts] = useState([]);
@@ -40,15 +41,13 @@ const Dashboard = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("username");
         navigate("/login");
     };
 
     return (
         <div className="flex flex-col h-screen font-poppins bg-black text-white">
-            {/* Top Banner */}
-            <header className="bg-gray-800 p-4">
-                <h1 className="text-2xl font-bold">Bellingham Data Futures</h1>
-            </header>
+            <Header />
             <div className="flex flex-1 relative">
                 {/* Sidebar */}
                 <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between">
