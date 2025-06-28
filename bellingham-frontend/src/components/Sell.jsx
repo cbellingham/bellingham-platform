@@ -86,19 +86,6 @@ const Sell = () => {
             price: parseFloat(form.price || 0),
             dataDescription: form.dataDescription,
             agreementText: form.agreementText,
-            seller: profile?.legalBusinessName || "",
-            legalBusinessName: profile?.legalBusinessName,
-            name: profile?.name,
-            countryOfIncorporation: profile?.countryOfIncorporation,
-            taxId: profile?.taxId,
-            companyRegistrationNumber: profile?.companyRegistrationNumber,
-            primaryContactName: profile?.primaryContactName,
-            primaryContactEmail: profile?.primaryContactEmail,
-            primaryContactPhone: profile?.primaryContactPhone,
-            technicalContactName: profile?.technicalContactName,
-            technicalContactEmail: profile?.technicalContactEmail,
-            technicalContactPhone: profile?.technicalContactPhone,
-            companyDescription: profile?.companyDescription,
         };
         if (snippet) {
             data.termsFileName = snippet.name;
