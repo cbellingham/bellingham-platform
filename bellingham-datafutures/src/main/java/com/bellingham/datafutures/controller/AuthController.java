@@ -118,4 +118,58 @@ public class AuthController {
         map.put("companyDescription", user.getCompanyDescription());
         return map;
     }
+
+    @PutMapping("/profile")
+    public Map<String, Object> updateProfile(Authentication authentication,
+            @RequestBody Map<String, String> updates) {
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return Map.of();
+        }
+
+        if (updates.containsKey("legalBusinessName"))
+            user.setLegalBusinessName(updates.get("legalBusinessName"));
+        if (updates.containsKey("name"))
+            user.setName(updates.get("name"));
+        if (updates.containsKey("countryOfIncorporation"))
+            user.setCountryOfIncorporation(updates.get("countryOfIncorporation"));
+        if (updates.containsKey("taxId"))
+            user.setTaxId(updates.get("taxId"));
+        if (updates.containsKey("companyRegistrationNumber"))
+            user.setCompanyRegistrationNumber(updates.get("companyRegistrationNumber"));
+        if (updates.containsKey("primaryContactName"))
+            user.setPrimaryContactName(updates.get("primaryContactName"));
+        if (updates.containsKey("primaryContactEmail"))
+            user.setPrimaryContactEmail(updates.get("primaryContactEmail"));
+        if (updates.containsKey("primaryContactPhone"))
+            user.setPrimaryContactPhone(updates.get("primaryContactPhone"));
+        if (updates.containsKey("technicalContactName"))
+            user.setTechnicalContactName(updates.get("technicalContactName"));
+        if (updates.containsKey("technicalContactEmail"))
+            user.setTechnicalContactEmail(updates.get("technicalContactEmail"));
+        if (updates.containsKey("technicalContactPhone"))
+            user.setTechnicalContactPhone(updates.get("technicalContactPhone"));
+        if (updates.containsKey("companyDescription"))
+            user.setCompanyDescription(updates.get("companyDescription"));
+
+        userRepository.save(user);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getId());
+        map.put("username", user.getUsername());
+        map.put("legalBusinessName", user.getLegalBusinessName());
+        map.put("name", user.getName());
+        map.put("countryOfIncorporation", user.getCountryOfIncorporation());
+        map.put("taxId", user.getTaxId());
+        map.put("companyRegistrationNumber", user.getCompanyRegistrationNumber());
+        map.put("primaryContactName", user.getPrimaryContactName());
+        map.put("primaryContactEmail", user.getPrimaryContactEmail());
+        map.put("primaryContactPhone", user.getPrimaryContactPhone());
+        map.put("technicalContactName", user.getTechnicalContactName());
+        map.put("technicalContactEmail", user.getTechnicalContactEmail());
+        map.put("technicalContactPhone", user.getTechnicalContactPhone());
+        map.put("companyDescription", user.getCompanyDescription());
+        return map;
+    }
 }
