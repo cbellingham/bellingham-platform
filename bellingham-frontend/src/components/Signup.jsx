@@ -3,8 +3,22 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [form, setForm] = useState({
+        username: "",
+        password: "",
+        legalBusinessName: "",
+        name: "",
+        countryOfIncorporation: "",
+        taxId: "",
+        companyRegistrationNumber: "",
+        primaryContactName: "",
+        primaryContactEmail: "",
+        primaryContactPhone: "",
+        technicalContactName: "",
+        technicalContactEmail: "",
+        technicalContactPhone: "",
+        companyDescription: "",
+    });
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
@@ -16,11 +30,25 @@ const Signup = () => {
         try {
             await axios.post(
                 `${import.meta.env.VITE_API_BASE_URL}/api/register`,
-                { username, password }
+                form
             );
             setMessage("Registration successful. Please log in.");
-            setUsername("");
-            setPassword("");
+            setForm({
+                username: "",
+                password: "",
+                legalBusinessName: "",
+                name: "",
+                countryOfIncorporation: "",
+                taxId: "",
+                companyRegistrationNumber: "",
+                primaryContactName: "",
+                primaryContactEmail: "",
+                primaryContactPhone: "",
+                technicalContactName: "",
+                technicalContactEmail: "",
+                technicalContactPhone: "",
+                companyDescription: "",
+            });
         } catch (err) {
             console.error(err);
             setError("Registration failed.");
@@ -37,15 +65,99 @@ const Signup = () => {
                 <input
                     type="text"
                     placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={form.username}
+                    onChange={(e) => setForm({ ...form, username: e.target.value })}
                     className="w-full p-2 mb-4 border rounded-lg"
                 />
                 <input
                     type="password"
                     placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Legal Business Name"
+                    value={form.legalBusinessName}
+                    onChange={(e) => setForm({ ...form, legalBusinessName: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Your Name"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Country of Incorporation"
+                    value={form.countryOfIncorporation}
+                    onChange={(e) => setForm({ ...form, countryOfIncorporation: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="UK or US Tax ID Code"
+                    value={form.taxId}
+                    onChange={(e) => setForm({ ...form, taxId: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Company Registration Number"
+                    value={form.companyRegistrationNumber}
+                    onChange={(e) => setForm({ ...form, companyRegistrationNumber: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Primary Contact Name"
+                    value={form.primaryContactName}
+                    onChange={(e) => setForm({ ...form, primaryContactName: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="email"
+                    placeholder="Primary Contact Email"
+                    value={form.primaryContactEmail}
+                    onChange={(e) => setForm({ ...form, primaryContactEmail: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Primary Contact Phone"
+                    value={form.primaryContactPhone}
+                    onChange={(e) => setForm({ ...form, primaryContactPhone: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Technical Contact Name"
+                    value={form.technicalContactName}
+                    onChange={(e) => setForm({ ...form, technicalContactName: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="email"
+                    placeholder="Technical Contact Email"
+                    value={form.technicalContactEmail}
+                    onChange={(e) => setForm({ ...form, technicalContactEmail: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="Technical Contact Phone"
+                    value={form.technicalContactPhone}
+                    onChange={(e) => setForm({ ...form, technicalContactPhone: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="text"
+                    placeholder="One line company description"
+                    value={form.companyDescription}
+                    onChange={(e) => setForm({ ...form, companyDescription: e.target.value })}
                     className="w-full p-2 mb-6 border rounded-lg"
                 />
                 <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./Header";
 
 const defaultAgreement = `DATA PURCHASE AGREEMENT
@@ -54,6 +54,18 @@ const Sell = () => {
     });
     const [snippet, setSnippet] = useState(null);
     const [message, setMessage] = useState("");
+    const [profile, setProfile] = useState(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        axios
+            .get(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => setProfile(res.data))
+            .catch((err) => console.error(err));
+    }, []);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -74,6 +86,19 @@ const Sell = () => {
             price: parseFloat(form.price || 0),
             dataDescription: form.dataDescription,
             agreementText: form.agreementText,
+            seller: profile?.legalBusinessName || "",
+            legalBusinessName: profile?.legalBusinessName,
+            name: profile?.name,
+            countryOfIncorporation: profile?.countryOfIncorporation,
+            taxId: profile?.taxId,
+            companyRegistrationNumber: profile?.companyRegistrationNumber,
+            primaryContactName: profile?.primaryContactName,
+            primaryContactEmail: profile?.primaryContactEmail,
+            primaryContactPhone: profile?.primaryContactPhone,
+            technicalContactName: profile?.technicalContactName,
+            technicalContactEmail: profile?.technicalContactEmail,
+            technicalContactPhone: profile?.technicalContactPhone,
+            companyDescription: profile?.companyDescription,
         };
         if (snippet) {
             data.termsFileName = snippet.name;

@@ -76,7 +76,46 @@ public class AuthController {
         user.setUsername(username);
         user.setPassword(encoder.encode(password));
         user.setRole("ROLE_USER");
+
+        user.setLegalBusinessName(creds.get("legalBusinessName"));
+        user.setName(creds.get("name"));
+        user.setCountryOfIncorporation(creds.get("countryOfIncorporation"));
+        user.setTaxId(creds.get("taxId"));
+        user.setCompanyRegistrationNumber(creds.get("companyRegistrationNumber"));
+        user.setPrimaryContactName(creds.get("primaryContactName"));
+        user.setPrimaryContactEmail(creds.get("primaryContactEmail"));
+        user.setPrimaryContactPhone(creds.get("primaryContactPhone"));
+        user.setTechnicalContactName(creds.get("technicalContactName"));
+        user.setTechnicalContactEmail(creds.get("technicalContactEmail"));
+        user.setTechnicalContactPhone(creds.get("technicalContactPhone"));
+        user.setCompanyDescription(creds.get("companyDescription"));
+
         userRepository.save(user);
         return "User registered";
+    }
+
+    @GetMapping("/profile")
+    public Map<String, Object> getProfile(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return Map.of();
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getId());
+        map.put("username", user.getUsername());
+        map.put("legalBusinessName", user.getLegalBusinessName());
+        map.put("name", user.getName());
+        map.put("countryOfIncorporation", user.getCountryOfIncorporation());
+        map.put("taxId", user.getTaxId());
+        map.put("companyRegistrationNumber", user.getCompanyRegistrationNumber());
+        map.put("primaryContactName", user.getPrimaryContactName());
+        map.put("primaryContactEmail", user.getPrimaryContactEmail());
+        map.put("primaryContactPhone", user.getPrimaryContactPhone());
+        map.put("technicalContactName", user.getTechnicalContactName());
+        map.put("technicalContactEmail", user.getTechnicalContactEmail());
+        map.put("technicalContactPhone", user.getTechnicalContactPhone());
+        map.put("companyDescription", user.getCompanyDescription());
+        return map;
     }
 }
