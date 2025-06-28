@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "./Header";
 
 const defaultAgreement = `DATA PURCHASE AGREEMENT
@@ -54,18 +54,6 @@ const Sell = () => {
     });
     const [snippet, setSnippet] = useState(null);
     const [message, setMessage] = useState("");
-    const [profile, setProfile] = useState(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        axios
-            .get(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((res) => setProfile(res.data))
-            .catch((err) => console.error(err));
-    }, []);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

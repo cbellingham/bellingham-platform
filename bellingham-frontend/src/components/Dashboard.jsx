@@ -83,7 +83,7 @@ const Dashboard = () => {
                             Settings
                         </button>
                         <button
-                            onClick={() => alert("Account screen not implemented yet")}
+                            onClick={() => navigate("/account")}
                             className="text-left hover:bg-gray-700 px-4 py-2 rounded"
                         >
                             Account
