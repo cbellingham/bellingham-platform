@@ -2,6 +2,9 @@ package com.bellingham.datafutures.controller;
 
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
+import com.bellingham.datafutures.repository.UserRepository;
+import com.bellingham.datafutures.model.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,9 @@ public class ForwardContractController {
 
     @Autowired
     private ForwardContractRepository repository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping
     public List<ForwardContract> getAll() {
@@ -31,7 +37,27 @@ public class ForwardContractController {
     @PostMapping
     public ForwardContract create(@RequestBody ForwardContract contract) {
         contract.setStatus("Available");
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
+
         return repository.save(contract);
+    }
+
+    private void fillSellerDetails(ForwardContract contract, User user) {
+        contract.setSeller(user.getLegalBusinessName());
+        contract.setLegalBusinessName(user.getLegalBusinessName());
+        contract.setName(user.getName());
+        contract.setCountryOfIncorporation(user.getCountryOfIncorporation());
+        contract.setTaxId(user.getTaxId());
+        contract.setCompanyRegistrationNumber(user.getCompanyRegistrationNumber());
+        contract.setPrimaryContactName(user.getPrimaryContactName());
+        contract.setPrimaryContactEmail(user.getPrimaryContactEmail());
+        contract.setPrimaryContactPhone(user.getPrimaryContactPhone());
+        contract.setTechnicalContactName(user.getTechnicalContactName());
+        contract.setTechnicalContactEmail(user.getTechnicalContactEmail());
+        contract.setTechnicalContactPhone(user.getTechnicalContactPhone());
+        contract.setCompanyDescription(user.getCompanyDescription());
     }
 
     @GetMapping("/available")
