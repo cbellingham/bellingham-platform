@@ -4,6 +4,7 @@ import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.model.User;
+import java.time.LocalDate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +23,33 @@ public class ForwardContractController {
     @Autowired
     private UserRepository userRepository;
 
+    private void updateExpiredContracts() {
+        LocalDate today = LocalDate.now();
+        List<ForwardContract> contracts = repository.findAll();
+        for (ForwardContract contract : contracts) {
+            LocalDate delivery = contract.getDeliveryDate();
+            if (delivery != null && delivery.isBefore(today)) {
+                String status = contract.getStatus();
+                if ("Available".equalsIgnoreCase(status)) {
+                    contract.setStatus("Void");
+                    repository.save(contract);
+                } else if ("Purchased".equalsIgnoreCase(status)) {
+                    contract.setStatus("Delivered");
+                    repository.save(contract);
+                }
+            }
+        }
+    }
+
     @GetMapping
     public List<ForwardContract> getAll() {
+        updateExpiredContracts();
         return repository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ForwardContract> getById(@PathVariable Long id) {
+        updateExpiredContracts();
         return repository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -62,11 +83,13 @@ public class ForwardContractController {
 
     @GetMapping("/available")
     public List<ForwardContract> getAvailable() {
+        updateExpiredContracts();
         return repository.findByStatus("Available");
     }
 
     @GetMapping("/purchased")
     public List<ForwardContract> getPurchased() {
+        updateExpiredContracts();
         String username = org.springframework.security.core.context.SecurityContextHolder
                 .getContext().getAuthentication().getName();
         return repository.findByStatusAndBuyerUsername("Purchased", username);
