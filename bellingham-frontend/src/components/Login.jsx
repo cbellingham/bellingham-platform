@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import LoginImage from "../assets/ChatGPT Image Jun 30, 2025 at 01_15_10 PM.png";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -46,6 +47,7 @@ const Login = () => {
 
     return (
         <div className="flex flex-col h-screen items-center justify-center bg-gray-100">
+            <img src={LoginImage} alt="Login logo" className="w-48 mb-4" />
             <h1 className="text-3xl font-bold mb-6 text-center">
                 Bellingham Data Futures
             </h1>
