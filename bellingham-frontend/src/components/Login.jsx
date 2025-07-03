@@ -47,7 +47,7 @@ const Login = () => {
 
     return (
         <div
-            className="relative flex flex-col items-center justify-start pt-64 h-screen"
+            className="relative flex flex-col items-center justify-center h-screen"
             style={{
                 backgroundImage: `url(${LoginImage})`,
                 backgroundSize: "150px",
