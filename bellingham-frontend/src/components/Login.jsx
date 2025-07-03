@@ -47,8 +47,13 @@ const Login = () => {
 
     return (
         <div
-            className="relative flex flex-col items-center justify-start pt-64 h-screen bg-cover bg-center"
-            style={{ backgroundImage: `url(${LoginImage})` }}
+            className="relative flex flex-col items-center justify-start pt-64 h-screen"
+            style={{
+                backgroundImage: `url(${LoginImage})`,
+                backgroundSize: "150px",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "bottom right",
+            }}
         >
             <div className="absolute inset-0 bg-black opacity-60" />
             <form
