@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import LoginImage from "../assets/ChatGPT Image Jun 30, 2025 at 01_15_10 PM.png";
+import LoginImage from "../assets/login.png";
 
 const Login = () => {
     const [username, setUsername] = useState("");
