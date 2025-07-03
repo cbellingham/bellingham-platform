@@ -1,10 +1,15 @@
 import React from "react";
+import logoImage from "../assets/login.png";
 
 const Header = () => {
     const username = localStorage.getItem("username");
     return (
         <header className="bg-gray-800 p-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Bellingham Data Futures</h1>
+            <img
+                src={logoImage}
+                alt="Bellingham Data Futures logo"
+                className="h-24 w-24"
+            />
             {username && (
                 <span className="text-sm text-white">Logged in as: {username}</span>
             )}

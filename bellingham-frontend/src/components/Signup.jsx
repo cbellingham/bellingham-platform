@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import logoImage from "../assets/login.png";
 
 const Signup = () => {
     const [form, setForm] = useState({
@@ -57,7 +58,11 @@ const Signup = () => {
 
     return (
         <div className="flex flex-col h-screen items-center justify-center bg-black text-white font-poppins">
-            <h1 className="text-3xl font-bold mb-6 text-center">Bellingham Data Futures</h1>
+            <img
+                src={logoImage}
+                alt="Bellingham Data Futures logo"
+                className="h-24 w-24 mb-6"
+            />
             <form onSubmit={handleSignup} className="bg-white shadow-lg rounded-2xl p-8 w-96">
                 <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
                 {message && <div className="text-green-600 mb-2">{message}</div>}
