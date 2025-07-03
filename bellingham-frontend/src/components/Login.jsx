@@ -47,18 +47,14 @@ const Login = () => {
 
     return (
         <div
-            className="relative flex flex-col items-center justify-center h-screen bg-cover bg-center"
+            className="relative flex flex-col items-center justify-start pt-64 h-screen bg-cover bg-center"
             style={{ backgroundImage: `url(${LoginImage})` }}
         >
             <div className="absolute inset-0 bg-black opacity-60" />
-            <h1 className="relative z-10 text-3xl font-bold mb-6 text-center text-white">
-                Bellingham Data Futures
-            </h1>
             <form
                 onSubmit={handleLogin}
                 className="relative z-10 bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 w-96"
             >
-                <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
                 {error && <div className="text-red-600 mb-2">{error}</div>}
                 <input
                     type="text"
