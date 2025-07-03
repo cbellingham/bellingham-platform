@@ -8,7 +8,7 @@ const Header = () => {
             <img
                 src={logoImage}
                 alt="Bellingham Data Futures logo"
-                className="h-8"
+                className="h-24 w-24"
             />
             {username && (
                 <span className="text-sm text-white">Logged in as: {username}</span>
