@@ -132,4 +132,18 @@ public class ForwardContractController {
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
+
+    @PostMapping("/{id}/list")
+    public ResponseEntity<ForwardContract> listForSale(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(contract -> {
+                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
+                    contract.setStatus("Available");
+                    contract.setBuyerUsername(null);
+                    ForwardContract saved = repository.save(contract);
+                    return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().<ForwardContract>build());
+    }
 }

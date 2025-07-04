@@ -30,6 +30,22 @@ const Reports = () => {
         fetchPurchased();
     }, []);
 
+    const handleListForSale = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}/list`,
+                {},
+                config
+            );
+            setContracts((prev) => prev.filter((c) => c.id !== id));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to list contract for sale.");
+        }
+    };
+
     return (
         <div className="relative p-8 text-white bg-black min-h-screen font-poppins">
             <Header />
@@ -42,6 +58,7 @@ const Reports = () => {
                         <th className="border p-2">Seller</th>
                         <th className="border p-2">Price</th>
                         <th className="border p-2">Delivery</th>
+                        <th className="border p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,6 +72,17 @@ const Reports = () => {
                             <td className="border p-2">{contract.seller}</td>
                             <td className="border p-2">${contract.price}</td>
                             <td className="border p-2">{contract.deliveryDate}</td>
+                            <td className="border p-2">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleListForSale(contract.id);
+                                    }}
+                                    className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                >
+                                    List for Sale
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
