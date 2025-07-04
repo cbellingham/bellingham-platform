@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
+import { useNavigate } from "react-router-dom";
 
 const defaultAgreement = `DATA PURCHASE AGREEMENT
 
@@ -45,6 +47,7 @@ Buyer: [Buyer’s Full Legal Name], a [Entity Type] with a principal place of bu
 import axios from "axios";
 
 const Sell = () => {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         deliveryDate: "",
         title: "",
@@ -100,12 +103,21 @@ const Sell = () => {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        navigate("/login");
+    };
+
     return (
-        <div className="p-8 bg-black min-h-screen text-white font-poppins">
+        <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
             <Header />
-            <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
-            {message && <p className="mb-4">{message}</p>}
-            <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
+            <div className="flex flex-1 relative gap-6">
+                <Sidebar onLogout={handleLogout} />
+                <main className="flex-1 p-8">
+                    <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
+                    {message && <p className="mb-4">{message}</p>}
+                    <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
                 <div>
                     <label>Delivery Date</label>
                     <input
@@ -173,6 +185,8 @@ const Sell = () => {
                     Submit Contract
                 </button>
             </form>
+                </main>
+            </div>
         </div>
     );
 };

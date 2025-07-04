@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
 
 const Account = () => {
@@ -34,18 +35,28 @@ const Account = () => {
 
     if (error) {
         return (
-            <div className="p-8 bg-black min-h-screen text-white font-poppins">
+            <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
                 <Header />
-                <p className="text-red-500">{error}</p>
+                <div className="flex flex-1">
+                    <Sidebar onLogout={handleLogout} />
+                    <main className="flex-1 p-8">
+                        <p className="text-red-500">{error}</p>
+                    </main>
+                </div>
             </div>
         );
     }
 
     if (!profile) {
         return (
-            <div className="p-8 bg-black min-h-screen text-white font-poppins">
+            <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
                 <Header />
-                <p>Loading...</p>
+                <div className="flex flex-1">
+                    <Sidebar onLogout={handleLogout} />
+                    <main className="flex-1 p-8">
+                        <p>Loading...</p>
+                    </main>
+                </div>
             </div>
         );
     }
@@ -70,12 +81,21 @@ const Account = () => {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        navigate("/login");
+    };
+
     return (
-        <div className="p-8 bg-black min-h-screen text-white font-poppins">
+        <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
             <Header />
-            <h1 className="text-3xl font-bold mb-6">Account Details</h1>
-            {editing ? (
-                <div className="space-y-2">
+            <div className="flex flex-1 relative gap-6">
+                <Sidebar onLogout={handleLogout} />
+                <main className="flex-1 p-8">
+                    <h1 className="text-3xl font-bold mb-6">Account Details</h1>
+                    {editing ? (
+                        <div className="space-y-2">
                     <p><strong>Username:</strong> {profile.username}</p>
                     <input
                         className="w-full p-2 bg-gray-800 rounded"
@@ -202,6 +222,8 @@ const Account = () => {
                     </button>
                 </div>
             )}
+                </main>
+            </div>
         </div>
     );
 };

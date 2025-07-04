@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
+import { useNavigate } from "react-router-dom";
 
 const Reports = () => {
+    const navigate = useNavigate();
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
     const [selectedContract, setSelectedContract] = useState(null);
@@ -46,12 +49,21 @@ const Reports = () => {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        navigate("/login");
+    };
+
     return (
-        <div className="relative p-8 text-white bg-black min-h-screen font-poppins">
+        <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
             <Header />
-            <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+            <div className="flex flex-1 relative gap-6">
+                <Sidebar onLogout={handleLogout} />
+                <main className="flex-1 p-8">
+                    <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
+                    {error && <p className="text-red-500 mb-4">{error}</p>}
+                    <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                 <thead>
                     <tr className="bg-gray-700 text-left">
                         <th className="border p-2">Title</th>
@@ -87,13 +99,15 @@ const Reports = () => {
                     ))}
                 </tbody>
             </table>
-            <p className="mt-4 text-lg font-semibold">
-                Total Value: ${totalValue.toFixed(2)}
-            </p>
-            <ContractDetailsPanel
-                contract={selectedContract}
-                onClose={() => setSelectedContract(null)}
-            />
+                    <p className="mt-4 text-lg font-semibold">
+                        Total Value: ${totalValue.toFixed(2)}
+                    </p>
+                    <ContractDetailsPanel
+                        contract={selectedContract}
+                        onClose={() => setSelectedContract(null)}
+                    />
+                </main>
+            </div>
         </div>
     );
 };
