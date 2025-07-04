@@ -11,6 +11,12 @@ const Account = () => {
     const [formData, setFormData] = useState({});
     const navigate = useNavigate();
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        navigate("/login");
+    };
+
     useEffect(() => {
         const fetchProfile = async () => {
             try {
@@ -79,12 +85,6 @@ const Account = () => {
             console.error(err);
             setError("Failed to save profile");
         }
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        navigate("/login");
     };
 
     return (
