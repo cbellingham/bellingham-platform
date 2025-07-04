@@ -61,7 +61,7 @@ const Signup = () => {
             <img
                 src={logoImage}
                 alt="Bellingham Data Futures logo"
-                className="h-12 mb-6"
+                className="h-[150px] w-[150px] mb-6"
             />
             <form onSubmit={handleSignup} className="bg-white shadow-lg rounded-2xl p-8 w-96">
                 <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>

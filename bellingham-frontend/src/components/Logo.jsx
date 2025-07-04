@@ -11,7 +11,7 @@ const Logo = () => {
         <img
             src={logoImage}
             alt="Logo"
-            className="fixed bottom-4 right-4 w-24 h-24 pointer-events-none"
+            className="fixed bottom-4 right-4 w-[150px] h-[150px] pointer-events-none"
             style={style}
         />
     );
