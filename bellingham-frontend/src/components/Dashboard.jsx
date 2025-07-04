@@ -48,7 +48,7 @@ const Dashboard = () => {
     return (
         <div className="flex flex-col h-screen font-poppins bg-black text-white">
             <Header />
-            <div className="flex flex-1 relative">
+            <div className="flex flex-1 relative gap-6">
                 {/* Sidebar */}
                 <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between">
                     <nav className="flex flex-col space-y-4">
@@ -103,7 +103,7 @@ const Dashboard = () => {
                         selectedContract ? "sm:mr-96" : ""
                     }`}
                 >
-                    <h2 className="text-3xl font-bold mb-6 text-white">Contracts</h2>
+                    <h2 className="text-3xl font-bold mb-6 text-white">Open Contracts</h2>
                     <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                     <thead>
                     <tr className="bg-gray-700 text-left">
