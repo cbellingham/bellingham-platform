@@ -24,7 +24,7 @@ const Dashboard = () => {
                     ? { headers: { Authorization: `Bearer ${token}` } }
                     : {};
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts`,
+                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/available`,
                     config
                 );
 
