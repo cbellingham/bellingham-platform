@@ -21,6 +21,7 @@ public class ForwardContract {
     private String agreementText;
     private String status;
     private String buyerUsername;
+    private LocalDate purchaseDate;
 
     private String legalBusinessName;
     private String name;
@@ -115,6 +116,14 @@ public class ForwardContract {
 
     public void setBuyerUsername(String buyerUsername) {
         this.buyerUsername = buyerUsername;
+    }
+
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDate purchaseDate) {
+        this.purchaseDate = purchaseDate;
     }
 
     public String getLegalBusinessName() {

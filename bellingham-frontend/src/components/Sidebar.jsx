@@ -31,6 +31,12 @@ const Sidebar = ({ onLogout }) => {
                     Reports
                 </button>
                 <button
+                    onClick={() => navigate("/calendar")}
+                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                >
+                    Calendar
+                </button>
+                <button
                     onClick={() => alert("Settings screen not implemented yet")}
                     className="text-left hover:bg-gray-700 px-4 py-2 rounded"
                 >

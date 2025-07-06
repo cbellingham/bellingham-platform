@@ -127,6 +127,7 @@ public class ForwardContractController {
                     String username = org.springframework.security.core.context.SecurityContextHolder
                             .getContext().getAuthentication().getName();
                     contract.setBuyerUsername(username);
+                    contract.setPurchaseDate(LocalDate.now());
                     ForwardContract saved = repository.save(contract);
                     return ResponseEntity.ok(saved);
                 })
@@ -141,6 +142,7 @@ public class ForwardContractController {
                     userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
                     contract.setStatus("Available");
                     contract.setBuyerUsername(null);
+                    contract.setPurchaseDate(null);
                     ForwardContract saved = repository.save(contract);
                     return ResponseEntity.ok(saved);
                 })
