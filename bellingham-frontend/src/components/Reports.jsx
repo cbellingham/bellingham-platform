@@ -103,6 +103,7 @@ const Reports = () => {
                         Total Value: ${totalValue.toFixed(2)}
                     </p>
                     <ContractDetailsPanel
+                        inline
                         contract={selectedContract}
                         onClose={() => setSelectedContract(null)}
                     />

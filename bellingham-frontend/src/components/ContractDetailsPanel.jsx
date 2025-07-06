@@ -1,10 +1,14 @@
 import React from "react";
 
-const ContractDetailsPanel = ({ contract, onClose }) => {
+const ContractDetailsPanel = ({ contract, onClose, inline = false }) => {
     if (!contract) return null;
 
+    const panelClasses = inline
+        ? "w-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 max-w-md mt-4"
+        : "absolute top-0 right-0 w-full sm:w-96 h-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 max-w-md";
+
     return (
-        <div className="absolute top-0 right-0 w-full sm:w-96 h-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 max-w-md">
+        <div className={panelClasses}>
             <button
                 className="mb-4 bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
                 onClick={onClose}
