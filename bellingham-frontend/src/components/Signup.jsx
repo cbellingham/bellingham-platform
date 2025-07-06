@@ -57,7 +57,13 @@ const Signup = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen items-center justify-center bg-black text-white font-poppins">
+        <div className="relative flex flex-col h-screen items-center justify-center bg-black text-white font-poppins">
+            <button
+                onClick={() => navigate(-1)}
+                className="absolute top-4 left-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded"
+            >
+                Back
+            </button>
             <img
                 src={logoImage}
                 alt="Bellingham Data Futures logo"
