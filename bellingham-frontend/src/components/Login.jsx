@@ -27,8 +27,21 @@ const Login = () => {
 
             const token = res.data.id_token;
             if (token) {
-                localStorage.setItem("token", token);
-                localStorage.setItem("username", username);
+                try {
+                    localStorage.setItem("token", token);
+                    localStorage.setItem("username", username);
+                } catch (e) {
+                    console.error("LocalStorage quota exceeded, clearing profile picture", e);
+                    localStorage.removeItem("profilePicture");
+                    try {
+                        localStorage.setItem("token", token);
+                        localStorage.setItem("username", username);
+                    } catch (e2) {
+                        console.error("Failed to store credentials", e2);
+                        setError("Login failed: unable to store credentials.");
+                        return;
+                    }
+                }
                 try {
                     const profile = await axios.get(
                         `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
