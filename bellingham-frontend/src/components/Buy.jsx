@@ -86,11 +86,7 @@ const Buy = () => {
             <Header />
             <div className="flex flex-1 relative gap-6">
                 <Sidebar onLogout={handleLogout} />
-                <main
-                    className={`flex-1 p-8 overflow-auto bg-black transition-all duration-300 ${
-                        selectedContract ? "sm:mr-96" : ""
-                    }`}
-                >
+                <main className="flex-1 p-8 overflow-auto bg-black">
                     <h1 className="text-3xl font-bold mb-6">Available Contracts</h1>
                     {error && <p className="text-red-500 mb-4">{error}</p>}
                     <div className="mb-4 flex flex-wrap gap-4">
@@ -164,11 +160,12 @@ const Buy = () => {
                             ))}
                         </tbody>
                     </table>
+                    <ContractDetailsPanel
+                        inline
+                        contract={selectedContract}
+                        onClose={() => setSelectedContract(null)}
+                    />
                 </main>
-                <ContractDetailsPanel
-                    contract={selectedContract}
-                    onClose={() => setSelectedContract(null)}
-                />
             </div>
         </div>
     );
