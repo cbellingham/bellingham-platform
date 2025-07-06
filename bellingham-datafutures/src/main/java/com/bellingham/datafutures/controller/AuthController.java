@@ -89,6 +89,7 @@ public class AuthController {
         user.setTechnicalContactEmail(creds.get("technicalContactEmail"));
         user.setTechnicalContactPhone(creds.get("technicalContactPhone"));
         user.setCompanyDescription(creds.get("companyDescription"));
+        user.setProfilePicture(creds.get("profilePicture"));
 
         userRepository.save(user);
         return "User registered";
@@ -116,6 +117,7 @@ public class AuthController {
         map.put("technicalContactEmail", user.getTechnicalContactEmail());
         map.put("technicalContactPhone", user.getTechnicalContactPhone());
         map.put("companyDescription", user.getCompanyDescription());
+        map.put("profilePicture", user.getProfilePicture());
         return map;
     }
 
@@ -152,6 +154,8 @@ public class AuthController {
             user.setTechnicalContactPhone(updates.get("technicalContactPhone"));
         if (updates.containsKey("companyDescription"))
             user.setCompanyDescription(updates.get("companyDescription"));
+        if (updates.containsKey("profilePicture"))
+            user.setProfilePicture(updates.get("profilePicture"));
 
         userRepository.save(user);
 
@@ -170,6 +174,7 @@ public class AuthController {
         map.put("technicalContactEmail", user.getTechnicalContactEmail());
         map.put("technicalContactPhone", user.getTechnicalContactPhone());
         map.put("companyDescription", user.getCompanyDescription());
+        map.put("profilePicture", user.getProfilePicture());
         return map;
     }
 }

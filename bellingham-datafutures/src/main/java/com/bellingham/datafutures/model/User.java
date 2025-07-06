@@ -27,6 +27,9 @@ public class User {
     private String technicalContactPhone;
     private String companyDescription;
 
+    @Lob
+    private String profilePicture;
+
     // Getters and Setters
 
     public Long getId() {
@@ -155,5 +158,13 @@ public class User {
 
     public void setCompanyDescription(String companyDescription) {
         this.companyDescription = companyDescription;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

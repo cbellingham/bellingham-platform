@@ -19,10 +19,21 @@ const Signup = () => {
         technicalContactEmail: "",
         technicalContactPhone: "",
         companyDescription: "",
+        profilePicture: "",
     });
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setForm({ ...form, profilePicture: reader.result });
+        };
+        reader.readAsDataURL(file);
+    };
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -49,6 +60,7 @@ const Signup = () => {
                 technicalContactEmail: "",
                 technicalContactPhone: "",
                 companyDescription: "",
+                profilePicture: "",
             });
         } catch (err) {
             console.error(err);
@@ -85,6 +97,12 @@ const Signup = () => {
                     placeholder="Password"
                     value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-lg"
+                />
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
                     className="w-full p-2 mb-4 border rounded-lg"
                 />
                 <input
