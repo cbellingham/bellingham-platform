@@ -29,6 +29,17 @@ const Login = () => {
             if (token) {
                 localStorage.setItem("token", token);
                 localStorage.setItem("username", username);
+                try {
+                    const profile = await axios.get(
+                        `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    );
+                    if (profile.data.profilePicture) {
+                        localStorage.setItem("profilePicture", profile.data.profilePicture);
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
 
                 // Force full page reload to refresh state
                 window.location.href = "/";
