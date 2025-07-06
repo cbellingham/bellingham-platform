@@ -49,7 +49,7 @@ const Sidebar = ({ onLogout }) => {
                     Account
                 </button>
             </nav>
-            <div className="mt-6 flex flex-col space-y-2">
+            <div className="mt-auto flex flex-col space-y-2">
                 <button
                     onClick={() => navigate(-1)}
                     className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-left text-white"
