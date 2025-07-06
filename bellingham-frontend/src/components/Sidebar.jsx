@@ -49,14 +49,22 @@ const Sidebar = ({ onLogout }) => {
                     Account
                 </button>
             </nav>
-            {onLogout && (
+            <div className="mt-auto flex flex-col space-y-2">
                 <button
-                    onClick={onLogout}
-                    className="mt-6 bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
+                    onClick={() => navigate(-1)}
+                    className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-left text-white"
                 >
-                    Log Out
+                    Back
                 </button>
-            )}
+                {onLogout && (
+                    <button
+                        onClick={onLogout}
+                        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
+                    >
+                        Log Out
+                    </button>
+                )}
+            </div>
         </aside>
     );
 };
