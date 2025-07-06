@@ -62,6 +62,7 @@ const Buy = () => {
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
+        localStorage.removeItem("profilePicture");
         navigate("/login");
     };
 
