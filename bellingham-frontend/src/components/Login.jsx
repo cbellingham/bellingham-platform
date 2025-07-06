@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import LoginImage from "../assets/login.png";
+import { safeSetItem } from "../utils/storage";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -27,17 +28,11 @@ const Login = () => {
 
             const token = res.data.id_token;
             if (token) {
-                try {
-                    localStorage.setItem("token", token);
-                    localStorage.setItem("username", username);
-                } catch (e) {
-                    console.error("LocalStorage quota exceeded, clearing profile picture", e);
+                if (!safeSetItem("token", token) || !safeSetItem("username", username)) {
+                    console.error("LocalStorage quota exceeded, clearing profile picture");
                     localStorage.removeItem("profilePicture");
-                    try {
-                        localStorage.setItem("token", token);
-                        localStorage.setItem("username", username);
-                    } catch (e2) {
-                        console.error("Failed to store credentials", e2);
+                    if (!safeSetItem("token", token) || !safeSetItem("username", username)) {
+                        console.error("Failed to store credentials");
                         setError("Login failed: unable to store credentials.");
                         return;
                     }
@@ -48,7 +43,9 @@ const Login = () => {
                         { headers: { Authorization: `Bearer ${token}` } }
                     );
                     if (profile.data.profilePicture) {
-                        localStorage.setItem("profilePicture", profile.data.profilePicture);
+                        if (!safeSetItem("profilePicture", profile.data.profilePicture)) {
+                            console.warn("Unable to cache profile picture");
+                        }
                     }
                 } catch (e) {
                     console.error(e);
