@@ -33,7 +33,6 @@ const Dashboard = () => {
             } catch (err) {
                 console.error("Error fetching contracts", err);
                 localStorage.removeItem("token");
-                localStorage.removeItem("profilePicture");
                 navigate("/login");
             }
         };
@@ -44,7 +43,6 @@ const Dashboard = () => {
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
-        localStorage.removeItem("profilePicture");
         navigate("/login");
     };
 

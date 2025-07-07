@@ -29,26 +29,9 @@ const Login = () => {
             const token = res.data.id_token;
             if (token) {
                 if (!safeSetItem("token", token) || !safeSetItem("username", username)) {
-                    console.error("LocalStorage quota exceeded, clearing profile picture");
-                    localStorage.removeItem("profilePicture");
-                    if (!safeSetItem("token", token) || !safeSetItem("username", username)) {
-                        console.error("Failed to store credentials");
-                        setError("Login failed: unable to store credentials.");
-                        return;
-                    }
-                }
-                try {
-                    const profile = await axios.get(
-                        `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
-                        { headers: { Authorization: `Bearer ${token}` } }
-                    );
-                    if (profile.data.profilePicture) {
-                        if (!safeSetItem("profilePicture", profile.data.profilePicture)) {
-                            console.warn("Unable to cache profile picture");
-                        }
-                    }
-                } catch (e) {
-                    console.error(e);
+                    console.error("Failed to store credentials");
+                    setError("Login failed: unable to store credentials.");
+                    return;
                 }
 
                 // Force full page reload to refresh state
