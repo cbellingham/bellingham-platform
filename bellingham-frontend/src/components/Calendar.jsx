@@ -20,7 +20,7 @@ const ContractCalendar = () => {
                     `${import.meta.env.VITE_API_BASE_URL}/api/contracts/purchased`,
                     config
                 );
-                setContracts(res.data);
+                setContracts(res.data.content);
             } catch (err) {
                 console.error(err);
                 navigate("/login");
