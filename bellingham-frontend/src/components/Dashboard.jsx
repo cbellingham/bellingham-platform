@@ -84,6 +84,8 @@ const Dashboard = () => {
                     </table>
                 </main>
                 <ContractDetailsPanel
+                    inline
+                    inlineWidth="w-full sm:w-1/3"
                     contract={selectedContract}
                     onClose={() => setSelectedContract(null)}
                 />
