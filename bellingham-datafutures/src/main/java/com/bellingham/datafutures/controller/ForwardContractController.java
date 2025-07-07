@@ -16,7 +16,8 @@ import org.springframework.data.domain.Pageable;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+// Allow CORS from any host during development.
+@CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/api/contracts")
 public class ForwardContractController {
 

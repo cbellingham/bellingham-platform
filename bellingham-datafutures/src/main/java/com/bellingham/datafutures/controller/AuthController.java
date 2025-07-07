@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+// Allow the frontend to call these endpoints from any host during development.
+// In production the origin should be restricted via configuration.
+@CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/api")
 public class AuthController {
 
