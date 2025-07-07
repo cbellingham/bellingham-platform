@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
@@ -57,6 +57,26 @@ const Sell = () => {
     });
     const [snippet, setSnippet] = useState(null);
     const [message, setMessage] = useState("");
+    const [contracts, setContracts] = useState([]);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchContracts = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+                const res = await axios.get(
+                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/my`,
+                    config
+                );
+                setContracts(res.data.content);
+            } catch (err) {
+                console.error(err);
+                setError("Failed to load contracts.");
+            }
+        };
+        fetchContracts();
+    }, []);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -185,7 +205,32 @@ const Sell = () => {
                     Submit Contract
                 </button>
             </form>
-                </main>
+
+            <h2 className="text-2xl font-bold mt-10 mb-4">My Contracts</h2>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+            <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                <thead>
+                    <tr className="bg-gray-700 text-left">
+                        <th className="border p-2">Title</th>
+                        <th className="border p-2">Buyer</th>
+                        <th className="border p-2">Price</th>
+                        <th className="border p-2">Delivery</th>
+                        <th className="border p-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {contracts.map((c) => (
+                        <tr key={c.id} className="hover:bg-gray-600">
+                            <td className="border p-2">{c.title}</td>
+                            <td className="border p-2">{c.buyerUsername || "-"}</td>
+                            <td className="border p-2">${c.price}</td>
+                            <td className="border p-2">{c.deliveryDate}</td>
+                            <td className="border p-2">{c.status}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </main>
             </div>
         </div>
     );

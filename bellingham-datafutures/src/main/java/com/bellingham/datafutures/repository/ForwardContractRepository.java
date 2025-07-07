@@ -13,5 +13,6 @@ public interface ForwardContractRepository extends JpaRepository<ForwardContract
     Page<ForwardContract> findByStatus(String status, Pageable pageable);
     Page<ForwardContract> findByStatusAndBuyerUsername(String status, String buyerUsername, Pageable pageable);
     List<ForwardContract> findByBuyerUsername(String buyerUsername);
+    Page<ForwardContract> findByCreatorUsername(String creatorUsername, Pageable pageable);
 }
 
