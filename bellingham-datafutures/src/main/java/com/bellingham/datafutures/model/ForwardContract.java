@@ -5,6 +5,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_status", columnList = "status"),
+        @Index(name = "idx_buyer_username", columnList = "buyerUsername"),
+        @Index(name = "idx_delivery_date", columnList = "deliveryDate")
+})
 public class ForwardContract {
 
     @Id

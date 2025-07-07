@@ -5,11 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface ForwardContractRepository extends JpaRepository<ForwardContract, Long> {
-    List<ForwardContract> findByStatus(String status);
-    List<ForwardContract> findByStatusAndBuyerUsername(String status, String buyerUsername);
+    Page<ForwardContract> findByStatus(String status, Pageable pageable);
+    Page<ForwardContract> findByStatusAndBuyerUsername(String status, String buyerUsername, Pageable pageable);
     List<ForwardContract> findByBuyerUsername(String buyerUsername);
 }
 
