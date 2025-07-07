@@ -47,12 +47,14 @@ const Sidebar = ({ onLogout }) => {
                 >
                     Calendar
                 </NavLink>
-                <button
-                    onClick={() => alert("Settings screen not implemented yet")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded text-white"
+                <NavLink
+                    to="/settings"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                    }
                 >
                     Settings
-                </button>
+                </NavLink>
                 <NavLink
                     to="/account"
                     className={({ isActive }) =>
