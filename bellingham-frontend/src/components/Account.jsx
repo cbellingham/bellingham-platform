@@ -3,6 +3,7 @@ import axios from "axios";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
+import { safeSetItem } from "../utils/storage";
 
 const Account = () => {
     const [profile, setProfile] = useState(null);
@@ -33,7 +34,15 @@ const Account = () => {
                 setProfile(res.data);
                 setFormData(res.data);
                 if (res.data.profilePicture) {
-                    localStorage.setItem("profilePicture", res.data.profilePicture);
+                    if (
+                        !safeSetItem(
+                            "profilePicture",
+                            res.data.profilePicture,
+                            { maxLength: 1_000_000 }
+                        )
+                    ) {
+                        console.warn("Unable to cache profile picture");
+                    }
                 }
             } catch (err) {
                 console.error(err);
@@ -85,7 +94,15 @@ const Account = () => {
             );
             setProfile(res.data);
             if (res.data.profilePicture) {
-                localStorage.setItem("profilePicture", res.data.profilePicture);
+                if (
+                    !safeSetItem(
+                        "profilePicture",
+                        res.data.profilePicture,
+                        { maxLength: 1_000_000 }
+                    )
+                ) {
+                    console.warn("Unable to cache profile picture");
+                }
             }
             setEditing(false);
         } catch (err) {
