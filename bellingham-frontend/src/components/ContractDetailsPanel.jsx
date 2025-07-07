@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const ContractDetailsPanel = ({ contract, onClose, inline = false }) => {
-    if (!contract) return null;
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        if (contract) {
+            setVisible(true);
+        } else {
+            setVisible(false);
+        }
+    }, [contract]);
+
+    if (!contract && !visible) return null;
 
     const panelClasses = inline
         ? "w-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 max-w-md mt-4"
-        : "absolute top-0 right-0 w-full sm:w-96 h-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 max-w-md";
+        : `fixed top-0 right-0 w-full sm:w-1/3 h-full bg-gray-900 text-white p-6 shadow-lg z-20 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`;
 
     const handleDownload = async () => {
         const token = localStorage.getItem("token");
@@ -25,14 +35,15 @@ const ContractDetailsPanel = ({ contract, onClose, inline = false }) => {
         window.URL.revokeObjectURL(url);
     };
 
+    const handleClose = () => {
+        setVisible(false);
+        setTimeout(() => {
+            onClose();
+        }, 300);
+    };
+
     return (
         <div className={panelClasses}>
-            <button
-                className="mb-4 bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
-                onClick={onClose}
-            >
-                Close
-            </button>
             <h2 className="text-xl font-bold mb-4">{contract.title}</h2>
             <button
                 className="mb-4 bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
@@ -52,6 +63,12 @@ const ContractDetailsPanel = ({ contract, onClose, inline = false }) => {
                     </li>
                 ))}
             </ul>
+            <button
+                className="mt-auto bg-red-600 hover:bg-red-700 px-3 py-1 rounded self-end"
+                onClick={handleClose}
+            >
+                Close
+            </button>
         </div>
     );
 };
