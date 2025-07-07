@@ -8,8 +8,9 @@ const Sidebar = ({ onLogout }) => {
             <nav className="flex flex-col space-y-4">
                 <NavLink
                     to="/"
+                    end
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Home
@@ -17,7 +18,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/buy"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Buy
@@ -25,7 +26,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/sell"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Sell
@@ -33,7 +34,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/reports"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Reports
@@ -41,21 +42,21 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/calendar"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Calendar
                 </NavLink>
                 <button
                     onClick={() => alert("Settings screen not implemented yet")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                    className="text-left hover:bg-gray-700 px-4 py-2 rounded text-white"
                 >
                     Settings
                 </button>
                 <NavLink
                     to="/account"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Account
