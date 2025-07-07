@@ -4,6 +4,7 @@ import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.service.PdfService;
 import java.time.LocalDate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class ForwardContractController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PdfService pdfService;
 
     private void updateExpiredContracts() {
         LocalDate today = LocalDate.now();
@@ -53,6 +57,26 @@ public class ForwardContractController {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(contract -> {
+                    try {
+                        byte[] bytes = pdfService.generateContractPdf(contract);
+                        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+                        headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+                        headers.setContentDisposition(org.springframework.http.ContentDisposition
+                                .attachment()
+                                .filename("contract-" + id + ".pdf")
+                                .build());
+                        return new org.springframework.http.ResponseEntity<>(bytes, headers, org.springframework.http.HttpStatus.OK);
+                    } catch (java.io.IOException e) {
+                        return org.springframework.http.ResponseEntity.internalServerError().build();
+                    }
+                })
+                .orElse(org.springframework.http.ResponseEntity.notFound().build());
     }
 
     @PostMapping
