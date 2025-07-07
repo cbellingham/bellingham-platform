@@ -1,9 +1,12 @@
 package com.bellingham.datafutures.controller;
 
 import com.bellingham.datafutures.model.ForwardContract;
+import com.bellingham.datafutures.model.ContractActivity;
+import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.model.User;
+import java.time.LocalDateTime;
 import com.bellingham.datafutures.service.PdfService;
 import java.time.LocalDate;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +32,18 @@ public class ForwardContractController {
 
     @Autowired
     private PdfService pdfService;
+
+    @Autowired
+    private ContractActivityRepository activityRepository;
+
+    private void logActivity(ForwardContract contract, String username, String action) {
+        ContractActivity activity = new ContractActivity();
+        activity.setContract(contract);
+        activity.setUsername(username);
+        activity.setAction(action);
+        activity.setTimestamp(LocalDateTime.now());
+        activityRepository.save(activity);
+    }
 
 
     @GetMapping
@@ -73,7 +88,9 @@ public class ForwardContractController {
         contract.setCreatorUsername(username);
         userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
 
-        return repository.save(contract);
+        ForwardContract saved = repository.save(contract);
+        logActivity(saved, username, "Created contract");
+        return saved;
     }
 
     private void fillSellerDetails(ForwardContract contract, User user) {
@@ -114,6 +131,8 @@ public class ForwardContractController {
                 .map(existing -> {
                     updated.setId(id);
                     ForwardContract saved = repository.save(updated);
+                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    logActivity(saved, username, "Updated contract");
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -123,7 +142,9 @@ public class ForwardContractController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         return repository.findById(id)
                 .map(contract -> {
+                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
                     repository.deleteById(id);
+                    logActivity(contract, username, "Deleted contract");
                     return ResponseEntity.noContent().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -142,6 +163,7 @@ public class ForwardContractController {
                     contract.setBuyerUsername(username);
                     contract.setPurchaseDate(LocalDate.now());
                     ForwardContract saved = repository.save(contract);
+                    logActivity(saved, username, "Purchased contract");
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -157,6 +179,7 @@ public class ForwardContractController {
                     contract.setBuyerUsername(null);
                     contract.setPurchaseDate(null);
                     ForwardContract saved = repository.save(contract);
+                    logActivity(saved, username, "Listed for sale");
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -175,11 +198,19 @@ public class ForwardContractController {
                         contract.setBuyerUsername(null);
                         contract.setPurchaseDate(null);
                         ForwardContract saved = repository.save(contract);
+                        logActivity(saved, username, "Closed contract");
                         return ResponseEntity.ok(saved);
                     }
                     return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
                             .<ForwardContract>build();
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<java.util.List<ContractActivity>> getHistory(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(contract -> ResponseEntity.ok(activityRepository.findByContractOrderByTimestampAsc(contract)))
+                .orElse(ResponseEntity.notFound().build());
     }
 }
