@@ -10,8 +10,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
@@ -27,33 +29,16 @@ public class ForwardContractController {
     @Autowired
     private PdfService pdfService;
 
-    private void updateExpiredContracts() {
-        LocalDate today = LocalDate.now();
-        List<ForwardContract> contracts = repository.findAll();
-        for (ForwardContract contract : contracts) {
-            LocalDate delivery = contract.getDeliveryDate();
-            if (delivery != null && delivery.isBefore(today)) {
-                String status = contract.getStatus();
-                if ("Available".equalsIgnoreCase(status)) {
-                    contract.setStatus("Void");
-                    repository.save(contract);
-                } else if ("Purchased".equalsIgnoreCase(status)) {
-                    contract.setStatus("Delivered");
-                    repository.save(contract);
-                }
-            }
-        }
-    }
 
     @GetMapping
-    public List<ForwardContract> getAll() {
-        updateExpiredContracts();
-        return repository.findAll();
+    public Page<ForwardContract> getAll(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ForwardContract> getById(@PathVariable Long id) {
-        updateExpiredContracts();
         return repository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -106,17 +91,19 @@ public class ForwardContractController {
     }
 
     @GetMapping("/available")
-    public List<ForwardContract> getAvailable() {
-        updateExpiredContracts();
-        return repository.findByStatus("Available");
+    public Page<ForwardContract> getAvailable(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findByStatus("Available", pageable);
     }
 
     @GetMapping("/purchased")
-    public List<ForwardContract> getPurchased() {
-        updateExpiredContracts();
+    public Page<ForwardContract> getPurchased(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         String username = org.springframework.security.core.context.SecurityContextHolder
                 .getContext().getAuthentication().getName();
-        return repository.findByStatusAndBuyerUsername("Purchased", username);
+        return repository.findByStatusAndBuyerUsername("Purchased", username, pageable);
     }
 
     @PutMapping("/{id}")
