@@ -1,53 +1,65 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Sidebar = ({ onLogout }) => {
     const navigate = useNavigate();
     return (
         <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between">
             <nav className="flex flex-col space-y-4">
-                <button
-                    onClick={() => navigate("/")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                <NavLink
+                    to="/"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                    }
                 >
                     Home
-                </button>
-                <button
-                    onClick={() => navigate("/buy")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                </NavLink>
+                <NavLink
+                    to="/buy"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                    }
                 >
                     Buy
-                </button>
-                <button
-                    onClick={() => navigate("/sell")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                </NavLink>
+                <NavLink
+                    to="/sell"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                    }
                 >
                     Sell
-                </button>
-                <button
-                    onClick={() => navigate("/reports")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                </NavLink>
+                <NavLink
+                    to="/reports"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                    }
                 >
                     Reports
-                </button>
-                <button
-                    onClick={() => navigate("/calendar")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                </NavLink>
+                <NavLink
+                    to="/calendar"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                    }
                 >
                     Calendar
-                </button>
+                </NavLink>
                 <button
                     onClick={() => alert("Settings screen not implemented yet")}
                     className="text-left hover:bg-gray-700 px-4 py-2 rounded"
                 >
                     Settings
                 </button>
-                <button
-                    onClick={() => navigate("/account")}
-                    className="text-left hover:bg-gray-700 px-4 py-2 rounded"
+                <NavLink
+                    to="/account"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded ${isActive ? "bg-gray-700" : ""}`
+                    }
                 >
                     Account
-                </button>
+                </NavLink>
             </nav>
             <div className="mt-6 flex flex-col space-y-2">
                 <button
