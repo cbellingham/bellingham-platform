@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-const ContractDetailsPanel = ({ contract, onClose, inline = false }) => {
+const ContractDetailsPanel = ({
+    contract,
+    onClose,
+    inline = false,
+    inlineWidth = "w-full max-w-md",
+}) => {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -14,7 +19,7 @@ const ContractDetailsPanel = ({ contract, onClose, inline = false }) => {
     if (!contract && !visible) return null;
 
     const panelClasses = inline
-        ? "w-full bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 max-w-md mt-4"
+        ? `${inlineWidth} bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 mt-4 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`
         : `fixed top-0 right-0 w-full sm:w-1/3 h-full bg-gray-900 text-white p-6 shadow-lg z-20 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`;
 
     const handleDownload = async () => {
