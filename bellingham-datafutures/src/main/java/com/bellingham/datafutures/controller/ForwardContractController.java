@@ -70,6 +70,7 @@ public class ForwardContractController {
         contract.setStatus("Available");
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        contract.setCreatorUsername(username);
         userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
 
         return repository.save(contract);
@@ -157,6 +158,27 @@ public class ForwardContractController {
                     contract.setPurchaseDate(null);
                     ForwardContract saved = repository.save(contract);
                     return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().<ForwardContract>build());
+    }
+
+    @PostMapping("/{id}/closeout")
+    public ResponseEntity<ForwardContract> closeOut(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(contract -> {
+                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    String buyer = contract.getBuyerUsername();
+                    boolean isCreator = username.equals(contract.getCreatorUsername());
+                    boolean isBuyer = buyer != null && buyer.equals(username);
+                    if ((buyer == null && isCreator) || isBuyer) {
+                        contract.setStatus("Closed");
+                        contract.setBuyerUsername(null);
+                        contract.setPurchaseDate(null);
+                        ForwardContract saved = repository.save(contract);
+                        return ResponseEntity.ok(saved);
+                    }
+                    return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                            .<ForwardContract>build();
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }

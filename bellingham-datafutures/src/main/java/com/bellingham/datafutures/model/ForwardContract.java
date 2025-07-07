@@ -26,6 +26,7 @@ public class ForwardContract {
     private String agreementText;
     private String status;
     private String buyerUsername;
+    private String creatorUsername;
     private LocalDate purchaseDate;
 
     private String legalBusinessName;
@@ -121,6 +122,14 @@ public class ForwardContract {
 
     public void setBuyerUsername(String buyerUsername) {
         this.buyerUsername = buyerUsername;
+    }
+
+    public String getCreatorUsername() {
+        return creatorUsername;
+    }
+
+    public void setCreatorUsername(String creatorUsername) {
+        this.creatorUsername = creatorUsername;
     }
 
     public LocalDate getPurchaseDate() {
