@@ -49,6 +49,22 @@ const Reports = () => {
         }
     };
 
+    const handleCloseout = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}/closeout`,
+                {},
+                config
+            );
+            setContracts((prev) => prev.filter((c) => c.id !== id));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to closeout contract.");
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
@@ -93,6 +109,15 @@ const Reports = () => {
                                     className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
                                 >
                                     List for Sale
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleCloseout(contract.id);
+                                    }}
+                                    className="ml-2 bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
+                                >
+                                    Closeout
                                 </button>
                             </td>
                         </tr>
