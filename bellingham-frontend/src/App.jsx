@@ -8,6 +8,7 @@ import Reports from "./components/Reports";
 import Calendar from "./components/Calendar";
 import Signup from "./components/Signup";
 import Account from "./components/Account";
+import Settings from "./components/Settings";
 import Logo from "./components/Logo";
 
 const App = () => {
@@ -37,6 +38,10 @@ const App = () => {
             <Route
                 path="/calendar"
                 element={token ? <Calendar /> : <Navigate to="/login" />}
+            />
+            <Route
+                path="/settings"
+                element={token ? <Settings /> : <Navigate to="/login" />}
             />
             <Route
                 path="/account"
