@@ -54,11 +54,7 @@ const Dashboard = () => {
                 <Sidebar onLogout={handleLogout} />
 
                 {/* Main Content */}
-                <main
-                    className={`flex-1 p-8 overflow-auto bg-black transition-all duration-300 ${
-                        selectedContract ? "sm:mr-96" : ""
-                    }`}
-                >
+                <main className="flex-1 p-8 overflow-auto bg-black">
                     <h2 className="text-3xl font-bold mb-6 text-white">Open Contracts</h2>
                     <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                     <thead>
