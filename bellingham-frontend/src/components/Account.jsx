@@ -3,7 +3,6 @@ import axios from "axios";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
-import { safeSetItem } from "../utils/storage";
 
 const Account = () => {
     const [profile, setProfile] = useState(null);
@@ -15,7 +14,6 @@ const Account = () => {
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
-        localStorage.removeItem("profilePicture");
         navigate("/login");
     };
 
@@ -33,11 +31,6 @@ const Account = () => {
                 );
                 setProfile(res.data);
                 setFormData(res.data);
-                if (res.data.profilePicture) {
-                    if (!safeSetItem("profilePicture", res.data.profilePicture)) {
-                        console.warn("Unable to cache profile picture");
-                    }
-                }
             } catch (err) {
                 console.error(err);
                 setError("Failed to load profile");
@@ -87,11 +80,6 @@ const Account = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setProfile(res.data);
-            if (res.data.profilePicture) {
-                if (!safeSetItem("profilePicture", res.data.profilePicture)) {
-                    console.warn("Unable to cache profile picture");
-                }
-            }
             setEditing(false);
         } catch (err) {
             console.error(err);
@@ -186,23 +174,6 @@ const Account = () => {
                         onChange={handleChange}
                         placeholder="Technical Contact Phone"
                     />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                                setFormData({ ...formData, profilePicture: reader.result });
-                            };
-                            reader.readAsDataURL(file);
-                        }}
-                        className="w-full p-2 bg-gray-800 rounded"
-                    />
-                    {formData.profilePicture && (
-                        <img src={formData.profilePicture} alt="Preview" className="h-20 w-20 rounded-full" />
-                    )}
                     <textarea
                         className="w-full p-2 bg-gray-800 rounded"
                         name="companyDescription"
@@ -243,9 +214,6 @@ const Account = () => {
                     <p><strong>Technical Contact Email:</strong> {profile.technicalContactEmail}</p>
                     <p><strong>Technical Contact Phone:</strong> {profile.technicalContactPhone}</p>
                     <p><strong>Company Description:</strong> {profile.companyDescription}</p>
-                    {profile.profilePicture && (
-                        <img src={profile.profilePicture} alt="Profile" className="h-20 w-20 rounded-full" />
-                    )}
                     <button
                         onClick={() => setEditing(true)}
                         className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
