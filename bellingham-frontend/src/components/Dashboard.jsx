@@ -29,7 +29,7 @@ const Dashboard = () => {
                     config
                 );
 
-                setContracts(res.data);
+                setContracts(res.data.content);
             } catch (err) {
                 console.error("Error fetching contracts", err);
                 localStorage.removeItem("token");

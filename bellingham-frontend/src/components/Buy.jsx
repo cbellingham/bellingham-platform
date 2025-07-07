@@ -26,7 +26,7 @@ const Buy = () => {
                     `${import.meta.env.VITE_API_BASE_URL}/api/contracts/available`,
                     config
                 );
-                setContracts(res.data);
+                setContracts(res.data.content);
             } catch (err) {
                 console.error(err);
                 if (err.response) {
