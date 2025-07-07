@@ -73,10 +73,10 @@ public class ForwardContractController {
                                 .build());
                         return new org.springframework.http.ResponseEntity<>(bytes, headers, org.springframework.http.HttpStatus.OK);
                     } catch (java.io.IOException e) {
-                        return org.springframework.http.ResponseEntity.internalServerError().build();
+                        return org.springframework.http.ResponseEntity.internalServerError().<byte[]>build();
                     }
                 })
-                .orElse(org.springframework.http.ResponseEntity.notFound().build());
+                .orElse(org.springframework.http.ResponseEntity.notFound().<byte[]>build());
     }
 
     @PostMapping
