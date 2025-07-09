@@ -62,9 +62,16 @@ const Buy = () => {
     const handleBid = async (contractId) => {
         const price = prompt("Enter your bid price");
         if (!price) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("You must sign in to place a bid.");
+            navigate("/login");
+            return;
+        }
+
         try {
-            const token = localStorage.getItem("token");
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            const config = { headers: { Authorization: `Bearer ${token}` } };
             await axios.post(
                 `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
                 { amount: parseFloat(price) },
@@ -73,7 +80,14 @@ const Buy = () => {
             alert("Bid submitted!");
         } catch (err) {
             console.error(err);
-            alert("Failed to submit bid.");
+            if (err.response && err.response.status === 400) {
+                alert("Failed to submit bid: contract is not available.");
+            } else if (err.response && err.response.status === 401) {
+                alert("Session expired. Please sign in again.");
+                navigate("/login");
+            } else {
+                alert("Failed to submit bid.");
+            }
         }
     };
 
