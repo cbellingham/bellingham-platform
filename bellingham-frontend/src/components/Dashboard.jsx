@@ -61,7 +61,7 @@ const Dashboard = () => {
                     <tr className="bg-gray-700 text-left">
                         <th className="border p-2">Title</th>
                         <th className="border p-2">Seller</th>
-                        <th className="border p-2">Price</th>
+                        <th className="border p-2">Ask Price</th>
                         <th className="border p-2">Status</th>
                         <th className="border p-2">Delivery</th>
                     </tr>
