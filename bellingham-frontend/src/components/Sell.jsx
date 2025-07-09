@@ -129,6 +129,49 @@ const Sell = () => {
         navigate("/login");
     };
 
+    const fetchBids = async (contractId) => {
+        const token = localStorage.getItem("token");
+        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+        const res = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
+            config
+        );
+        return res.data;
+    };
+
+    const handleViewBids = async (contract) => {
+        try {
+            const bids = await fetchBids(contract.id);
+            if (bids.length === 0) {
+                alert("No bids yet.");
+                return;
+            }
+            const list = bids.map((b) => `${b.id}: ${b.bidderUsername} $${b.amount} [${b.status}]`).join("\n");
+            const selected = prompt(`Bids for ${contract.title}:\n${list}\nEnter bid id to accept`);
+            if (!selected) return;
+            await handleAcceptBid(contract.id, selected);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to load bids");
+        }
+    };
+
+    const handleAcceptBid = async (contractId, bidId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids/${bidId}/accept`,
+                {},
+                config
+            );
+            alert("Bid accepted");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to accept bid");
+        }
+    };
+
     return (
         <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
             <Header />
@@ -161,7 +204,7 @@ const Sell = () => {
                     />
                 </div>
                 <div>
-                    <label>Initial Price ($)</label>
+                    <label>Ask Price ($)</label>
                     <input
                         type="number"
                         name="price"
@@ -213,9 +256,10 @@ const Sell = () => {
                     <tr className="bg-gray-700 text-left">
                         <th className="border p-2">Title</th>
                         <th className="border p-2">Buyer</th>
-                        <th className="border p-2">Price</th>
+                        <th className="border p-2">Ask Price</th>
                         <th className="border p-2">Delivery</th>
                         <th className="border p-2">Status</th>
+                        <th className="border p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -226,6 +270,14 @@ const Sell = () => {
                             <td className="border p-2">${c.price}</td>
                             <td className="border p-2">{c.deliveryDate}</td>
                             <td className="border p-2">{c.status}</td>
+                            <td className="border p-2">
+                                <button
+                                    className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                    onClick={() => handleViewBids(c)}
+                                >
+                                    View Bids
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

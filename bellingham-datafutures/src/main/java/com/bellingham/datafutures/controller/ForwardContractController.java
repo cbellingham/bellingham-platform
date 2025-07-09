@@ -2,6 +2,8 @@ package com.bellingham.datafutures.controller;
 
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.model.ContractActivity;
+import com.bellingham.datafutures.model.Bid;
+import com.bellingham.datafutures.repository.BidRepository;
 import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
@@ -35,6 +37,9 @@ public class ForwardContractController {
 
     @Autowired
     private ContractActivityRepository activityRepository;
+
+    @Autowired
+    private BidRepository bidRepository;
 
     private void logActivity(ForwardContract contract, String username, String action) {
         ContractActivity activity = new ContractActivity();
@@ -178,15 +183,89 @@ public class ForwardContractController {
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
 
+    @PostMapping("/{id}/bids")
+    public ResponseEntity<Bid> placeBid(@PathVariable Long id, @RequestBody Bid bid) {
+        return repository.findById(id)
+                .map(contract -> {
+                    if (!"Available".equalsIgnoreCase(contract.getStatus())) {
+                        return ResponseEntity.badRequest().<Bid>build();
+                    }
+                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    bid.setId(null);
+                    bid.setContract(contract);
+                    bid.setBidderUsername(username);
+                    bid.setStatus("Pending");
+                    bid.setTimestamp(LocalDateTime.now());
+                    Bid saved = bidRepository.save(bid);
+                    logActivity(contract, username, "Placed bid");
+                    return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().<Bid>build());
+    }
+
+    @GetMapping("/{id}/bids")
+    public ResponseEntity<java.util.List<Bid>> getBids(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(contract -> ResponseEntity.ok(bidRepository.findByContractOrderByTimestampAsc(contract)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{contractId}/bids/{bidId}/accept")
+    public ResponseEntity<ForwardContract> acceptBid(@PathVariable Long contractId, @PathVariable Long bidId) {
+        java.util.Optional<ForwardContract> contractOpt = repository.findById(contractId);
+        java.util.Optional<Bid> bidOpt = bidRepository.findById(bidId);
+        if (contractOpt.isEmpty() || bidOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        ForwardContract contract = contractOpt.get();
+        Bid bid = bidOpt.get();
+        if (!bid.getContract().getId().equals(contract.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!username.equals(contract.getCreatorUsername())) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
+        }
+
+        contract.setStatus("Purchased");
+        contract.setBuyerUsername(bid.getBidderUsername());
+        contract.setPurchaseDate(LocalDate.now());
+        contract.setPrice(bid.getAmount());
+        ForwardContract savedContract = repository.save(contract);
+
+        bid.setStatus("Accepted");
+        bidRepository.save(bid);
+
+        bidRepository.findByContractOrderByTimestampAsc(contract).forEach(b -> {
+            if (!b.getId().equals(bidId)) {
+                b.setStatus("Rejected");
+                bidRepository.save(b);
+            }
+        });
+
+        logActivity(savedContract, username, "Accepted bid");
+        return ResponseEntity.ok(savedContract);
+    }
+
     @PostMapping("/{id}/list")
-    public ResponseEntity<ForwardContract> listForSale(@PathVariable Long id) {
+    public ResponseEntity<ForwardContract> listForSale(@PathVariable Long id,
+                                                       @RequestBody(required = false) java.util.Map<String, Object> body) {
         return repository.findById(id)
                 .map(contract -> {
                     String username = SecurityContextHolder.getContext().getAuthentication().getName();
                     userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
+                    contract.setCreatorUsername(username);
                     contract.setStatus("Available");
                     contract.setBuyerUsername(null);
                     contract.setPurchaseDate(null);
+                    if (body != null && body.containsKey("price")) {
+                        try {
+                            java.math.BigDecimal p = new java.math.BigDecimal(body.get("price").toString());
+                            contract.setPrice(p);
+                        } catch (Exception e) {
+                            // ignore invalid price
+                        }
+                    }
                     ForwardContract saved = repository.save(contract);
                     logActivity(saved, username, "Listed for sale");
                     return ResponseEntity.ok(saved);

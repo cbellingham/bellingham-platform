@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const ContractDetailsPanel = ({
     contract,
@@ -7,12 +8,20 @@ const ContractDetailsPanel = ({
     inlineWidth = "w-full max-w-md",
 }) => {
     const [visible, setVisible] = useState(false);
+    const [bids, setBids] = useState([]);
 
     useEffect(() => {
         if (contract) {
             setVisible(true);
+            const token = localStorage.getItem("token");
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            axios
+                .get(`${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contract.id}/bids`, config)
+                .then((res) => setBids(res.data))
+                .catch(() => setBids([]));
         } else {
             setVisible(false);
+            setBids([]);
         }
     }, [contract]);
 
@@ -68,6 +77,18 @@ const ContractDetailsPanel = ({
                     </li>
                 ))}
             </ul>
+            {bids.length > 0 && (
+                <div className="mt-4">
+                    <h3 className="font-semibold mb-2">Bids</h3>
+                    <ul className="space-y-1">
+                        {bids.map((b) => (
+                            <li key={b.id}>
+                                {b.bidderUsername}: ${b.amount} - {b.status}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
             <button
                 className="mt-auto bg-red-600 hover:bg-red-700 px-3 py-1 rounded self-end"
                 onClick={handleClose}

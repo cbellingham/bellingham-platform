@@ -59,6 +59,24 @@ const Buy = () => {
         }
     };
 
+    const handleBid = async (contractId) => {
+        const price = prompt("Enter your bid price");
+        if (!price) return;
+        try {
+            const token = localStorage.getItem("token");
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
+                { amount: parseFloat(price) },
+                config
+            );
+            alert("Bid submitted!");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to submit bid.");
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
@@ -129,7 +147,7 @@ const Buy = () => {
                             <tr className="bg-gray-700 text-left">
                                 <th className="border p-2">Title</th>
                                 <th className="border p-2">Seller</th>
-                                <th className="border p-2">Price</th>
+                                <th className="border p-2">Ask Price</th>
                                 <th className="border p-2">Delivery</th>
                                 <th className="border p-2">Actions</th>
                             </tr>
@@ -145,7 +163,7 @@ const Buy = () => {
                                     <td className="border p-2">{contract.seller}</td>
                                     <td className="border p-2">${contract.price}</td>
                                     <td className="border p-2">{contract.deliveryDate}</td>
-                                    <td className="border p-2">
+                                    <td className="border p-2 space-x-2">
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -154,6 +172,15 @@ const Buy = () => {
                                             className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded"
                                         >
                                             Buy
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleBid(contract.id);
+                                            }}
+                                            className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                        >
+                                            Bid
                                         </button>
                                     </td>
                                 </tr>
