@@ -179,7 +179,7 @@ const Buy = () => {
                                                 e.stopPropagation();
                                                 handleBuy(contract.id);
                                             }}
-                                            className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded"
+                                            className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
                                         >
                                             Buy
                                         </button>
@@ -188,7 +188,7 @@ const Buy = () => {
                                                 e.stopPropagation();
                                                 handleBid(contract.id);
                                             }}
-                                            className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                            className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded"
                                         >
                                             Bid
                                         </button>
