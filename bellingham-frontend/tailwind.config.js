@@ -10,7 +10,7 @@ export default {
         contrast: '#fff'
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif']
+        sans: ['"Times New Roman"', 'serif']
       }
     }
   },
