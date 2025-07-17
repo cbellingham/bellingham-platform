@@ -22,11 +22,11 @@ public class PdfService {
             try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
                 stream.setLeading(14.5f);
                 stream.beginText();
-                stream.setFont(PDType1Font.HELVETICA_BOLD, 16);
+                stream.setFont(PDType1Font.TIMES_BOLD, 16);
                 stream.newLineAtOffset(50, 750);
                 stream.showText("Data Purchase Agreement");
                 stream.newLine();
-                stream.setFont(PDType1Font.HELVETICA, 12);
+                stream.setFont(PDType1Font.TIMES_ROMAN, 12);
                 stream.showText("Title: " + nullSafe(contract.getTitle()));
                 stream.newLine();
                 stream.showText("Seller: " + nullSafe(contract.getSeller()));
@@ -46,13 +46,13 @@ public class PdfService {
                 stream.newLine();
                 stream.showText("Data Description:");
                 stream.newLine();
-                stream.setFont(PDType1Font.HELVETICA, 11);
+                stream.setFont(PDType1Font.TIMES_ROMAN, 11);
                 stream.showText(nullSafe(contract.getDataDescription()));
                 stream.newLine();
                 stream.newLine();
-                stream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                stream.setFont(PDType1Font.TIMES_BOLD, 12);
                 stream.showText("Agreement Text:");
-                stream.setFont(PDType1Font.HELVETICA, 11);
+                stream.setFont(PDType1Font.TIMES_ROMAN, 11);
                 stream.newLine();
                 for (String line : splitLines(contract.getAgreementText())) {
                     stream.showText(line);
