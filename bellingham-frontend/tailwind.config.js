@@ -4,7 +4,16 @@ export default {
     './src/**/*.{js,jsx}'
   ],
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        base: '#000',
+        contrast: '#fff'
+      },
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif']
+      }
+    }
   },
+  darkMode: 'class',
   plugins: []
 };

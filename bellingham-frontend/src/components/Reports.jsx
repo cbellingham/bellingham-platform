@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ContractDetailsPanel from "./ContractDetailsPanel";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 
 const Reports = () => {
@@ -72,12 +71,9 @@ const Reports = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
-            <Header />
-            <div className="flex flex-1 relative gap-6">
-                <Sidebar onLogout={handleLogout} />
-                <main className="flex-1 p-8">
-                    <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
+        <Layout onLogout={handleLogout}>
+            <main className="flex-1 p-8">
+                <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
                     {error && <p className="text-red-500 mb-4">{error}</p>}
                     <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                 <thead>
@@ -133,8 +129,7 @@ const Reports = () => {
                         onClose={() => setSelectedContract(null)}
                     />
                 </main>
-            </div>
-        </div>
+        </Layout>
     );
 };
 

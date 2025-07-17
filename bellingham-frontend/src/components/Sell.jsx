@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 
 const defaultAgreement = `DATA PURCHASE AGREEMENT
@@ -173,12 +172,9 @@ const Sell = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
-            <Header />
-            <div className="flex flex-1 relative gap-6">
-                <Sidebar onLogout={handleLogout} />
-                <main className="flex-1 p-8">
-                    <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
+        <Layout onLogout={handleLogout}>
+            <main className="flex-1 p-8">
+                <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
                     {message && <p className="mb-4">{message}</p>}
                     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
                 <div>
@@ -283,8 +279,7 @@ const Sell = () => {
                 </tbody>
             </table>
         </main>
-            </div>
-        </div>
+        </Layout>
     );
 };
 

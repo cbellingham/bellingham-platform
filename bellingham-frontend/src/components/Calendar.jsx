@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import axios from "axios";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 
 const ContractCalendar = () => {
@@ -64,12 +63,9 @@ const ContractCalendar = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen font-poppins bg-black text-white">
-            <Header />
-            <div className="flex flex-1 gap-6 relative">
-                <Sidebar onLogout={handleLogout} />
-                <main className="flex-1 p-8 overflow-auto">
-                    <h1 className="text-3xl font-bold mb-6">Contract Calendar</h1>
+        <Layout onLogout={handleLogout}>
+            <main className="flex-1 p-8 overflow-auto">
+                <h1 className="text-3xl font-bold mb-6">Contract Calendar</h1>
                     <Calendar
                         onChange={setSelectedDate}
                         value={selectedDate}
@@ -86,9 +82,8 @@ const ContractCalendar = () => {
                             ))}
                         </ul>
                     </div>
-                </main>
-            </div>
-        </div>
+            </main>
+        </Layout>
     );
 };
 
