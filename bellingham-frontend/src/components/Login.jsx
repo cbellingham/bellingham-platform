@@ -60,10 +60,16 @@ const Login = () => {
             }}
         >
             <div className="absolute inset-0 bg-black opacity-60" />
-            <form
-                onSubmit={handleLogin}
-                className="relative z-10 bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 w-96"
-            >
+            <div className="relative z-10 flex flex-col items-center">
+                <img
+                    src={LoginImage}
+                    alt="Bellingham Data Futures logo"
+                    className="h-[150px] w-[150px] mb-6"
+                />
+                <form
+                    onSubmit={handleLogin}
+                    className="bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 w-96"
+                >
                 {error && <div className="text-red-600 mb-2">{error}</div>}
                 <input
                     type="text"
@@ -93,6 +99,7 @@ const Login = () => {
                     Create Account
                 </button>
             </form>
+            </div>
         </div>
     );
 };
