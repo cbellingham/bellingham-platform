@@ -3,6 +3,7 @@ import axios from "axios";
 
 const NotificationPopup = () => {
     const [notification, setNotification] = useState(null);
+    const [visible, setVisible] = useState(false);
 
     const fetchNotifications = async () => {
         const token = localStorage.getItem("token");
@@ -25,6 +26,12 @@ const NotificationPopup = () => {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        if (notification) {
+            setVisible(true);
+        }
+    }, [notification]);
+
     const markRead = async (id) => {
         const token = localStorage.getItem("token");
         if (!token) return;
@@ -39,7 +46,8 @@ const NotificationPopup = () => {
     const handleClose = async () => {
         if (notification) {
             await markRead(notification.id);
-            setNotification(null);
+            setVisible(false);
+            setTimeout(() => setNotification(null), 300);
         }
     };
 
@@ -55,7 +63,8 @@ const NotificationPopup = () => {
                 config
             );
             await markRead(notification.id);
-            setNotification(null);
+            setVisible(false);
+            setTimeout(() => setNotification(null), 300);
             alert("Bid accepted");
         } catch (err) {
             console.error("Failed to accept bid", err);
@@ -75,7 +84,8 @@ const NotificationPopup = () => {
                 config
             );
             await markRead(notification.id);
-            setNotification(null);
+            setVisible(false);
+            setTimeout(() => setNotification(null), 300);
         } catch (err) {
             console.error("Failed to reject bid", err);
             alert("Failed to decline bid");
@@ -85,7 +95,9 @@ const NotificationPopup = () => {
     if (!notification) return null;
 
     return (
-        <div className="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded shadow-lg z-50">
+        <div
+            className={`fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded shadow-lg z-50 w-80 transform transition-transform duration-300 ${visible ? "translate-y-0" : "translate-y-full"}`}
+        >
             <p className="mb-2">{notification.message}</p>
             <div className="flex gap-2 justify-end">
                 <button className="bg-green-600 px-2 py-1 rounded" onClick={handleAccept}>Accept</button>
