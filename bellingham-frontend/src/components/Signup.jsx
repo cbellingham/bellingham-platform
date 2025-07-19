@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import logoImage from "../assets/login.png";
+import Header from "./Header";
 
 const Signup = () => {
     const [form, setForm] = useState({
@@ -58,19 +58,16 @@ const Signup = () => {
     };
 
     return (
-        <div className="relative flex flex-col h-screen items-center justify-center bg-base text-contrast font-sans">
-            <button
-                onClick={() => navigate(-1)}
-                className="absolute top-4 left-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded"
-            >
-                Back
-            </button>
-            <img
-                src={logoImage}
-                alt="Bellingham Data Futures logo"
-                className="h-[150px] w-[150px] mb-6"
-            />
-            <form onSubmit={handleSignup} className="bg-white shadow-lg rounded-2xl p-8 w-96">
+        <div className="flex flex-col min-h-screen bg-base text-contrast font-sans">
+            <Header />
+            <div className="relative flex flex-col flex-1 items-center justify-center">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="absolute top-4 left-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                >
+                    Back
+                </button>
+                <form onSubmit={handleSignup} className="bg-white shadow-lg rounded-2xl p-8 w-96">
                 <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
                 {message && <div className="text-green-600 mb-2">{message}</div>}
                 {error && <div className="text-red-600 mb-2">{error}</div>}
@@ -183,6 +180,7 @@ const Signup = () => {
                     Back to Login
                 </button>
             </form>
+            </div>
         </div>
     );
 };
