@@ -8,6 +8,7 @@ import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.service.NotificationService;
 import java.time.LocalDateTime;
 import com.bellingham.datafutures.service.PdfService;
 import java.time.LocalDate;
@@ -40,6 +41,9 @@ public class ForwardContractController {
 
     @Autowired
     private BidRepository bidRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     private void logActivity(ForwardContract contract, String username, String action) {
         ContractActivity activity = new ContractActivity();
@@ -197,6 +201,12 @@ public class ForwardContractController {
                     bid.setStatus("Pending");
                     bid.setTimestamp(LocalDateTime.now());
                     Bid saved = bidRepository.save(bid);
+                    // notify seller
+                    String sellerUsername = contract.getCreatorUsername();
+                    if (sellerUsername != null && !sellerUsername.equals(username)) {
+                        String msg = "New bid on contract " + contract.getTitle();
+                        notificationService.notifyUser(sellerUsername, msg);
+                    }
                     logActivity(contract, username, "Placed bid");
                     return ResponseEntity.ok(saved);
                 })
