@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import LoginImage from "../assets/login.png";
 import { safeSetItem } from "../utils/storage";
+import Header from "./Header";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -50,26 +51,23 @@ const Login = () => {
     };
 
     return (
-        <div
-            className="relative flex flex-col items-center justify-center h-screen"
-            style={{
-                backgroundImage: `url(${LoginImage})`,
-                backgroundSize: "150px",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "bottom right",
-            }}
-        >
-            <div className="absolute inset-0 bg-black opacity-60" />
-            <div className="relative z-10 flex flex-col items-center">
-                <img
-                    src={LoginImage}
-                    alt="Bellingham Data Futures logo"
-                    className="h-[150px] w-[150px] mb-6"
-                />
-                <form
-                    onSubmit={handleLogin}
-                    className="bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 w-96"
-                >
+        <div className="flex flex-col min-h-screen">
+            <Header />
+            <div
+                className="relative flex flex-col items-center justify-center flex-1"
+                style={{
+                    backgroundImage: `url(${LoginImage})`,
+                    backgroundSize: "150px",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "bottom right",
+                }}
+            >
+                <div className="absolute inset-0 bg-black opacity-60" />
+                <div className="relative z-10 flex flex-col items-center">
+                    <form
+                        onSubmit={handleLogin}
+                        className="bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 w-96"
+                    >
                 {error && <div className="text-red-600 mb-2">{error}</div>}
                 <input
                     type="text"
@@ -99,6 +97,7 @@ const Login = () => {
                     Create Account
                 </button>
             </form>
+                </div>
             </div>
         </div>
     );
