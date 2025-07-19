@@ -13,6 +13,8 @@ public class Notification {
     private String message;
     private LocalDateTime timestamp;
     private boolean readFlag = false;
+    private Long contractId;
+    private Long bidId;
 
     public Long getId() {
         return id;
@@ -52,5 +54,21 @@ public class Notification {
 
     public void setReadFlag(boolean readFlag) {
         this.readFlag = readFlag;
+    }
+
+    public Long getContractId() {
+        return contractId;
+    }
+
+    public void setContractId(Long contractId) {
+        this.contractId = contractId;
+    }
+
+    public Long getBidId() {
+        return bidId;
+    }
+
+    public void setBidId(Long bidId) {
+        this.bidId = bidId;
     }
 }

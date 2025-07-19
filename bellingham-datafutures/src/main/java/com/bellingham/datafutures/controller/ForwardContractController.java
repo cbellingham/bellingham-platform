@@ -205,7 +205,7 @@ public class ForwardContractController {
                     String sellerUsername = contract.getCreatorUsername();
                     if (sellerUsername != null && !sellerUsername.equals(username)) {
                         String msg = "New bid on contract " + contract.getTitle();
-                        notificationService.notifyUser(sellerUsername, msg);
+                        notificationService.notifyUser(sellerUsername, msg, contract.getId(), saved.getId());
                     }
                     logActivity(contract, username, "Placed bid");
                     return ResponseEntity.ok(saved);
@@ -255,6 +255,28 @@ public class ForwardContractController {
 
         logActivity(savedContract, username, "Accepted bid");
         return ResponseEntity.ok(savedContract);
+    }
+
+    @PostMapping("/{contractId}/bids/{bidId}/reject")
+    public ResponseEntity<Void> rejectBid(@PathVariable Long contractId, @PathVariable Long bidId) {
+        java.util.Optional<ForwardContract> contractOpt = repository.findById(contractId);
+        java.util.Optional<Bid> bidOpt = bidRepository.findById(bidId);
+        if (contractOpt.isEmpty() || bidOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        ForwardContract contract = contractOpt.get();
+        Bid bid = bidOpt.get();
+        if (!bid.getContract().getId().equals(contract.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!username.equals(contract.getCreatorUsername())) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
+        }
+        bid.setStatus("Rejected");
+        bidRepository.save(bid);
+        logActivity(contract, username, "Rejected bid");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/list")

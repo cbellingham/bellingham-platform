@@ -1,0 +1,99 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const NotificationPopup = () => {
+    const [notification, setNotification] = useState(null);
+
+    const fetchNotifications = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/notifications`, config);
+            const unread = res.data.find((n) => !n.readFlag);
+            if (unread && (!notification || unread.id !== notification.id)) {
+                setNotification(unread);
+            }
+        } catch (err) {
+            console.error("Failed to fetch notifications", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchNotifications();
+        const interval = setInterval(fetchNotifications, 10000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const markRead = async (id) => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/notifications/${id}/read`, {}, config);
+        } catch (err) {
+            console.error("Failed to mark notification read", err);
+        }
+    };
+
+    const handleClose = async () => {
+        if (notification) {
+            await markRead(notification.id);
+            setNotification(null);
+        }
+    };
+
+    const handleAccept = async () => {
+        if (!notification) return;
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+            await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${notification.contractId}/bids/${notification.bidId}/accept`,
+                {},
+                config
+            );
+            await markRead(notification.id);
+            setNotification(null);
+            alert("Bid accepted");
+        } catch (err) {
+            console.error("Failed to accept bid", err);
+            alert("Failed to accept bid");
+        }
+    };
+
+    const handleDecline = async () => {
+        if (!notification) return;
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+            await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${notification.contractId}/bids/${notification.bidId}/reject`,
+                {},
+                config
+            );
+            await markRead(notification.id);
+            setNotification(null);
+        } catch (err) {
+            console.error("Failed to reject bid", err);
+            alert("Failed to decline bid");
+        }
+    };
+
+    if (!notification) return null;
+
+    return (
+        <div className="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded shadow-lg z-50">
+            <p className="mb-2">{notification.message}</p>
+            <div className="flex gap-2 justify-end">
+                <button className="bg-green-600 px-2 py-1 rounded" onClick={handleAccept}>Accept</button>
+                <button className="bg-red-600 px-2 py-1 rounded" onClick={handleDecline}>Decline</button>
+                <button className="bg-gray-600 px-2 py-1 rounded" onClick={handleClose}>Dismiss</button>
+            </div>
+        </div>
+    );
+};
+
+export default NotificationPopup;

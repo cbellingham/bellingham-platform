@@ -16,10 +16,16 @@ public class NotificationService {
     }
 
     public void notifyUser(String username, String message) {
+        notifyUser(username, message, null, null);
+    }
+
+    public void notifyUser(String username, String message, Long contractId, Long bidId) {
         Notification n = new Notification();
         n.setUsername(username);
         n.setMessage(message);
         n.setTimestamp(LocalDateTime.now());
+        n.setContractId(contractId);
+        n.setBidId(bidId);
         repository.save(n);
     }
 
