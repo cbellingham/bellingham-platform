@@ -246,6 +246,13 @@ public class ForwardContractController {
         bid.setStatus("Accepted");
         bidRepository.save(bid);
 
+        // notify the bidder that their bid was accepted
+        String bidder = bid.getBidderUsername();
+        if (bidder != null && !bidder.isEmpty()) {
+            String msg = "Your bid on contract " + contract.getTitle() + " was accepted";
+            notificationService.notifyUser(bidder, msg, contract.getId(), bid.getId());
+        }
+
         bidRepository.findByContractOrderByTimestampAsc(contract).forEach(b -> {
             if (!b.getId().equals(bidId)) {
                 b.setStatus("Rejected");
@@ -275,6 +282,13 @@ public class ForwardContractController {
         }
         bid.setStatus("Rejected");
         bidRepository.save(bid);
+
+        // notify the bidder that their bid was declined
+        String bidder = bid.getBidderUsername();
+        if (bidder != null && !bidder.isEmpty()) {
+            String msg = "Your bid on contract " + contract.getTitle() + " was declined";
+            notificationService.notifyUser(bidder, msg, contract.getId(), bid.getId());
+        }
         logActivity(contract, username, "Rejected bid");
         return ResponseEntity.ok().build();
     }

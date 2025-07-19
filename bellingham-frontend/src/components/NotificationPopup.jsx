@@ -94,14 +94,23 @@ const NotificationPopup = () => {
 
     if (!notification) return null;
 
+    const showBidActions =
+        notification.bidId &&
+        notification.contractId &&
+        notification.message.toLowerCase().includes("new bid");
+
     return (
         <div
             className={`fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded shadow-lg z-50 w-80 transform transition-transform duration-300 ${visible ? "translate-y-0" : "translate-y-full"}`}
         >
             <p className="mb-2">{notification.message}</p>
             <div className="flex gap-2 justify-end">
-                <button className="bg-green-600 px-2 py-1 rounded" onClick={handleAccept}>Accept</button>
-                <button className="bg-red-600 px-2 py-1 rounded" onClick={handleDecline}>Decline</button>
+                {showBidActions && (
+                    <>
+                        <button className="bg-green-600 px-2 py-1 rounded" onClick={handleAccept}>Accept</button>
+                        <button className="bg-red-600 px-2 py-1 rounded" onClick={handleDecline}>Decline</button>
+                    </>
+                )}
                 <button className="bg-gray-600 px-2 py-1 rounded" onClick={handleClose}>Dismiss</button>
             </div>
         </div>
