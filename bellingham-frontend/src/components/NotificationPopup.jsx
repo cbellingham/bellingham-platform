@@ -101,7 +101,7 @@ const NotificationPopup = () => {
 
     return (
         <div
-            className={`fixed bottom-4 left-1/2 bg-gray-800 text-white p-4 rounded shadow-lg z-50 w-80 transform -translate-x-1/2 transition-transform duration-300 ${visible ? "translate-y-0" : "translate-y-full"}`}
+            className={`fixed bottom-0 left-0 w-full h-1/4 bg-gray-300 text-black p-4 rounded-t-lg shadow-lg z-50 transform transition-transform duration-300 ${visible ? "translate-y-0" : "translate-y-full"}`}
         >
             <p className="mb-2">{notification.message}</p>
             <div className="flex gap-2 justify-end">
