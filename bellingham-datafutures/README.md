@@ -9,7 +9,7 @@ files reference the `JWT_SECRET` environment variable which must be provided
 when running the application:
 
 ```
-jwt.secret=${JWT_SECRET}
+jwt.secret=${JWT_SECRET:}
 ```
 
 If no secret is supplied the application will fail to start.
