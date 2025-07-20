@@ -5,6 +5,7 @@ import Dashboard from "./components/Dashboard";
 import Buy from "./components/Buy";
 import Sell from "./components/Sell";
 import Reports from "./components/Reports";
+import Sales from "./components/Sales";
 import Calendar from "./components/Calendar";
 import Signup from "./components/Signup";
 import Account from "./components/Account";
@@ -34,6 +35,10 @@ const App = () => {
             <Route
                 path="/reports"
                 element={token ? <Reports /> : <Navigate to="/login" />}
+            />
+            <Route
+                path="/sales"
+                element={token ? <Sales /> : <Navigate to="/login" />}
             />
             <Route
                 path="/calendar"

@@ -40,6 +40,14 @@ const Sidebar = ({ onLogout }) => {
                     Reports
                 </NavLink>
                 <NavLink
+                    to="/sales"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                    }
+                >
+                    Sales
+                </NavLink>
+                <NavLink
                     to="/calendar"
                     className={({ isActive }) =>
                         `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`

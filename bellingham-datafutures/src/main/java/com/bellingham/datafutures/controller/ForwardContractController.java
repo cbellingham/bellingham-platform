@@ -143,6 +143,15 @@ public class ForwardContractController {
         return repository.findByCreatorUsername(username, pageable);
     }
 
+    @GetMapping("/sold")
+    public Page<ForwardContract> getSoldContracts(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        String username = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+        return repository.findByCreatorUsernameAndBuyerUsernameIsNotNull(username, pageable);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ForwardContract> update(@PathVariable Long id, @RequestBody ForwardContract updated) {
         return repository.findById(id)
