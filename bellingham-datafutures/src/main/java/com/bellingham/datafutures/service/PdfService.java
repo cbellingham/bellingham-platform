@@ -41,6 +41,10 @@ public class PdfService {
                     stream.showText("Delivery Date: " + date);
                     stream.newLine();
                 }
+                stream.showText("Delivery Format: " + nullSafe(contract.getDeliveryFormat()));
+                stream.newLine();
+                stream.showText("Platform: " + nullSafe(contract.getPlatformName()));
+                stream.newLine();
                 stream.showText("Status: " + nullSafe(contract.getStatus()));
                 stream.newLine();
                 stream.newLine();
