@@ -41,3 +41,11 @@ styles and Tailwind directives are included in `src/index.css` and imported in
 `src/main.jsx`. The theme defines custom `base` and `contrast` colors and uses
 the `Times New Roman` font which is available on most systems without any
 additional downloads.
+
+## Running tests
+
+Unit tests are written with Vitest and React Testing Library. Execute them with:
+
+```bash
+npm test
+```
