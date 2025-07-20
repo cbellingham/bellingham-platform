@@ -4,15 +4,8 @@ This module contains the Spring Boot API used by the platform.
 
 ## Configuration
 
-The API requires a secret key for signing JSON Web Tokens. The configuration
-files reference the `JWT_SECRET` environment variable which must be provided
-when running the application:
-
-```
-jwt.secret=${JWT_SECRET:}
-```
-
-If no secret is supplied the application will fail to start.
+The API requires a secret key for signing JSON Web Tokens. The value is
+hard-coded in `JwtUtil` so no additional configuration is necessary.
 
 ## Running the application
 
@@ -29,7 +22,6 @@ spring.datasource.password=bdf_pass
 
 The following environment variables can be used to configure the runtime:
 
-- `JWT_SECRET` – secret used for signing tokens.
 - `server.port` – optional port the API listens on. Defaults to `8080`.
 
 Start the service with the Maven wrapper:
