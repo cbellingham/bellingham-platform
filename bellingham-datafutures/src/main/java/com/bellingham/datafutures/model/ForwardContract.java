@@ -20,6 +20,8 @@ public class ForwardContract {
     private String seller;
     private BigDecimal price;
     private LocalDate deliveryDate;
+    private String deliveryFormat;
+    private String platformName;
     private String dataDescription;
     private String termsFileName;
     @Column(columnDefinition = "TEXT")
@@ -82,6 +84,22 @@ public class ForwardContract {
 
     public void setDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public String getDeliveryFormat() {
+        return deliveryFormat;
+    }
+
+    public void setDeliveryFormat(String deliveryFormat) {
+        this.deliveryFormat = deliveryFormat;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
     }
 
     public String getDataDescription() {
