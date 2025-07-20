@@ -48,8 +48,10 @@ java -jar target/datafutures-0.0.1-SNAPSHOT.jar
 
 ## Running tests
 
-Execute the unit tests using Maven:
+Unit tests use an in-memory H2 database defined in
+`src/test/resources/application-test.properties`. Run them with the
+`test` Spring profile:
 
 ```bash
-./mvnw test
+./mvnw test -Dspring.profiles.active=test
 ```
