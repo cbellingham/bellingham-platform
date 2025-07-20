@@ -24,7 +24,7 @@ const NotificationPopup = () => {
         fetchNotifications();
         const interval = setInterval(fetchNotifications, 10000);
         return () => clearInterval(interval);
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (notification) {
