@@ -39,7 +39,7 @@ const Sales = () => {
             <main className="flex-1 p-8">
                 <h1 className="text-3xl font-bold mb-6">Sold Contracts</h1>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
-                <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                     <thead>
                         <tr className="bg-gray-700 text-left">
                             <th className="border p-2">Title</th>
