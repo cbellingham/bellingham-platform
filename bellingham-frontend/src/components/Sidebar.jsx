@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 const Sidebar = ({ onLogout }) => {
     const navigate = useNavigate();
     return (
-        <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between">
+        <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between border-r border-gray-700">
             <nav className="flex flex-col space-y-4">
                 <NavLink
                     to="/"

@@ -7,10 +7,13 @@ export default {
     extend: {
       colors: {
         base: '#000',
-        contrast: '#fff'
+        contrast: '#fff',
+        primary: '#1d4ed8',
+        secondary: '#3b82f6',
+        accent: '#ef4444'
       },
       fontFamily: {
-        sans: ['"Times New Roman"', 'serif']
+        sans: ['Inter', 'sans-serif']
       }
     }
   },
