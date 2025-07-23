@@ -350,6 +350,19 @@ public class ForwardContractController {
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
 
+    @GetMapping("/history")
+    public Page<ForwardContract> getHistory(@RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return repository.findByStatusAndBuyerUsernameOrStatusAndCreatorUsername(
+                "Closed",
+                username,
+                "Closed",
+                username,
+                pageable);
+    }
+
     @GetMapping("/{id}/history")
     public ResponseEntity<java.util.List<ContractActivity>> getHistory(@PathVariable Long id) {
         return repository.findById(id)

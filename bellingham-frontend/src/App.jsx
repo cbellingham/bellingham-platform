@@ -10,6 +10,7 @@ import Calendar from "./components/Calendar";
 import Signup from "./components/Signup";
 import Account from "./components/Account";
 import Settings from "./components/Settings";
+import History from "./components/History";
 import Logo from "./components/Logo";
 
 const App = () => {
@@ -51,6 +52,10 @@ const App = () => {
             <Route
                 path="/account"
                 element={token ? <Account /> : <Navigate to="/login" />}
+            />
+            <Route
+                path="/history"
+                element={token ? <History /> : <Navigate to="/login" />}
             />
         </Routes>
         <Logo />
