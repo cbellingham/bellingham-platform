@@ -38,9 +38,9 @@ npm run build
 
 Tailwind is configured via `tailwind.config.js` and `postcss.config.js`. Global
 styles and Tailwind directives are included in `src/index.css` and imported in
-`src/main.jsx`. The theme defines custom `base` and `contrast` colors and uses
-the `Times New Roman` font which is available on most systems without any
-additional downloads.
+`src/main.jsx`. The theme defines custom `base` and `contrast` colors along
+with `primary`, `secondary` and `accent` hues. The font family now uses the
+Inter web font which is loaded in `index.html`.
 
 ## Running tests
 
