@@ -303,7 +303,7 @@ const Sell = () => {
 
             <h2 className="text-2xl font-bold mt-10 mb-4">My Contracts</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
-            <table className="w-full table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+            <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
                 <thead>
                     <tr className="bg-gray-700 text-left">
                         <th className="border p-2">Title</th>
