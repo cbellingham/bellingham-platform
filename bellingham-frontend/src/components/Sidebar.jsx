@@ -56,6 +56,14 @@ const Sidebar = ({ onLogout }) => {
                     Calendar
                 </NavLink>
                 <NavLink
+                    to="/history"
+                    className={({ isActive }) =>
+                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                    }
+                >
+                    History
+                </NavLink>
+                <NavLink
                     to="/settings"
                     className={({ isActive }) =>
                         `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
