@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { apiUrl } from "../utils/api";
 import BidChart from "./BidChart";
 
 const ContractDetailsPanel = ({
@@ -18,7 +17,7 @@ const ContractDetailsPanel = ({
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             axios
-                .get(apiUrl(`/api/contracts/${contract.id}/bids`), config)
+                .get(`${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contract.id}/bids`, config)
                 .then((res) => setBids(res.data))
                 .catch(() => setBids([]));
         } else {
@@ -36,7 +35,7 @@ const ContractDetailsPanel = ({
     const handleDownload = async () => {
         const token = localStorage.getItem("token");
         const res = await fetch(
-            apiUrl(`/api/contracts/${contract.id}/pdf`),
+            `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contract.id}/pdf`,
             {
                 headers: token ? { Authorization: `Bearer ${token}` } : {},
             }

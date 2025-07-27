@@ -37,12 +37,6 @@ Or build a runnable jar and execute it manually:
 java -jar target/datafutures-0.0.1-SNAPSHOT.jar
 ```
 
-### Default credentials
-
-When the application starts it automatically creates a user with the
-credentials `admin`/`admin` if one does not already exist. Use this
-account to sign in or register additional users via the API.
-
 ## Running tests
 
 Unit tests use an in-memory H2 database defined in

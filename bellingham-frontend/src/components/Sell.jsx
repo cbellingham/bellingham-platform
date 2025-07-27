@@ -72,7 +72,6 @@ IN WITNESS WHEREOF, the Parties have executed this Forward Data Sale Agreement a
  </div>
  </div>`;
 import axios from "axios";
-import { apiUrl } from "../utils/api";
 
 const Sell = () => {
     const navigate = useNavigate();
@@ -98,36 +97,12 @@ const Sell = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) return;
-                const res = await axios.get(
-                    apiUrl("/api/profile"),
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-                setForm((f) => ({
-                    ...f,
-                    sellerFullName:
-                        f.sellerFullName ||
-                        res.data.legalBusinessName ||
-                        res.data.name ||
-                        "",
-                }));
-            } catch (err) {
-                console.error(err);
-            }
-        };
-        fetchProfile();
-    }, []);
-
-    useEffect(() => {
         const fetchContracts = async () => {
             try {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    apiUrl("/api/contracts/my"),
+                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/my`,
                     config
                 );
                 setContracts(res.data.content);
@@ -174,7 +149,7 @@ const Sell = () => {
 
         try {
             await axios.post(
-                apiUrl("/api/contracts"),
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts`,
                 data,
                 config
             );
@@ -212,7 +187,7 @@ const Sell = () => {
         const token = localStorage.getItem("token");
         const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
         const res = await axios.get(
-            apiUrl(`/api/contracts/${contractId}/bids`),
+            `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
             config
         );
         return res.data;
@@ -240,7 +215,7 @@ const Sell = () => {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             await axios.post(
-                apiUrl(`/api/contracts/${contractId}/bids/${bidId}/accept`),
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids/${bidId}/accept`,
                 {},
                 config
             );
@@ -434,7 +409,6 @@ const Sell = () => {
                         <th className="border p-2">Ask Price</th>
                         <th className="border p-2">Delivery</th>
                         <th className="border p-2">Status</th>
-                        <th className="border p-2">Views</th>
                         <th className="border p-2">Actions</th>
                     </tr>
                 </thead>
@@ -446,7 +420,6 @@ const Sell = () => {
                             <td className="border p-2">${c.price}</td>
                             <td className="border p-2">{c.deliveryDate}</td>
                             <td className="border p-2">{c.status}</td>
-                            <td className="border p-2">{c.viewCount}</td>
                             <td className="border p-2">
                                 <button
                                     className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"

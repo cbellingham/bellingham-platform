@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { apiUrl } from "../utils/api";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +21,7 @@ const Reports = () => {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    apiUrl("/api/contracts/purchased"),
+                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/purchased`,
                     config
                 );
                 setContracts(res.data.content);
@@ -33,27 +32,12 @@ const Reports = () => {
         fetchPurchased();
     }, []);
 
-    const fetchContract = async (id) => {
-        try {
-            const token = localStorage.getItem("token");
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-            const res = await axios.get(
-                apiUrl(`/api/contracts/${id}`),
-                config
-            );
-            setSelectedContract(res.data);
-        } catch (err) {
-            console.error(err);
-            setSelectedContract(null);
-        }
-    };
-
     const handleListForSale = async (id) => {
         try {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             await axios.post(
-                apiUrl(`/api/contracts/${id}/list`),
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}/list`,
                 {},
                 config
             );
@@ -69,7 +53,7 @@ const Reports = () => {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             await axios.post(
-                apiUrl(`/api/contracts/${id}/closeout`),
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}/closeout`,
                 {},
                 config
             );
@@ -106,7 +90,7 @@ const Reports = () => {
                         <tr
                             key={contract.id}
                             className="hover:bg-gray-600 cursor-pointer"
-                            onClick={() => fetchContract(contract.id)}
+                            onClick={() => setSelectedContract(contract)}
                         >
                             <td className="border p-2">{contract.title}</td>
                             <td className="border p-2">{contract.seller}</td>
