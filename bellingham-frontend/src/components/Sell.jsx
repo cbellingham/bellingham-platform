@@ -97,6 +97,30 @@ const Sell = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return;
+                const res = await axios.get(
+                    `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                setForm((f) => ({
+                    ...f,
+                    sellerFullName:
+                        f.sellerFullName ||
+                        res.data.legalBusinessName ||
+                        res.data.name ||
+                        "",
+                }));
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    useEffect(() => {
         const fetchContracts = async () => {
             try {
                 const token = localStorage.getItem("token");
