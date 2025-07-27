@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import BidChart from "./BidChart";
 
 const ContractDetailsPanel = ({
     contract,
@@ -87,6 +88,7 @@ const ContractDetailsPanel = ({
                             </li>
                         ))}
                     </ul>
+                    <BidChart bids={bids} />
                 </div>
             )}
             <button
