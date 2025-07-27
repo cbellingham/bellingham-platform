@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +22,7 @@ const Buy = () => {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             const res = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}`,
+                apiUrl(`/api/contracts/${id}`),
                 config
             );
             setSelectedContract(res.data);
@@ -37,7 +38,7 @@ const Buy = () => {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/available`,
+                    apiUrl("/api/contracts/available"),
                     config
                 );
                 setContracts(res.data.content);
@@ -62,7 +63,7 @@ const Buy = () => {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/buy`,
+                apiUrl(`/api/contracts/${contractId}/buy`),
                 {},
                 config
             );
@@ -87,7 +88,7 @@ const Buy = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
+                apiUrl(`/api/contracts/${contractId}/bids`),
                 { amount: parseFloat(price) },
                 config
             );

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +17,7 @@ const ContractCalendar = () => {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/purchased`,
+                    apiUrl("/api/contracts/purchased"),
                     config
                 );
                 setContracts(res.data.content);

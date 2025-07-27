@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 
@@ -25,7 +26,7 @@ const Account = () => {
                     return;
                 }
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
+                    apiUrl("/api/profile"),
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 setProfile(res.data);
@@ -66,7 +67,7 @@ const Account = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await axios.put(
-                `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
+                apiUrl("/api/profile"),
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
