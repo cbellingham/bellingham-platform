@@ -50,7 +50,6 @@ public class ForwardContract {
     private String technicalContactEmail;
     private String technicalContactPhone;
     private String companyDescription;
-    private int viewCount;
 
     // Getters and setters
 
@@ -316,13 +315,5 @@ public class ForwardContract {
 
     public void setCompanyDescription(String companyDescription) {
         this.companyDescription = companyDescription;
-    }
-
-    public int getViewCount() {
-        return viewCount;
-    }
-
-    public void setViewCount(int viewCount) {
-        this.viewCount = viewCount;
     }
 }

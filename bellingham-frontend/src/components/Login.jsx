@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import LoginImage from "../assets/login.png";
 import { safeSetItem } from "../utils/storage";
-import { apiUrl } from "../utils/api";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -18,7 +17,7 @@ const Login = () => {
 
         try {
             const res = await axios.post(
-                apiUrl("/api/authenticate"),
+                `${import.meta.env.VITE_API_BASE_URL}/api/authenticate`,
                 {
                 username,
                 password,

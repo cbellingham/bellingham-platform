@@ -28,9 +28,6 @@ cp .env.example .env
 
 For local development the default value is `http://localhost:8080`.
 
-After editing `.env` you need to restart the dev server (`npm run dev`)
-so Vite picks up the new value.
-
 To create a production build:
 
 ```bash
