@@ -433,6 +433,7 @@ const Sell = () => {
                         <th className="border p-2">Ask Price</th>
                         <th className="border p-2">Delivery</th>
                         <th className="border p-2">Status</th>
+                        <th className="border p-2">Views</th>
                         <th className="border p-2">Actions</th>
                     </tr>
                 </thead>
@@ -444,6 +445,7 @@ const Sell = () => {
                             <td className="border p-2">${c.price}</td>
                             <td className="border p-2">{c.deliveryDate}</td>
                             <td className="border p-2">{c.status}</td>
+                            <td className="border p-2">{c.viewCount}</td>
                             <td className="border p-2">
                                 <button
                                     className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"

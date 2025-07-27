@@ -65,7 +65,11 @@ public class ForwardContractController {
     @GetMapping("/{id}")
     public ResponseEntity<ForwardContract> getById(@PathVariable Long id) {
         return repository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(contract -> {
+                    contract.setViewCount(contract.getViewCount() + 1);
+                    repository.save(contract);
+                    return ResponseEntity.ok(contract);
+                })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
     }
 

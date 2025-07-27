@@ -39,6 +39,21 @@ const Dashboard = () => {
         fetchContracts();
     }, [navigate]);
 
+    const fetchContract = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            const res = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}`,
+                config
+            );
+            setSelectedContract(res.data);
+        } catch (err) {
+            console.error(err);
+            setSelectedContract(null);
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
@@ -64,7 +79,7 @@ const Dashboard = () => {
                         <tr
                             key={contract.id}
                             className="hover:bg-gray-600 cursor-pointer"
-                            onClick={() => setSelectedContract(contract)}
+                            onClick={() => fetchContract(contract.id)}
                         >
                             <td className="border p-2">{contract.title}</td>
                             <td className="border p-2">{contract.seller}</td>
