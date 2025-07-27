@@ -76,6 +76,13 @@ import axios from "axios";
 const Sell = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState({
+        effectiveDate: "",
+        sellerFullName: "",
+        sellerEntityType: "",
+        sellerAddress: "",
+        buyerFullName: "",
+        buyerEntityType: "",
+        buyerAddress: "",
         deliveryDate: "",
         deliveryFormat: "",
         platformName: "",
@@ -128,6 +135,13 @@ const Sell = () => {
             price: parseFloat(form.price || 0),
             dataDescription: form.dataDescription,
             agreementText: form.agreementText,
+            effectiveDate: form.effectiveDate,
+            sellerFullName: form.sellerFullName,
+            sellerEntityType: form.sellerEntityType,
+            sellerAddress: form.sellerAddress,
+            buyerFullName: form.buyerFullName,
+            buyerEntityType: form.buyerEntityType,
+            buyerAddress: form.buyerAddress,
         };
         if (snippet) {
             data.termsFileName = snippet.name;
@@ -141,6 +155,13 @@ const Sell = () => {
             );
             setMessage("✅ Data contract submitted!");
             setForm({
+                effectiveDate: "",
+                sellerFullName: "",
+                sellerEntityType: "",
+                sellerAddress: "",
+                buyerFullName: "",
+                buyerEntityType: "",
+                buyerAddress: "",
                 deliveryDate: "",
                 deliveryFormat: "",
                 platformName: "",
@@ -211,6 +232,83 @@ const Sell = () => {
                 <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
                     {message && <p className="mb-4">{message}</p>}
                     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
+                <div>
+                    <label>Effective Date</label>
+                    <input
+                        type="date"
+                        name="effectiveDate"
+                        value={form.effectiveDate}
+                        onChange={handleChange}
+                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Seller Full Name</label>
+                    <input
+                        type="text"
+                        name="sellerFullName"
+                        value={form.sellerFullName}
+                        onChange={handleChange}
+                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Seller Entity Type</label>
+                    <input
+                        type="text"
+                        name="sellerEntityType"
+                        value={form.sellerEntityType}
+                        onChange={handleChange}
+                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Seller Address</label>
+                    <input
+                        type="text"
+                        name="sellerAddress"
+                        value={form.sellerAddress}
+                        onChange={handleChange}
+                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Buyer Full Name</label>
+                    <input
+                        type="text"
+                        name="buyerFullName"
+                        value={form.buyerFullName}
+                        onChange={handleChange}
+                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Buyer Entity Type</label>
+                    <input
+                        type="text"
+                        name="buyerEntityType"
+                        value={form.buyerEntityType}
+                        onChange={handleChange}
+                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Buyer Address</label>
+                    <input
+                        type="text"
+                        name="buyerAddress"
+                        value={form.buyerAddress}
+                        onChange={handleChange}
+                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        required
+                    />
+                </div>
                 <div>
                     <label>Delivery Date</label>
                     <input

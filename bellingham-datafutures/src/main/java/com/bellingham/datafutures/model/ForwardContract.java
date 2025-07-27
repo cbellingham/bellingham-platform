@@ -26,6 +26,13 @@ public class ForwardContract {
     private String termsFileName;
     @Column(columnDefinition = "TEXT")
     private String agreementText;
+    private java.time.LocalDate effectiveDate;
+    private String sellerFullName;
+    private String sellerEntityType;
+    private String sellerAddress;
+    private String buyerFullName;
+    private String buyerEntityType;
+    private String buyerAddress;
     private String status;
     private String buyerUsername;
     private String creatorUsername;
@@ -124,6 +131,62 @@ public class ForwardContract {
 
     public void setAgreementText(String agreementText) {
         this.agreementText = agreementText;
+    }
+
+    public java.time.LocalDate getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(java.time.LocalDate effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+
+    public String getSellerFullName() {
+        return sellerFullName;
+    }
+
+    public void setSellerFullName(String sellerFullName) {
+        this.sellerFullName = sellerFullName;
+    }
+
+    public String getSellerEntityType() {
+        return sellerEntityType;
+    }
+
+    public void setSellerEntityType(String sellerEntityType) {
+        this.sellerEntityType = sellerEntityType;
+    }
+
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
+    }
+
+    public String getBuyerFullName() {
+        return buyerFullName;
+    }
+
+    public void setBuyerFullName(String buyerFullName) {
+        this.buyerFullName = buyerFullName;
+    }
+
+    public String getBuyerEntityType() {
+        return buyerEntityType;
+    }
+
+    public void setBuyerEntityType(String buyerEntityType) {
+        this.buyerEntityType = buyerEntityType;
+    }
+
+    public String getBuyerAddress() {
+        return buyerAddress;
+    }
+
+    public void setBuyerAddress(String buyerAddress) {
+        this.buyerAddress = buyerAddress;
     }
 
     public String getStatus() {

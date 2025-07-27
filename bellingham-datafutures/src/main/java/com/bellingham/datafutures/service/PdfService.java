@@ -31,8 +31,24 @@ public class PdfService {
                 stream.newLine();
                 stream.showText("Seller: " + nullSafe(contract.getSeller()));
                 stream.newLine();
+                if (contract.getEffectiveDate() != null) {
+                    stream.showText("Effective Date: " + contract.getEffectiveDate().format(DateTimeFormatter.ISO_DATE));
+                    stream.newLine();
+                }
+                stream.showText("Seller Name: " + nullSafe(contract.getSellerFullName()));
+                stream.newLine();
+                stream.showText("Seller Entity Type: " + nullSafe(contract.getSellerEntityType()));
+                stream.newLine();
+                stream.showText("Seller Address: " + nullSafe(contract.getSellerAddress()));
+                stream.newLine();
+                stream.showText("Buyer Name: " + nullSafe(contract.getBuyerFullName()));
+                stream.newLine();
+                stream.showText("Buyer Entity Type: " + nullSafe(contract.getBuyerEntityType()));
+                stream.newLine();
+                stream.showText("Buyer Address: " + nullSafe(contract.getBuyerAddress()));
+                stream.newLine();
                 String buyer = contract.getBuyerUsername() == null ? "-" : contract.getBuyerUsername();
-                stream.showText("Buyer: " + buyer);
+                stream.showText("Buyer Username: " + buyer);
                 stream.newLine();
                 stream.showText("Price: $" + contract.getPrice());
                 stream.newLine();
