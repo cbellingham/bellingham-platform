@@ -72,6 +72,7 @@ IN WITNESS WHEREOF, the Parties have executed this Forward Data Sale Agreement a
  </div>
  </div>`;
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 
 const Sell = () => {
     const navigate = useNavigate();
@@ -102,7 +103,7 @@ const Sell = () => {
                 const token = localStorage.getItem("token");
                 if (!token) return;
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
+                    apiUrl("/api/profile"),
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 setForm((f) => ({
@@ -126,7 +127,7 @@ const Sell = () => {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/my`,
+                    apiUrl("/api/contracts/my"),
                     config
                 );
                 setContracts(res.data.content);
@@ -173,7 +174,7 @@ const Sell = () => {
 
         try {
             await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts`,
+                apiUrl("/api/contracts"),
                 data,
                 config
             );
@@ -211,7 +212,7 @@ const Sell = () => {
         const token = localStorage.getItem("token");
         const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
         const res = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
+            apiUrl(`/api/contracts/${contractId}/bids`),
             config
         );
         return res.data;
@@ -239,7 +240,7 @@ const Sell = () => {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids/${bidId}/accept`,
+                apiUrl(`/api/contracts/${contractId}/bids/${bidId}/accept`),
                 {},
                 config
             );

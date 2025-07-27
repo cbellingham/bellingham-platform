@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 
 const NotificationPopup = () => {
     const [notification, setNotification] = useState(null);
@@ -10,7 +11,7 @@ const NotificationPopup = () => {
         if (!token) return;
         const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/notifications`, config);
+            const res = await axios.get(apiUrl("/api/notifications"), config);
             const unread = res.data.find((n) => !n.readFlag);
             if (unread && (!notification || unread.id !== notification.id)) {
                 setNotification(unread);
@@ -37,7 +38,7 @@ const NotificationPopup = () => {
         if (!token) return;
         const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/notifications/${id}/read`, {}, config);
+            await axios.post(apiUrl(`/api/notifications/${id}/read`), {}, config);
         } catch (err) {
             console.error("Failed to mark notification read", err);
         }
@@ -58,7 +59,7 @@ const NotificationPopup = () => {
         const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
             await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${notification.contractId}/bids/${notification.bidId}/accept`,
+                apiUrl(`/api/contracts/${notification.contractId}/bids/${notification.bidId}/accept`),
                 {},
                 config
             );
@@ -79,7 +80,7 @@ const NotificationPopup = () => {
         const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
             await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${notification.contractId}/bids/${notification.bidId}/reject`,
+                apiUrl(`/api/contracts/${notification.contractId}/bids/${notification.bidId}/reject`),
                 {},
                 config
             );

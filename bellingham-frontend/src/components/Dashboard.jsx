@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 
@@ -24,7 +25,7 @@ const Dashboard = () => {
                     ? { headers: { Authorization: `Bearer ${token}` } }
                     : {};
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/available`,
+                    apiUrl("/api/contracts/available"),
                     config
                 );
 
@@ -44,7 +45,7 @@ const Dashboard = () => {
             const token = localStorage.getItem("token");
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
             const res = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}`,
+                apiUrl(`/api/contracts/${id}`),
                 config
             );
             setSelectedContract(res.data);

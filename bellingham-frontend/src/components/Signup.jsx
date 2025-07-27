@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 
@@ -31,7 +32,7 @@ const Signup = () => {
         setMessage("");
         try {
             await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/register`,
+                apiUrl("/api/register"),
                 form
             );
             setMessage("Registration successful. Please log in.");

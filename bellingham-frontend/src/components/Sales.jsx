@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../utils/api";
 import Layout from "./Layout";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +17,7 @@ const Sales = () => {
                 const token = localStorage.getItem("token");
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/sold`,
+                    apiUrl("/api/contracts/sold"),
                     config
                 );
                 setContracts(res.data.content);
