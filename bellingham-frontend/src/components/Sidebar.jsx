@@ -10,7 +10,7 @@ const Sidebar = ({ onLogout }) => {
                     to="/"
                     end
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Home
@@ -18,7 +18,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/buy"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Buy
@@ -26,7 +26,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/sell"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Sell
@@ -34,7 +34,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/reports"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Reports
@@ -42,7 +42,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/sales"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Sales
@@ -50,7 +50,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/calendar"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Calendar
@@ -58,7 +58,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/history"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     History
@@ -66,7 +66,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/settings"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Settings
@@ -74,7 +74,7 @@ const Sidebar = ({ onLogout }) => {
                 <NavLink
                     to="/account"
                     className={({ isActive }) =>
-                        `text-left hover:bg-gray-700 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
+                        `text-left hover:bg-green-600 px-4 py-2 rounded text-white ${isActive ? "bg-gray-700" : ""}`
                     }
                 >
                     Account
