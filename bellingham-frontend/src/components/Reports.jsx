@@ -2,8 +2,11 @@ import React, { useEffect, useState, useContext } from "react";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
+codex/add-button-component-with-variants
+import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from "../context/AuthContext";
+main
 
 const Reports = () => {
     const navigate = useNavigate();
@@ -82,24 +85,25 @@ const Reports = () => {
                             <td className="border p-2">${contract.price}</td>
                             <td className="border p-2">{contract.deliveryDate}</td>
                             <td className="border p-2">
-                                <button
+                                <Button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleListForSale(contract.id);
                                     }}
-                                    className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                    className="px-2 py-1"
                                 >
                                     List for Sale
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    variant="danger"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleCloseout(contract.id);
                                     }}
-                                    className="ml-2 bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
+                                    className="ml-2 px-2 py-1"
                                 >
                                     Closeout
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     ))}

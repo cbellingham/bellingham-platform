@@ -5,6 +5,7 @@ import api from "../utils/api";
 import { AuthContext } from "../context/AuthContext";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
+import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
 
 const Buy = () => {
@@ -159,24 +160,25 @@ const Buy = () => {
                                     <td className="border p-2">${contract.price}</td>
                                     <td className="border p-2">{contract.deliveryDate}</td>
                                     <td className="border p-2 space-x-2">
-                                        <button
+                                        <Button
+                                            variant="success"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleBuy(contract.id);
                                             }}
-                                            className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
+                                            className="px-2 py-1"
                                         >
                                             Buy
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleBid(contract.id);
                                             }}
-                                            className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded"
+                                            className="px-2 py-1"
                                         >
                                             Bid
-                                        </button>
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}

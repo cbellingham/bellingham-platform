@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+codex/add-button-component-with-variants
+import Button from "./ui/Button";
 import api from "../utils/api";
+main
 
 const Signup = () => {
     const [form, setForm] = useState({
@@ -58,12 +61,13 @@ const Signup = () => {
         <div className="flex flex-col min-h-screen bg-base text-contrast font-sans">
             <Header />
             <div className="relative flex flex-col flex-1 items-center justify-center">
-                <button
+                <Button
+                    variant="ghost"
                     onClick={() => navigate(-1)}
-                    className="absolute top-4 left-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                    className="absolute top-4 left-4 px-3 py-1"
                 >
                     Back
-                </button>
+                </Button>
                 <form onSubmit={handleSignup} className="bg-white shadow-lg rounded-2xl p-8 w-1/2">
                 <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
                 {message && <div className="text-green-600 mb-2">{message}</div>}
@@ -166,16 +170,17 @@ const Signup = () => {
                     onChange={(e) => setForm({ ...form, companyDescription: e.target.value })}
                     className="w-1/2 p-2 mb-6 border rounded-lg"
                 />
-                <button type="submit" className="w-1/2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">
+                <Button type="submit" className="w-1/2 rounded-lg" variant="primary">
                     Register
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="w-1/2 mt-2 text-blue-600"
+                    variant="link"
+                    className="w-1/2 mt-2"
                     onClick={() => navigate("/login")}
                 >
                     Back to Login
-                </button>
+                </Button>
             </form>
             </div>
         </div>

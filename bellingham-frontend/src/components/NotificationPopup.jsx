@@ -1,6 +1,11 @@
+codex/add-button-component-with-variants
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Button from "./ui/Button";
 import React, { useEffect, useState, useContext } from "react";
 import api from "../utils/api";
 import { AuthContext } from "../context/AuthContext";
+main
 
 const NotificationPopup = () => {
     const [notification, setNotification] = useState(null);
@@ -96,11 +101,29 @@ const NotificationPopup = () => {
             <div className="flex gap-2 justify-end">
                 {showBidActions && (
                     <>
-                        <button className="bg-green-600 px-2 py-1 rounded" onClick={handleAccept}>Accept</button>
-                        <button className="bg-red-600 px-2 py-1 rounded" onClick={handleDecline}>Decline</button>
+                        <Button
+                            variant="success"
+                            className="px-2 py-1"
+                            onClick={handleAccept}
+                        >
+                            Accept
+                        </Button>
+                        <Button
+                            variant="danger"
+                            className="px-2 py-1"
+                            onClick={handleDecline}
+                        >
+                            Decline
+                        </Button>
                     </>
                 )}
-                <button className="bg-gray-600 px-2 py-1 rounded" onClick={handleClose}>Dismiss</button>
+                <Button
+                    variant="ghost"
+                    className="px-2 py-1"
+                    onClick={handleClose}
+                >
+                    Dismiss
+                </Button>
             </div>
         </div>
     );
