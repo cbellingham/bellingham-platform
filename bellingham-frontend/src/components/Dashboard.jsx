@@ -1,47 +1,40 @@
 // src/components/Dashboard.jsx
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const Dashboard = () => {
     const [contracts, setContracts] = useState([]);
     const [selectedContract, setSelectedContract] = useState(null);
     const navigate = useNavigate();
 
+    const { token, logout } = useContext(AuthContext);
+
     useEffect(() => {
         const fetchContracts = async () => {
             try {
-                const token = localStorage.getItem("token");
                 if (!token) {
                     navigate("/login");
                     return;
                 }
-
-                const config = token
-                    ? { headers: { Authorization: `Bearer ${token}` } }
-                    : {};
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/available`,
-                    config
-                );
-
+                const res = await api.get(`/api/contracts/available`);
                 setContracts(res.data.content);
             } catch (err) {
                 console.error("Error fetching contracts", err);
-                localStorage.removeItem("token");
+                logout();
                 navigate("/login");
             }
         };
 
         fetchContracts();
-    }, [navigate]);
+    }, [navigate, token, logout]);
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 

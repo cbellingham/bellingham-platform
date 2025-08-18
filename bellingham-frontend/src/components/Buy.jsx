@@ -1,7 +1,8 @@
 // src/components/Buy.jsx
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
@@ -16,15 +17,12 @@ const Buy = () => {
     const [maxPrice, setMaxPrice] = useState("");
     const [sellerFilter, setSellerFilter] = useState("");
 
+    const { token, logout } = useContext(AuthContext);
+
     useEffect(() => {
         const fetchContracts = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/available`,
-                    config
-                );
+                const res = await api.get(`/api/contracts/available`);
                 setContracts(res.data.content);
             } catch (err) {
                 console.error(err);
@@ -44,13 +42,7 @@ const Buy = () => {
 
     const handleBuy = async (contractId) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/buy`,
-                {},
-                config
-            );
+            await api.post(`/api/contracts/${contractId}/buy`);
             alert("Contract purchased successfully!");
         } catch (err) {
             console.error(err);
@@ -62,7 +54,6 @@ const Buy = () => {
         const price = prompt("Enter your bid price");
         if (!price) return;
 
-        const token = localStorage.getItem("token");
         if (!token) {
             alert("You must sign in to place a bid.");
             navigate("/login");
@@ -70,12 +61,7 @@ const Buy = () => {
         }
 
         try {
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
-                { amount: parseFloat(price) },
-                config
-            );
+            await api.post(`/api/contracts/${contractId}/bids`, { amount: parseFloat(price) });
             alert("Bid submitted!");
         } catch (err) {
             console.error(err);
@@ -91,8 +77,7 @@ const Buy = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 

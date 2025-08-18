@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const NotificationPopup = () => {
     const [notification, setNotification] = useState(null);
     const [visible, setVisible] = useState(false);
 
+    const { token } = useContext(AuthContext);
+
     const fetchNotifications = async () => {
-        const token = localStorage.getItem("token");
         if (!token) return;
-        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/notifications`, config);
+            const res = await api.get(`/api/notifications`);
             const unread = res.data.find((n) => !n.readFlag);
             if (unread && (!notification || unread.id !== notification.id)) {
                 setNotification(unread);
@@ -33,11 +34,9 @@ const NotificationPopup = () => {
     }, [notification]);
 
     const markRead = async (id) => {
-        const token = localStorage.getItem("token");
         if (!token) return;
-        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/notifications/${id}/read`, {}, config);
+            await api.post(`/api/notifications/${id}/read`);
         } catch (err) {
             console.error("Failed to mark notification read", err);
         }
@@ -53,14 +52,9 @@ const NotificationPopup = () => {
 
     const handleAccept = async () => {
         if (!notification) return;
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${notification.contractId}/bids/${notification.bidId}/accept`,
-                {},
-                config
+            await api.post(
+                `/api/contracts/${notification.contractId}/bids/${notification.bidId}/accept`
             );
             await markRead(notification.id);
             setVisible(false);
@@ -74,14 +68,9 @@ const NotificationPopup = () => {
 
     const handleDecline = async () => {
         if (!notification) return;
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${notification.contractId}/bids/${notification.bidId}/reject`,
-                {},
-                config
+            await api.post(
+                `/api/contracts/${notification.contractId}/bids/${notification.bidId}/reject`
             );
             await markRead(notification.id);
             setVisible(false);

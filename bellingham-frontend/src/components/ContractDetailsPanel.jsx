@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import BidChart from "./BidChart";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const ContractDetailsPanel = ({
     contract,
@@ -10,21 +11,24 @@ const ContractDetailsPanel = ({
 }) => {
     const [visible, setVisible] = useState(false);
     const [bids, setBids] = useState([]);
+    const { token } = useContext(AuthContext);
 
     useEffect(() => {
         if (contract) {
             setVisible(true);
-            const token = localStorage.getItem("token");
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-            axios
-                .get(`${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contract.id}/bids`, config)
-                .then((res) => setBids(res.data))
-                .catch(() => setBids([]));
+            if (token) {
+                api
+                    .get(`/api/contracts/${contract.id}/bids`)
+                    .then((res) => setBids(res.data))
+                    .catch(() => setBids([]));
+            } else {
+                setBids([]);
+            }
         } else {
             setVisible(false);
             setBids([]);
         }
-    }, [contract]);
+    }, [contract, token]);
 
     if (!contract && !visible) return null;
 
@@ -33,15 +37,8 @@ const ContractDetailsPanel = ({
         : `fixed top-0 right-0 w-full sm:w-1/3 h-full bg-gray-900 text-white p-6 shadow-lg z-20 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`;
 
     const handleDownload = async () => {
-        const token = localStorage.getItem("token");
-        const res = await fetch(
-            `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contract.id}/pdf`,
-            {
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
-            }
-        );
-        if (!res.ok) return;
-        const blob = await res.blob();
+        const res = await api.get(`/api/contracts/${contract.id}/pdf`, { responseType: "blob" });
+        const blob = res.data;
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import logoImage from "../assets/login.png";
+import { AuthContext } from "../context/AuthContext";
 
 const Header = () => {
-    const username = localStorage.getItem("username");
+    const { username } = useContext(AuthContext);
 
     return (
         <header className="bg-gray-800 p-4 flex justify-between items-center border-b border-gray-700">
