@@ -1,9 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-codex/add-button-component-with-variants
 import Button from "./ui/Button";
 import navItems from "../config/navItems";
-main
 
 const Sidebar = ({ onLogout }) => {
     const navigate = useNavigate();

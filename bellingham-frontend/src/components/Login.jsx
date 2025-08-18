@@ -2,12 +2,9 @@
 
 import React, { useState, useContext } from "react";
 import LoginImage from "../assets/login.png";
-codex/add-button-component-with-variants
-import { safeSetItem } from "../utils/storage";
 import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from "../context/AuthContext";
-main
 
 const Login = () => {
     const [username, setUsername] = useState("");

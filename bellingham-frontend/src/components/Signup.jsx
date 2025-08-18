@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
-codex/add-button-component-with-variants
 import Button from "./ui/Button";
 import api from "../utils/api";
-main
 
 const Signup = () => {
     const [form, setForm] = useState({
