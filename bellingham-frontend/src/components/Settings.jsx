@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Settings = () => {
     const navigate = useNavigate();
 
+    const { logout } = useContext(AuthContext);
+
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 

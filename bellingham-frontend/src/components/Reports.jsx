@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
+codex/add-button-component-with-variants
 import Button from "./ui/Button";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
+main
 
 const Reports = () => {
     const navigate = useNavigate();
@@ -16,15 +19,12 @@ const Reports = () => {
         0
     );
 
+    const { logout } = useContext(AuthContext);
+
     useEffect(() => {
         const fetchPurchased = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/purchased`,
-                    config
-                );
+                const res = await api.get(`/api/contracts/purchased`);
                 setContracts(res.data.content);
             } catch {
                 setError("Failed to load purchased contracts.");
@@ -35,13 +35,7 @@ const Reports = () => {
 
     const handleListForSale = async (id) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}/list`,
-                {},
-                config
-            );
+            await api.post(`/api/contracts/${id}/list`);
             setContracts((prev) => prev.filter((c) => c.id !== id));
         } catch (err) {
             console.error(err);
@@ -51,13 +45,7 @@ const Reports = () => {
 
     const handleCloseout = async (id) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${id}/closeout`,
-                {},
-                config
-            );
+            await api.post(`/api/contracts/${id}/closeout`);
             setContracts((prev) => prev.filter((c) => c.id !== id));
         } catch (err) {
             console.error(err);
@@ -66,8 +54,7 @@ const Reports = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 

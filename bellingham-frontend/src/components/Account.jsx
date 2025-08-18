@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import Layout from "./Layout";
 import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const Account = () => {
     const [profile, setProfile] = useState(null);
@@ -11,24 +12,21 @@ const Account = () => {
     const [formData, setFormData] = useState({});
     const navigate = useNavigate();
 
+    const { token, logout } = useContext(AuthContext);
+
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem("token");
                 if (!token) {
                     navigate("/login");
                     return;
                 }
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
+                const res = await api.get(`/api/profile`);
                 setProfile(res.data);
                 setFormData(res.data);
             } catch (err) {
@@ -37,7 +35,7 @@ const Account = () => {
             }
         };
         fetchProfile();
-    }, [navigate]);
+    }, [navigate, token]);
 
     if (error) {
         return (
@@ -65,12 +63,7 @@ const Account = () => {
 
     const handleSave = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const res = await axios.put(
-                `${import.meta.env.VITE_API_BASE_URL}/api/profile`,
-                formData,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const res = await api.put(`/api/profile`, formData);
             setProfile(res.data);
             setEditing(false);
         } catch (err) {

@@ -1,9 +1,16 @@
+/* eslint-env jest */
+/* global test, expect */
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Login from '../components/Login';
+import { AuthProvider } from '../context/AuthContext';
 
 test('renders username and password fields', () => {
-  render(<Login />);
+  render(
+    <AuthProvider>
+      <Login />
+    </AuthProvider>
+  );
   expect(screen.getByPlaceholderText(/Username/i)).toBeInTheDocument();
   expect(screen.getByPlaceholderText(/Password/i)).toBeInTheDocument();
 });

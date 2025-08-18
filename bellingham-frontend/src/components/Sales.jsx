@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import Layout from "./Layout";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const Sales = () => {
     const navigate = useNavigate();
@@ -10,15 +11,12 @@ const Sales = () => {
     const [error, setError] = useState("");
     const [selectedContract, setSelectedContract] = useState(null);
 
+    const { logout } = useContext(AuthContext);
+
     useEffect(() => {
         const fetchSales = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/sold`,
-                    config
-                );
+                const res = await api.get(`/api/contracts/sold`);
                 setContracts(res.data.content);
             } catch (err) {
                 console.error(err);
@@ -29,8 +27,7 @@ const Sales = () => {
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 

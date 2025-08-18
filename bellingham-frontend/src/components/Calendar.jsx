@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
-import axios from "axios";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const ContractCalendar = () => {
     const navigate = useNavigate();
     const [contracts, setContracts] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
 
+    const { logout } = useContext(AuthContext);
+
     useEffect(() => {
         const fetchContracts = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/purchased`,
-                    config
-                );
+                const res = await api.get(`/api/contracts/purchased`);
                 setContracts(res.data.content);
             } catch (err) {
                 console.error(err);
@@ -57,8 +55,7 @@ const ContractCalendar = () => {
     const events = eventsByDate[formattedSelected] || [];
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 
