@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "./Layout";
+import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
 
 const Account = () => {
@@ -170,21 +171,21 @@ const Account = () => {
                         placeholder="Company Description"
                     />
                     <div className="space-x-2 mt-4">
-                        <button
+                        <Button
+                            variant="success"
                             onClick={handleSave}
-                            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
                         >
                             Save
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="ghost"
                             onClick={() => {
                                 setEditing(false);
                                 setFormData(profile);
                             }}
-                            className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded"
                         >
                             Cancel
-                        </button>
+                        </Button>
                     </div>
                 </div>
             ) : (
@@ -202,12 +203,9 @@ const Account = () => {
                     <p><strong>Technical Contact Email:</strong> {profile.technicalContactEmail}</p>
                     <p><strong>Technical Contact Phone:</strong> {profile.technicalContactPhone}</p>
                     <p><strong>Company Description:</strong> {profile.companyDescription}</p>
-                    <button
-                        onClick={() => setEditing(true)}
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
-                    >
+                    <Button onClick={() => setEditing(true)} className="mt-4">
                         Edit
-                    </button>
+                    </Button>
                 </div>
             )}
             </main>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
+import Button from "./ui/Button";
 
 const defaultAgreement = `Forward Data Sale Agreement (England & Wales Law)
 
@@ -394,9 +395,9 @@ const Sell = () => {
                         accept=".csv,.json,.txt"
                     />
                 </div>
-                <button type="submit" className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+                <Button type="submit" variant="success">
                     Submit Contract
-                </button>
+                </Button>
             </form>
 
             <h2 className="text-2xl font-bold mt-10 mb-4">My Contracts</h2>
@@ -421,12 +422,12 @@ const Sell = () => {
                             <td className="border p-2">{c.deliveryDate}</td>
                             <td className="border p-2">{c.status}</td>
                             <td className="border p-2">
-                                <button
-                                    className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                <Button
+                                    className="px-2 py-1"
                                     onClick={() => handleViewBids(c)}
                                 >
                                     View Bids
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     ))}

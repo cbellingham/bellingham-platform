@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import LoginImage from "../assets/login.png";
 import { safeSetItem } from "../utils/storage";
+import Button from "./ui/Button";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -76,19 +77,17 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full p-2 mb-6 border rounded-lg"
                 />
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
-                >
+                <Button type="submit" className="w-full rounded-lg" variant="primary">
                     Sign In
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="w-full mt-2 text-blue-600"
+                    variant="link"
+                    className="w-full mt-2"
                     onClick={() => (window.location.href = "/signup")}
                 >
                     Create Account
-                </button>
+                </Button>
             </form>
         </div>
     </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import Button from "./ui/Button";
 
 const Sidebar = ({ onLogout }) => {
     const navigate = useNavigate();
@@ -81,19 +82,17 @@ const Sidebar = ({ onLogout }) => {
                 </NavLink>
             </nav>
             <div className="mt-6 flex flex-col space-y-2">
-                <button
+                <Button
+                    variant="ghost"
                     onClick={() => navigate(-1)}
-                    className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-left text-white"
+                    className="text-left"
                 >
                     Back
-                </button>
+                </Button>
                 {onLogout && (
-                    <button
-                        onClick={onLogout}
-                        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
-                    >
+                    <Button variant="danger" onClick={onLogout}>
                         Log Out
-                    </button>
+                    </Button>
                 )}
             </div>
         </aside>

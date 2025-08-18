@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BidChart from "./BidChart";
+import Button from "./ui/Button";
 
 const ContractDetailsPanel = ({
     contract,
@@ -60,12 +61,12 @@ const ContractDetailsPanel = ({
     return (
         <div className={panelClasses}>
             <h2 className="text-xl font-bold mb-4">{contract.title}</h2>
-            <button
-                className="mb-4 bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
-                onClick={handleDownload}
-            >
-                Download PDF
-            </button>
+              <Button
+                  className="mb-4 px-3 py-1"
+                  onClick={handleDownload}
+              >
+                  Download PDF
+              </Button>
             <ul className="space-y-1">
                 {Object.entries(contract).map(([key, value]) => (
                     <li key={key}>
@@ -91,14 +92,15 @@ const ContractDetailsPanel = ({
                     <BidChart bids={bids} />
                 </div>
             )}
-            <button
-                className="mt-auto bg-red-600 hover:bg-red-700 px-3 py-1 rounded self-end"
-                onClick={handleClose}
-            >
-                Close
-            </button>
-        </div>
-    );
-};
+              <Button
+                  variant="danger"
+                  className="mt-auto px-3 py-1 self-end"
+                  onClick={handleClose}
+              >
+                  Close
+              </Button>
+          </div>
+      );
+  };
 
 export default ContractDetailsPanel;
