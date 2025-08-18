@@ -1,9 +1,9 @@
 // src/components/Login.jsx
 
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useContext } from "react";
 import LoginImage from "../assets/login.png";
-import { safeSetItem } from "../utils/storage";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -11,30 +11,17 @@ const Login = () => {
     const [error, setError] = useState("");
 
 
+    const { login } = useContext(AuthContext);
+
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(""); // Clear previous errors
+        setError("");
 
         try {
-            const res = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/authenticate`,
-                {
-                username,
-                password,
-                }
-            );
-
-            console.log("✅ Login API success:", res.data);
-
+            const res = await api.post(`/api/authenticate`, { username, password });
             const token = res.data.id_token;
             if (token) {
-                if (!safeSetItem("token", token) || !safeSetItem("username", username)) {
-                    console.error("Failed to store credentials");
-                    setError("Login failed: unable to store credentials.");
-                    return;
-                }
-
-                // Force full page reload to refresh state
+                login(token, username);
                 window.location.href = "/";
             } else {
                 setError("Login failed: No token received.");

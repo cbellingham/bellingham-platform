@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 const defaultAgreement = `Forward Data Sale Agreement (England & Wales Law)
 
@@ -71,10 +73,10 @@ IN WITNESS WHEREOF, the Parties have executed this Forward Data Sale Agreement a
  _Date: _____________________ _
  </div>
  </div>`;
-import axios from "axios";
 
 const Sell = () => {
     const navigate = useNavigate();
+    const { logout } = useContext(AuthContext);
     const [form, setForm] = useState({
         effectiveDate: "",
         sellerFullName: "",
@@ -99,12 +101,7 @@ const Sell = () => {
     useEffect(() => {
         const fetchContracts = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/contracts/my`,
-                    config
-                );
+                const res = await api.get(`/api/contracts/my`);
                 setContracts(res.data.content);
             } catch (err) {
                 console.error(err);
@@ -124,8 +121,6 @@ const Sell = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem("token");
-        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
         const data = {
             title: form.title,
@@ -148,11 +143,7 @@ const Sell = () => {
         }
 
         try {
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts`,
-                data,
-                config
-            );
+            await api.post(`/api/contracts`, data);
             setMessage("✅ Data contract submitted!");
             setForm({
                 effectiveDate: "",
@@ -178,18 +169,12 @@ const Sell = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
+        logout();
         navigate("/login");
     };
 
     const fetchBids = async (contractId) => {
-        const token = localStorage.getItem("token");
-        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-        const res = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids`,
-            config
-        );
+        const res = await api.get(`/api/contracts/${contractId}/bids`);
         return res.data;
     };
 
@@ -212,13 +197,7 @@ const Sell = () => {
 
     const handleAcceptBid = async (contractId, bidId) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-            await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/contracts/${contractId}/bids/${bidId}/accept`,
-                {},
-                config
-            );
+            await api.post(`/api/contracts/${contractId}/bids/${bidId}/accept`);
             alert("Bid accepted");
         } catch (err) {
             console.error(err);

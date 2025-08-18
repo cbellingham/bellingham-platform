@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
@@ -12,9 +12,10 @@ import Account from "./components/Account";
 import Settings from "./components/Settings";
 import History from "./components/History";
 import Logo from "./components/Logo";
+import { AuthContext } from "./context/AuthContext";
 
 const App = () => {
-    const token = localStorage.getItem("token");
+    const { token } = useContext(AuthContext);
 
     return (
         <>
