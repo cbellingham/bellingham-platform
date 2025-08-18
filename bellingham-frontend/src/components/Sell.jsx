@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
-codex/add-button-component-with-variants
 import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from "../context/AuthContext";
-main
 
 const defaultAgreement = `Forward Data Sale Agreement (England & Wales Law)
 

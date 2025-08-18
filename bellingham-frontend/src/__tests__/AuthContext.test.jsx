@@ -1,5 +1,4 @@
 /* eslint-env jest */
-/* global test, expect, beforeEach */
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
 import { AuthProvider, AuthContext } from '../context/AuthContext';

@@ -1,11 +1,7 @@
-codex/add-button-component-with-variants
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Button from "./ui/Button";
 import React, { useEffect, useState, useContext } from "react";
+import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from "../context/AuthContext";
-main
 
 const NotificationPopup = () => {
     const [notification, setNotification] = useState(null);

@@ -2,11 +2,9 @@ import React, { useEffect, useState, useContext } from "react";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
-codex/add-button-component-with-variants
 import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from "../context/AuthContext";
-main
 
 const Reports = () => {
     const navigate = useNavigate();

@@ -1,5 +1,4 @@
 /* eslint-env jest */
-/* global test, expect */
 import api from '../utils/api';
 
 test('attaches auth header when token exists', async () => {
