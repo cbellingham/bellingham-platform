@@ -86,84 +86,84 @@ const Account = () => {
                         <div className="space-y-2">
                     <p><strong>Username:</strong> {profile.username}</p>
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="legalBusinessName"
                         value={formData.legalBusinessName || ""}
                         onChange={handleChange}
                         placeholder="Legal Business Name"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="name"
                         value={formData.name || ""}
                         onChange={handleChange}
                         placeholder="Name"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="countryOfIncorporation"
                         value={formData.countryOfIncorporation || ""}
                         onChange={handleChange}
                         placeholder="Country of Incorporation"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="taxId"
                         value={formData.taxId || ""}
                         onChange={handleChange}
                         placeholder="Tax ID"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="companyRegistrationNumber"
                         value={formData.companyRegistrationNumber || ""}
                         onChange={handleChange}
                         placeholder="Company Registration Number"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="primaryContactName"
                         value={formData.primaryContactName || ""}
                         onChange={handleChange}
                         placeholder="Primary Contact Name"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="primaryContactEmail"
                         value={formData.primaryContactEmail || ""}
                         onChange={handleChange}
                         placeholder="Primary Contact Email"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="primaryContactPhone"
                         value={formData.primaryContactPhone || ""}
                         onChange={handleChange}
                         placeholder="Primary Contact Phone"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="technicalContactName"
                         value={formData.technicalContactName || ""}
                         onChange={handleChange}
                         placeholder="Technical Contact Name"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="technicalContactEmail"
                         value={formData.technicalContactEmail || ""}
                         onChange={handleChange}
                         placeholder="Technical Contact Email"
                     />
                     <input
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="technicalContactPhone"
                         value={formData.technicalContactPhone || ""}
                         onChange={handleChange}
                         placeholder="Technical Contact Phone"
                     />
                     <textarea
-                        className="w-full p-2 bg-gray-800 rounded"
+                        className="w-full p-2 bg-surface rounded"
                         name="companyDescription"
                         value={formData.companyDescription || ""}
                         onChange={handleChange}
@@ -172,7 +172,7 @@ const Account = () => {
                     <div className="space-x-2 mt-4">
                         <button
                             onClick={handleSave}
-                            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
+                            className="bg-success hover:bg-success-dark px-4 py-2 rounded"
                         >
                             Save
                         </button>
@@ -181,7 +181,7 @@ const Account = () => {
                                 setEditing(false);
                                 setFormData(profile);
                             }}
-                            className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded"
+                            className="bg-surface-tertiary hover:bg-surface-secondary px-4 py-2 rounded"
                         >
                             Cancel
                         </button>
@@ -204,7 +204,7 @@ const Account = () => {
                     <p><strong>Company Description:</strong> {profile.companyDescription}</p>
                     <button
                         onClick={() => setEditing(true)}
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+                        className="mt-4 bg-primary hover:bg-primary-dark px-4 py-2 rounded"
                     >
                         Edit
                     </button>

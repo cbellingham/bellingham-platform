@@ -239,7 +239,7 @@ const Sell = () => {
                         name="effectiveDate"
                         value={form.effectiveDate}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -250,7 +250,7 @@ const Sell = () => {
                         name="sellerFullName"
                         value={form.sellerFullName}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -261,7 +261,7 @@ const Sell = () => {
                         name="sellerEntityType"
                         value={form.sellerEntityType}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -272,7 +272,7 @@ const Sell = () => {
                         name="sellerAddress"
                         value={form.sellerAddress}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -283,7 +283,7 @@ const Sell = () => {
                         name="buyerFullName"
                         value={form.buyerFullName}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -294,7 +294,7 @@ const Sell = () => {
                         name="buyerEntityType"
                         value={form.buyerEntityType}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -305,7 +305,7 @@ const Sell = () => {
                         name="buyerAddress"
                         value={form.buyerAddress}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -316,7 +316,7 @@ const Sell = () => {
                         name="deliveryDate"
                         value={form.deliveryDate}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -327,7 +327,7 @@ const Sell = () => {
                         name="title"
                         value={form.title}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -338,7 +338,7 @@ const Sell = () => {
                         name="price"
                         value={form.price}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -349,7 +349,7 @@ const Sell = () => {
                         name="dataDescription"
                         value={form.dataDescription}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -360,7 +360,7 @@ const Sell = () => {
                         name="deliveryFormat"
                         value={form.deliveryFormat}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -371,7 +371,7 @@ const Sell = () => {
                         name="platformName"
                         value={form.platformName}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         required
                     />
                 </div>
@@ -381,7 +381,7 @@ const Sell = () => {
                         name="agreementText"
                         value={form.agreementText}
                         onChange={handleChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         rows="10"
                     />
                 </div>
@@ -390,20 +390,20 @@ const Sell = () => {
                     <input
                         type="file"
                         onChange={handleFileChange}
-                        className="w-full p-2 mt-1 bg-gray-800 rounded"
+                        className="w-full p-2 mt-1 bg-surface rounded"
                         accept=".csv,.json,.txt"
                     />
                 </div>
-                <button type="submit" className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+                <button type="submit" className="bg-success hover:bg-success-dark px-4 py-2 rounded">
                     Submit Contract
                 </button>
             </form>
 
             <h2 className="text-2xl font-bold mt-10 mb-4">My Contracts</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
-            <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+            <table className="w-[90%] mx-auto table-auto border border-collapse border-border bg-surface text-contrast shadow rounded">
                 <thead>
-                    <tr className="bg-gray-700 text-left">
+                    <tr className="bg-surface-secondary text-left">
                         <th className="border p-2">Title</th>
                         <th className="border p-2">Buyer</th>
                         <th className="border p-2">Ask Price</th>
@@ -414,7 +414,7 @@ const Sell = () => {
                 </thead>
                 <tbody>
                     {contracts.map((c) => (
-                        <tr key={c.id} className="hover:bg-gray-600">
+                        <tr key={c.id} className="hover:bg-surface-tertiary">
                             <td className="border p-2">{c.title}</td>
                             <td className="border p-2">{c.buyerUsername || "-"}</td>
                             <td className="border p-2">${c.price}</td>
@@ -422,7 +422,7 @@ const Sell = () => {
                             <td className="border p-2">{c.status}</td>
                             <td className="border p-2">
                                 <button
-                                    className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                    className="bg-primary hover:bg-primary-dark px-2 py-1 rounded"
                                     onClick={() => handleViewBids(c)}
                                 >
                                     View Bids

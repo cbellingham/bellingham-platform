@@ -47,7 +47,7 @@ const ContractCalendar = () => {
             const key = date.toISOString().split('T')[0];
             const events = eventsByDate[key];
             if (events && events.length > 0) {
-                return <div className="mt-1 w-2 h-2 bg-blue-500 rounded-full mx-auto"/>;
+                return <div className="mt-1 w-2 h-2 bg-primary-light rounded-full mx-auto"/>;
             }
         }
         return null;

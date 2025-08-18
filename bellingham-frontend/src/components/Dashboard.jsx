@@ -48,10 +48,10 @@ const Dashboard = () => {
     return (
         <Layout onLogout={handleLogout}>
             <main className="flex-1 p-8 overflow-auto">
-                <h2 className="text-3xl font-bold mb-6 text-white">Open Contracts</h2>
-                <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                <h2 className="text-3xl font-bold mb-6 text-contrast">Open Contracts</h2>
+                <table className="w-[90%] mx-auto table-auto border border-collapse border-border bg-surface text-contrast shadow rounded">
                     <thead>
-                    <tr className="bg-gray-700 text-left">
+                    <tr className="bg-surface-secondary text-left">
                         <th className="border p-2">Title</th>
                         <th className="border p-2">Seller</th>
                         <th className="border p-2">Ask Price</th>
@@ -63,7 +63,7 @@ const Dashboard = () => {
                     {contracts.map((contract) => (
                         <tr
                             key={contract.id}
-                            className="hover:bg-gray-600 cursor-pointer"
+                            className="hover:bg-surface-tertiary cursor-pointer"
                             onClick={() => setSelectedContract(contract)}
                         >
                             <td className="border p-2">{contract.title}</td>

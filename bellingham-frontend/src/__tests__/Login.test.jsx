@@ -1,3 +1,4 @@
+/* eslint-env vitest */
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Login from '../components/Login';

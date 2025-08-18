@@ -39,9 +39,9 @@ const Sales = () => {
             <main className="flex-1 p-8">
                 <h1 className="text-3xl font-bold mb-6">Sold Contracts</h1>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
-                <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                <table className="w-[90%] mx-auto table-auto border border-collapse border-border bg-surface text-contrast shadow rounded">
                     <thead>
-                        <tr className="bg-gray-700 text-left">
+                        <tr className="bg-surface-secondary text-left">
                             <th className="border p-2">Title</th>
                             <th className="border p-2">Buyer</th>
                             <th className="border p-2">Price</th>
@@ -53,7 +53,7 @@ const Sales = () => {
                         {contracts.map((c) => (
                             <tr
                                 key={c.id}
-                                className="hover:bg-gray-600 cursor-pointer"
+                                className="hover:bg-surface-tertiary cursor-pointer"
                                 onClick={() => setSelectedContract(c)}
                             >
                                 <td className="border p-2">{c.title}</td>

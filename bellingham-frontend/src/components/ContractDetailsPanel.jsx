@@ -29,8 +29,8 @@ const ContractDetailsPanel = ({
     if (!contract && !visible) return null;
 
     const panelClasses = inline
-        ? `${inlineWidth} bg-gray-900 text-white p-6 overflow-auto shadow-lg z-20 mt-4 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`
-        : `fixed top-0 right-0 w-full sm:w-1/3 h-full bg-gray-900 text-white p-6 shadow-lg z-20 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`;
+        ? `${inlineWidth} bg-base text-contrast p-6 overflow-auto shadow-lg z-20 mt-4 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`
+        : `fixed top-0 right-0 w-full sm:w-1/3 h-full bg-base text-contrast p-6 shadow-lg z-20 transform transition-transform duration-300 flex flex-col ${visible ? "translate-x-0" : "translate-x-full"}`;
 
     const handleDownload = async () => {
         const token = localStorage.getItem("token");
@@ -61,7 +61,7 @@ const ContractDetailsPanel = ({
         <div className={panelClasses}>
             <h2 className="text-xl font-bold mb-4">{contract.title}</h2>
             <button
-                className="mb-4 bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
+                className="mb-4 bg-primary hover:bg-primary-dark px-3 py-1 rounded"
                 onClick={handleDownload}
             >
                 Download PDF
@@ -92,7 +92,7 @@ const ContractDetailsPanel = ({
                 </div>
             )}
             <button
-                className="mt-auto bg-red-600 hover:bg-red-700 px-3 py-1 rounded self-end"
+                className="mt-auto bg-danger hover:bg-danger-dark px-3 py-1 rounded self-end"
                 onClick={handleClose}
             >
                 Close

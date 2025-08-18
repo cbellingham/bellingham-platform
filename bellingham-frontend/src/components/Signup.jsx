@@ -63,7 +63,7 @@ const Signup = () => {
             <div className="relative flex flex-col flex-1 items-center justify-center">
                 <button
                     onClick={() => navigate(-1)}
-                    className="absolute top-4 left-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                    className="absolute top-4 left-4 bg-surface-secondary hover:bg-surface-tertiary text-contrast px-3 py-1 rounded"
                 >
                     Back
                 </button>
@@ -169,7 +169,7 @@ const Signup = () => {
                     onChange={(e) => setForm({ ...form, companyDescription: e.target.value })}
                     className="w-1/2 p-2 mb-6 border rounded-lg"
                 />
-                <button type="submit" className="w-1/2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">
+                <button type="submit" className="w-1/2 bg-primary text-contrast p-2 rounded-lg hover:bg-primary-dark">
                     Register
                 </button>
                 <button

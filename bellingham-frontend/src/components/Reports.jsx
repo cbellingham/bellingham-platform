@@ -75,9 +75,9 @@ const Reports = () => {
             <main className="flex-1 p-8">
                 <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
                     {error && <p className="text-red-500 mb-4">{error}</p>}
-                    <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                    <table className="w-[90%] mx-auto table-auto border border-collapse border-border bg-surface text-contrast shadow rounded">
                 <thead>
-                    <tr className="bg-gray-700 text-left">
+                    <tr className="bg-surface-secondary text-left">
                         <th className="border p-2">Title</th>
                         <th className="border p-2">Seller</th>
                         <th className="border p-2">Ask Price</th>
@@ -89,7 +89,7 @@ const Reports = () => {
                     {contracts.map((contract) => (
                         <tr
                             key={contract.id}
-                            className="hover:bg-gray-600 cursor-pointer"
+                            className="hover:bg-surface-tertiary cursor-pointer"
                             onClick={() => setSelectedContract(contract)}
                         >
                             <td className="border p-2">{contract.title}</td>
@@ -102,7 +102,7 @@ const Reports = () => {
                                         e.stopPropagation();
                                         handleListForSale(contract.id);
                                     }}
-                                    className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded"
+                                    className="bg-primary hover:bg-primary-dark px-2 py-1 rounded"
                                 >
                                     List for Sale
                                 </button>
@@ -111,7 +111,7 @@ const Reports = () => {
                                         e.stopPropagation();
                                         handleCloseout(contract.id);
                                     }}
-                                    className="ml-2 bg-red-600 hover:bg-red-700 px-2 py-1 rounded"
+                                    className="ml-2 bg-danger hover:bg-danger-dark px-2 py-1 rounded"
                                 >
                                     Closeout
                                 </button>

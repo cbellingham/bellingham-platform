@@ -123,26 +123,26 @@ const Buy = () => {
                             placeholder="Search by title or seller"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="p-2 bg-gray-800 rounded"
+                            className="p-2 bg-surface rounded"
                         />
                         <input
                             type="number"
                             placeholder="Min Price"
                             value={minPrice}
                             onChange={(e) => setMinPrice(e.target.value)}
-                            className="p-2 bg-gray-800 rounded w-24"
+                            className="p-2 bg-surface rounded w-24"
                         />
                         <input
                             type="number"
                             placeholder="Max Price"
                             value={maxPrice}
                             onChange={(e) => setMaxPrice(e.target.value)}
-                            className="p-2 bg-gray-800 rounded w-24"
+                            className="p-2 bg-surface rounded w-24"
                         />
                         <select
                             value={sellerFilter}
                             onChange={(e) => setSellerFilter(e.target.value)}
-                            className="p-2 bg-gray-800 rounded"
+                            className="p-2 bg-surface rounded"
                         >
                             <option value="">All Sellers</option>
                             {sellers.map((s) => (
@@ -152,9 +152,9 @@ const Buy = () => {
                             ))}
                         </select>
                     </div>
-                    <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
+                    <table className="w-[90%] mx-auto table-auto border border-collapse border-border bg-surface text-contrast shadow rounded">
                         <thead>
-                            <tr className="bg-gray-700 text-left">
+                            <tr className="bg-surface-secondary text-left">
                                 <th className="border p-2">Title</th>
                                 <th className="border p-2">Seller</th>
                                 <th className="border p-2">Ask Price</th>
@@ -166,7 +166,7 @@ const Buy = () => {
                             {filteredContracts.map((contract) => (
                                 <tr
                                     key={contract.id}
-                                    className="hover:bg-gray-600 cursor-pointer"
+                                    className="hover:bg-surface-tertiary cursor-pointer"
                                     onClick={() => setSelectedContract(contract)}
                                 >
                                     <td className="border p-2">{contract.title}</td>
@@ -179,7 +179,7 @@ const Buy = () => {
                                                 e.stopPropagation();
                                                 handleBuy(contract.id);
                                             }}
-                                            className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
+                                            className="bg-success hover:bg-success-dark text-contrast px-2 py-1 rounded"
                                         >
                                             Buy
                                         </button>
@@ -188,7 +188,7 @@ const Buy = () => {
                                                 e.stopPropagation();
                                                 handleBid(contract.id);
                                             }}
-                                            className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded"
+                                            className="bg-primary-light hover:bg-primary text-contrast px-2 py-1 rounded"
                                         >
                                             Bid
                                         </button>

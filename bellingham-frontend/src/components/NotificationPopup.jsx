@@ -107,11 +107,11 @@ const NotificationPopup = () => {
             <div className="flex gap-2 justify-end">
                 {showBidActions && (
                     <>
-                        <button className="bg-green-600 px-2 py-1 rounded" onClick={handleAccept}>Accept</button>
-                        <button className="bg-red-600 px-2 py-1 rounded" onClick={handleDecline}>Decline</button>
+                        <button className="bg-success px-2 py-1 rounded" onClick={handleAccept}>Accept</button>
+                        <button className="bg-danger px-2 py-1 rounded" onClick={handleDecline}>Decline</button>
                     </>
                 )}
-                <button className="bg-gray-600 px-2 py-1 rounded" onClick={handleClose}>Dismiss</button>
+                <button className="bg-surface-tertiary px-2 py-1 rounded" onClick={handleClose}>Dismiss</button>
             </div>
         </div>
     );
