@@ -16,6 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
@@ -23,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,5 +60,22 @@ class ForwardContractControllerTest {
         mockMvc.perform(get("/api/contracts/available"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Test Contract"));
+    }
+
+    @Test
+    void buyContractStoresSignature() throws Exception {
+        ForwardContract contract = new ForwardContract();
+        contract.setId(1L);
+        contract.setStatus("Available");
+        given(repository.findById(1L)).willReturn(java.util.Optional.of(contract));
+        given(repository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("user", "pass"));
+
+        mockMvc.perform(post("/api/contracts/1/buy")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"signature\":\"sig\"}"))
+                .andExpect(status().isOk());
+
+        org.junit.jupiter.api.Assertions.assertEquals("sig", contract.getBuyerSignature());
     }
 }

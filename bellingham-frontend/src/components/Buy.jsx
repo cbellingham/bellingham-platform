@@ -7,6 +7,7 @@ import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
+import SignatureModal from "./SignatureModal";
 
 const Buy = () => {
     const navigate = useNavigate();
@@ -41,13 +42,24 @@ const Buy = () => {
         fetchContracts();
     }, []);
 
-    const handleBuy = async (contractId) => {
+    const [showSignature, setShowSignature] = useState(false);
+    const [pendingBuyId, setPendingBuyId] = useState(null);
+
+    const handleBuy = (contractId) => {
+        setPendingBuyId(contractId);
+        setShowSignature(true);
+    };
+
+    const confirmBuy = async (signature) => {
         try {
-            await api.post(`/api/contracts/${contractId}/buy`);
+            await api.post(`/api/contracts/${pendingBuyId}/buy`, { signature });
             alert("Contract purchased successfully!");
         } catch (err) {
             console.error(err);
             alert("Failed to purchase contract.");
+        } finally {
+            setShowSignature(false);
+            setPendingBuyId(null);
         }
     };
 
@@ -191,6 +203,12 @@ const Buy = () => {
                     />
                 </main>
         </Layout>
+        {showSignature && (
+            <SignatureModal
+                onConfirm={confirmBuy}
+                onCancel={() => setShowSignature(false)}
+            />
+        )}
     );
 };
 

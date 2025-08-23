@@ -3,6 +3,7 @@ package com.bellingham.datafutures.controller;
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.model.ContractActivity;
 import com.bellingham.datafutures.model.Bid;
+import com.bellingham.datafutures.model.SignatureRequest;
 import com.bellingham.datafutures.repository.BidRepository;
 import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
@@ -178,7 +179,7 @@ public class ForwardContractController {
     }
 
     @PostMapping("/{id}/buy")
-    public ResponseEntity<ForwardContract> buy(@PathVariable Long id) {
+    public ResponseEntity<ForwardContract> buy(@PathVariable Long id, @RequestBody SignatureRequest signature) {
         return repository.findById(id)
                 .map(contract -> {
                     if (!"Available".equalsIgnoreCase(contract.getStatus())) {
@@ -189,6 +190,7 @@ public class ForwardContractController {
                             .getContext().getAuthentication().getName();
                     contract.setBuyerUsername(username);
                     contract.setPurchaseDate(LocalDate.now());
+                    contract.setBuyerSignature(signature.getSignature());
                     ForwardContract saved = repository.save(contract);
                     logActivity(saved, username, "Purchased contract");
                     return ResponseEntity.ok(saved);
