@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import SignatureModal from "./SignatureModal";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
@@ -120,6 +121,9 @@ const Sell = () => {
         setSnippet(e.target.files[0]);
     };
 
+    const [showSignature, setShowSignature] = useState(false);
+    const [pendingData, setPendingData] = useState(null);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -142,9 +146,14 @@ const Sell = () => {
         if (snippet) {
             data.termsFileName = snippet.name;
         }
+        setPendingData(data);
+        setShowSignature(true);
+    };
 
+    const submitWithSignature = async (signature) => {
         try {
-            await api.post(`/api/contracts`, data);
+            const payload = { ...pendingData, sellerSignature: signature };
+            await api.post(`/api/contracts`, payload);
             setMessage("✅ Data contract submitted!");
             setForm({
                 effectiveDate: "",
@@ -166,6 +175,9 @@ const Sell = () => {
         } catch (err) {
             setMessage("❌ Submission failed.");
             console.error(err);
+        } finally {
+            setShowSignature(false);
+            setPendingData(null);
         }
     };
 
@@ -414,6 +426,12 @@ const Sell = () => {
             </table>
         </main>
         </Layout>
+        {showSignature && (
+            <SignatureModal
+                onConfirm={submitWithSignature}
+                onCancel={() => setShowSignature(false)}
+            />
+        )}
     );
 };
 

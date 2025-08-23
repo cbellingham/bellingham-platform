@@ -51,6 +51,12 @@ public class ForwardContract {
     private String technicalContactPhone;
     private String companyDescription;
 
+    @Lob
+    private String sellerSignature;
+
+    @Lob
+    private String buyerSignature;
+
     // Getters and setters
 
     public Long getId() {
@@ -315,5 +321,21 @@ public class ForwardContract {
 
     public void setCompanyDescription(String companyDescription) {
         this.companyDescription = companyDescription;
+    }
+
+    public String getSellerSignature() {
+        return sellerSignature;
+    }
+
+    public void setSellerSignature(String sellerSignature) {
+        this.sellerSignature = sellerSignature;
+    }
+
+    public String getBuyerSignature() {
+        return buyerSignature;
+    }
+
+    public void setBuyerSignature(String buyerSignature) {
+        this.buyerSignature = buyerSignature;
     }
 }
