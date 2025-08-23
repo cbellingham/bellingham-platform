@@ -219,6 +219,7 @@ const Sell = () => {
     };
 
     return (
+        <>
         <Layout onLogout={handleLogout}>
             <main className="flex-1 p-8">
                 <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
@@ -432,6 +433,7 @@ const Sell = () => {
                 onCancel={() => setShowSignature(false)}
             />
         )}
+        </>
     );
 };
 
