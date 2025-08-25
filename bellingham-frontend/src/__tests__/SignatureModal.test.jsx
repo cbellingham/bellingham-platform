@@ -4,20 +4,9 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import SignatureModal from '../components/SignatureModal';
 
-vi.mock(
-  'react-signature-canvas',
-  () => ({
-    default: React.forwardRef((props, ref) => {
-      React.useImperativeHandle(ref, () => ({
-        clear: vi.fn(),
-        isEmpty: () => false,
-        toDataURL: () => 'mock-data-url',
-      }));
-      return <canvas {...props.canvasProps} data-testid="signature-canvas" />;
-    }),
-  }),
-  { virtual: true }
-);
+// Provide a mock implementation for the signature canvas library so the
+// component can be tested without requiring the actual dependency or DOM APIs.
+vi.mock('react-signature-canvas');
 
 test('invokes handlers for actions', () => {
   const onConfirm = vi.fn();
