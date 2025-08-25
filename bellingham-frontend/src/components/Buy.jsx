@@ -111,6 +111,7 @@ const Buy = () => {
     });
 
     return (
+        <>
         <Layout onLogout={handleLogout}>
             <main className="flex-1 p-8 overflow-auto">
                 <h1 className="text-3xl font-bold mb-6">Available Contracts</h1>
@@ -209,6 +210,7 @@ const Buy = () => {
                 onCancel={() => setShowSignature(false)}
             />
         )}
+        </>
     );
 };
 
