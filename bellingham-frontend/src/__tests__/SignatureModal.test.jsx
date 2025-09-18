@@ -6,7 +6,39 @@ import SignatureModal from '../components/SignatureModal';
 
 // Provide a mock implementation for the signature canvas library so the
 // component can be tested without requiring the actual dependency or DOM APIs.
-vi.mock('react-signature-canvas');
+vi.mock(
+  'signature_pad/dist/signature_pad.js',
+  () => ({
+    default: class {
+      clear() {}
+
+      isEmpty() {
+        return false;
+      }
+
+      toDataURL() {
+        return 'mock-data-url';
+      }
+
+      off() {}
+    },
+  }),
+  { virtual: true },
+);
+
+const originalGetContext = HTMLCanvasElement.prototype.getContext;
+
+beforeAll(() => {
+  HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
+    setTransform: vi.fn(),
+    scale: vi.fn(),
+    clearRect: vi.fn(),
+  }));
+});
+
+afterAll(() => {
+  HTMLCanvasElement.prototype.getContext = originalGetContext;
+});
 
 test('invokes handlers for actions', () => {
   const onConfirm = vi.fn();
