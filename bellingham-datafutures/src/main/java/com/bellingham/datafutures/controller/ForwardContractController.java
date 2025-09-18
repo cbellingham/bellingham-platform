@@ -2,9 +2,7 @@ package com.bellingham.datafutures.controller;
 
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.model.ContractActivity;
-import com.bellingham.datafutures.model.Bid;
 import com.bellingham.datafutures.model.SignatureRequest;
-import com.bellingham.datafutures.repository.BidRepository;
 import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
@@ -39,9 +37,6 @@ public class ForwardContractController {
 
     @Autowired
     private ContractActivityRepository activityRepository;
-
-    @Autowired
-    private BidRepository bidRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -193,115 +188,16 @@ public class ForwardContractController {
                     contract.setBuyerSignature(signature.getSignature());
                     ForwardContract saved = repository.save(contract);
                     logActivity(saved, username, "Purchased contract");
+
+                    String sellerUsername = contract.getCreatorUsername();
+                    if (sellerUsername != null && !sellerUsername.equals(username)) {
+                        String msg = "Your contract " + contract.getTitle() + " was purchased";
+                        notificationService.notifyUser(sellerUsername, msg, contract.getId());
+                    }
+
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
-    }
-
-    @PostMapping("/{id}/bids")
-    public ResponseEntity<Bid> placeBid(@PathVariable Long id, @RequestBody Bid bid) {
-        return repository.findById(id)
-                .map(contract -> {
-                    if (!"Available".equalsIgnoreCase(contract.getStatus())) {
-                        return ResponseEntity.badRequest().<Bid>build();
-                    }
-                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
-                    bid.setId(null);
-                    bid.setContract(contract);
-                    bid.setBidderUsername(username);
-                    bid.setStatus("Pending");
-                    bid.setTimestamp(LocalDateTime.now());
-                    Bid saved = bidRepository.save(bid);
-                    // notify seller
-                    String sellerUsername = contract.getCreatorUsername();
-                    if (sellerUsername != null && !sellerUsername.equals(username)) {
-                        String msg = "New bid on contract " + contract.getTitle();
-                        notificationService.notifyUser(sellerUsername, msg, contract.getId(), saved.getId());
-                    }
-                    logActivity(contract, username, "Placed bid");
-                    return ResponseEntity.ok(saved);
-                })
-                .orElse(ResponseEntity.notFound().<Bid>build());
-    }
-
-    @GetMapping("/{id}/bids")
-    public ResponseEntity<java.util.List<Bid>> getBids(@PathVariable Long id) {
-        return repository.findById(id)
-                .map(contract -> ResponseEntity.ok(bidRepository.findByContractOrderByTimestampAsc(contract)))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/{contractId}/bids/{bidId}/accept")
-    public ResponseEntity<ForwardContract> acceptBid(@PathVariable Long contractId, @PathVariable Long bidId) {
-        java.util.Optional<ForwardContract> contractOpt = repository.findById(contractId);
-        java.util.Optional<Bid> bidOpt = bidRepository.findById(bidId);
-        if (contractOpt.isEmpty() || bidOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        ForwardContract contract = contractOpt.get();
-        Bid bid = bidOpt.get();
-        if (!bid.getContract().getId().equals(contract.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!username.equals(contract.getCreatorUsername())) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
-        }
-
-        contract.setStatus("Purchased");
-        contract.setBuyerUsername(bid.getBidderUsername());
-        contract.setPurchaseDate(LocalDate.now());
-        contract.setPrice(bid.getAmount());
-        ForwardContract savedContract = repository.save(contract);
-
-        bid.setStatus("Accepted");
-        bidRepository.save(bid);
-
-        // notify the bidder that their bid was accepted
-        String bidder = bid.getBidderUsername();
-        if (bidder != null && !bidder.isEmpty()) {
-            String msg = "Your bid on contract " + contract.getTitle() + " was accepted";
-            notificationService.notifyUser(bidder, msg, contract.getId(), bid.getId());
-        }
-
-        bidRepository.findByContractOrderByTimestampAsc(contract).forEach(b -> {
-            if (!b.getId().equals(bidId)) {
-                b.setStatus("Rejected");
-                bidRepository.save(b);
-            }
-        });
-
-        logActivity(savedContract, username, "Accepted bid");
-        return ResponseEntity.ok(savedContract);
-    }
-
-    @PostMapping("/{contractId}/bids/{bidId}/reject")
-    public ResponseEntity<Void> rejectBid(@PathVariable Long contractId, @PathVariable Long bidId) {
-        java.util.Optional<ForwardContract> contractOpt = repository.findById(contractId);
-        java.util.Optional<Bid> bidOpt = bidRepository.findById(bidId);
-        if (contractOpt.isEmpty() || bidOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        ForwardContract contract = contractOpt.get();
-        Bid bid = bidOpt.get();
-        if (!bid.getContract().getId().equals(contract.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!username.equals(contract.getCreatorUsername())) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
-        }
-        bid.setStatus("Rejected");
-        bidRepository.save(bid);
-
-        // notify the bidder that their bid was declined
-        String bidder = bid.getBidderUsername();
-        if (bidder != null && !bidder.isEmpty()) {
-            String msg = "Your bid on contract " + contract.getTitle() + " was declined";
-            notificationService.notifyUser(bidder, msg, contract.getId(), bid.getId());
-        }
-        logActivity(contract, username, "Rejected bid");
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/list")

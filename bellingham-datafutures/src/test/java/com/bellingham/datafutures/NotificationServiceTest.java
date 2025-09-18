@@ -27,7 +27,7 @@ class NotificationServiceTest {
 
     @Test
     void notifyUserPersistsNotification() {
-        notificationService.notifyUser("alice", "hello");
+        notificationService.notifyUser("alice", "hello", 5L);
 
         List<Notification> all = notificationRepository.findAll();
         assertThat(all).hasSize(1);
@@ -35,6 +35,17 @@ class NotificationServiceTest {
         assertThat(n.getUsername()).isEqualTo("alice");
         assertThat(n.getMessage()).isEqualTo("hello");
         assertThat(n.isReadFlag()).isFalse();
+        assertThat(n.getContractId()).isEqualTo(5L);
+    }
+
+    @Test
+    void notifyUserWithoutContractPersistsNullContract() {
+        notificationService.notifyUser("bob", "hi");
+
+        List<Notification> all = notificationRepository.findAll();
+        assertThat(all).hasSize(1);
+        Notification n = all.get(0);
+        assertThat(n.getContractId()).isNull();
     }
 
     @Test

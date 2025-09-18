@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
-import BidChart from "./BidChart";
+import React, { useEffect, useState } from "react";
 import Button from "./ui/Button";
 import api from "../utils/api";
-import { AuthContext } from '../context';
 
 const ContractDetailsPanel = ({
     contract,
@@ -11,25 +9,14 @@ const ContractDetailsPanel = ({
     inlineWidth = "w-full max-w-md",
 }) => {
     const [visible, setVisible] = useState(false);
-    const [bids, setBids] = useState([]);
-    const { token } = useContext(AuthContext);
 
     useEffect(() => {
         if (contract) {
             setVisible(true);
-            if (token) {
-                api
-                    .get(`/api/contracts/${contract.id}/bids`)
-                    .then((res) => setBids(res.data))
-                    .catch(() => setBids([]));
-            } else {
-                setBids([]);
-            }
         } else {
             setVisible(false);
-            setBids([]);
         }
-    }, [contract, token]);
+    }, [contract]);
 
     if (!contract && !visible) return null;
 
@@ -76,19 +63,6 @@ const ContractDetailsPanel = ({
                     </li>
                 ))}
             </ul>
-            {bids.length > 0 && (
-                <div className="mt-4">
-                    <h3 className="font-semibold mb-2">Bids</h3>
-                    <ul className="space-y-1">
-                        {bids.map((b) => (
-                            <li key={b.id}>
-                                {b.bidderUsername}: ${b.amount} - {b.status}
-                            </li>
-                        ))}
-                    </ul>
-                    <BidChart bids={bids} />
-                </div>
-            )}
               <Button
                   variant="danger"
                   className="mt-auto px-3 py-1 self-end"
