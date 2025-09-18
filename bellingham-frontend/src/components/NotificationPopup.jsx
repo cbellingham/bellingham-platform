@@ -71,7 +71,7 @@ const NotificationPopup = () => {
     };
 
     return (
-        <div className="fixed top-24 left-4 right-4 md:left-72 md:right-8 bg-blue-600 text-white p-4 rounded shadow-lg z-40 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div className="fixed top-24 left-4 right-4 md:left-72 md:right-8 bg-gray-800 text-white p-4 rounded shadow-lg z-40 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <p className="font-semibold">
                 You have {bidText} awaiting action across {contractText}.
             </p>
