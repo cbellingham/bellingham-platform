@@ -71,6 +71,7 @@ const Reports = () => {
     }, [contracts]);
 
     const pieOptions = useMemo(() => ({
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: "right",
@@ -147,7 +148,7 @@ const Reports = () => {
                         <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-md">
                             <h2 className="text-xl font-semibold mb-4">Allocation Overview</h2>
                             <div className="flex flex-col lg:flex-row items-center gap-6">
-                                <div className="w-full lg:w-1/2">
+                                <div className="w-full lg:w-1/2 max-w-xs lg:max-w-sm mx-auto h-64">
                                     <Pie data={pieData} options={pieOptions} />
                                 </div>
                                 <div className="w-full lg:w-1/2 space-y-2 text-sm text-gray-200">
