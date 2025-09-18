@@ -99,6 +99,11 @@ const Sell = () => {
     const [message, setMessage] = useState("");
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
+    const [selectedContract, setSelectedContract] = useState(null);
+    const [selectedContractBids, setSelectedContractBids] = useState([]);
+    const [bidsLoading, setBidsLoading] = useState(false);
+    const [bidsFeedback, setBidsFeedback] = useState("");
+    const [bidActionLoading, setBidActionLoading] = useState(null);
 
     useEffect(() => {
         const fetchContracts = async () => {
@@ -192,29 +197,41 @@ const Sell = () => {
     };
 
     const handleViewBids = async (contract) => {
+        setSelectedContract(contract);
+        setBidsFeedback("");
+        setBidsLoading(true);
         try {
             const bids = await fetchBids(contract.id);
+            setSelectedContractBids(bids);
             if (bids.length === 0) {
-                alert("No bids yet.");
-                return;
+                setBidsFeedback("No bids yet.");
             }
-            const list = bids.map((b) => `${b.id}: ${b.bidderUsername} $${b.amount} [${b.status}]`).join("\n");
-            const selected = prompt(`Bids for ${contract.title}:\n${list}\nEnter bid id to accept`);
-            if (!selected) return;
-            await handleAcceptBid(contract.id, selected);
         } catch (err) {
             console.error(err);
-            alert("Failed to load bids");
+            setSelectedContractBids([]);
+            setBidsFeedback("Failed to load bids.");
+        } finally {
+            setBidsLoading(false);
         }
     };
 
     const handleAcceptBid = async (contractId, bidId) => {
         try {
+            setBidActionLoading(bidId);
             await api.post(`/api/contracts/${contractId}/bids/${bidId}/accept`);
-            alert("Bid accepted");
+            setMessage("✅ Bid accepted.");
+            const updatedBids = await fetchBids(contractId);
+            setSelectedContractBids(updatedBids);
+            if (updatedBids.length === 0) {
+                setBidsFeedback("No bids remaining for this contract.");
+            } else {
+                setBidsFeedback("");
+            }
         } catch (err) {
             console.error(err);
-            alert("Failed to accept bid");
+            setMessage("❌ Failed to accept bid.");
+        } finally {
+            setBidActionLoading(null);
         }
     };
 
@@ -425,6 +442,70 @@ const Sell = () => {
                     ))}
                 </tbody>
             </table>
+            {selectedContract && (
+                <div className="w-[90%] mx-auto mt-6 bg-gray-800 border border-gray-700 rounded shadow p-4">
+                    <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
+                        <h3 className="text-xl font-semibold">
+                            Bids for {selectedContract.title}
+                        </h3>
+                        <Button
+                            variant="ghost"
+                            className="px-3 py-1"
+                            onClick={() => {
+                                setSelectedContract(null);
+                                setSelectedContractBids([]);
+                                setBidsFeedback("");
+                            }}
+                        >
+                            Close
+                        </Button>
+                    </div>
+                    {bidsLoading ? (
+                        <p>Loading bids...</p>
+                    ) : selectedContractBids.length > 0 ? (
+                        <table className="w-full table-auto border border-collapse border-gray-700">
+                            <thead>
+                                <tr className="bg-gray-700 text-left">
+                                    <th className="border p-2">Bidder</th>
+                                    <th className="border p-2">Amount</th>
+                                    <th className="border p-2">Status</th>
+                                    <th className="border p-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {selectedContractBids.map((bid) => {
+                                    const isPending =
+                                        (bid.status || "").toLowerCase() === "pending";
+                                    return (
+                                        <tr key={bid.id} className="hover:bg-gray-700">
+                                            <td className="border p-2">{bid.bidderUsername}</td>
+                                            <td className="border p-2">${bid.amount}</td>
+                                            <td className="border p-2 uppercase">{bid.status}</td>
+                                            <td className="border p-2">
+                                                <Button
+                                                    variant="success"
+                                                    className="px-3 py-1"
+                                                    disabled={!isPending || bidActionLoading === bid.id}
+                                                    onClick={() =>
+                                                        handleAcceptBid(selectedContract.id, bid.id)
+                                                    }
+                                                >
+                                                    {bidActionLoading === bid.id ? "Accepting..." : "Accept"}
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p>{bidsFeedback || "No bids yet."}</p>
+                    )}
+                    {!bidsLoading && bidsFeedback && selectedContractBids.length > 0 && (
+                        <p className="mt-3 text-sm text-gray-300">{bidsFeedback}</p>
+                    )}
+                </div>
+            )}
         </main>
         </Layout>
         {showSignature && (

@@ -1,38 +1,30 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import api from "../utils/api";
-import { AuthContext } from '../context';
+import { AuthContext } from "../context";
 
 const NotificationPopup = () => {
-    const [notification, setNotification] = useState(null);
-    const [visible, setVisible] = useState(false);
+    const [notifications, setNotifications] = useState([]);
 
     const { token } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    const fetchNotifications = async () => {
+    const fetchNotifications = useCallback(async () => {
         if (!token) return;
         try {
             const res = await api.get(`/api/notifications`);
-            const unread = res.data.find((n) => !n.readFlag);
-            if (unread && (!notification || unread.id !== notification.id)) {
-                setNotification(unread);
-            }
+            setNotifications(res.data || []);
         } catch (err) {
             console.error("Failed to fetch notifications", err);
         }
-    };
+    }, [token]);
 
     useEffect(() => {
         fetchNotifications();
         const interval = setInterval(fetchNotifications, 10000);
         return () => clearInterval(interval);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    useEffect(() => {
-        if (notification) {
-            setVisible(true);
-        }
-    }, [notification]);
+    }, [fetchNotifications]);
 
     const markRead = async (id) => {
         if (!token) return;
@@ -43,81 +35,51 @@ const NotificationPopup = () => {
         }
     };
 
-    const handleClose = async () => {
-        if (notification) {
-            await markRead(notification.id);
-            setVisible(false);
-            setTimeout(() => setNotification(null), 300);
-        }
+    const outstandingBids = notifications.filter((notification) => {
+        if (notification.readFlag) return false;
+        if (!notification.message) return false;
+        const message = notification.message.toLowerCase();
+        return (
+            notification.bidId &&
+            notification.contractId &&
+            (message.includes("new bid") || message.includes("outstanding bid"))
+        );
+    });
+
+    const handleDismiss = async () => {
+        const outstandingIds = outstandingBids.map((n) => n.id);
+        await Promise.all(outstandingIds.map((id) => markRead(id)));
+        setNotifications((prev) =>
+            prev.map((notification) =>
+                outstandingIds.includes(notification.id)
+                    ? { ...notification, readFlag: true }
+                    : notification
+            )
+        );
     };
 
-    const handleAccept = async () => {
-        if (!notification) return;
-        try {
-            await api.post(
-                `/api/contracts/${notification.contractId}/bids/${notification.bidId}/accept`
-            );
-            await markRead(notification.id);
-            setVisible(false);
-            setTimeout(() => setNotification(null), 300);
-            alert("Bid accepted");
-        } catch (err) {
-            console.error("Failed to accept bid", err);
-            alert("Failed to accept bid");
-        }
+    if (!outstandingBids.length) return null;
+
+    const bidCount = outstandingBids.length;
+    const contractCount = new Set(outstandingBids.map((n) => n.contractId)).size;
+    const bidText = bidCount === 1 ? "1 outstanding bid" : `${bidCount} outstanding bids`;
+    const contractText =
+        contractCount === 1 ? "1 contract" : `${contractCount} contracts`;
+
+    const handleReviewBids = () => {
+        navigate("/sell");
     };
-
-    const handleDecline = async () => {
-        if (!notification) return;
-        try {
-            await api.post(
-                `/api/contracts/${notification.contractId}/bids/${notification.bidId}/reject`
-            );
-            await markRead(notification.id);
-            setVisible(false);
-            setTimeout(() => setNotification(null), 300);
-        } catch (err) {
-            console.error("Failed to reject bid", err);
-            alert("Failed to decline bid");
-        }
-    };
-
-    if (!notification) return null;
-
-    const showBidActions =
-        notification.bidId &&
-        notification.contractId &&
-        notification.message.toLowerCase().includes("new bid");
 
     return (
-        <div
-            className={`fixed bottom-0 left-0 w-full h-1/4 bg-gray-300 text-black p-4 rounded-t-lg shadow-lg z-50 transform transition-transform duration-300 ${visible ? "translate-y-0" : "translate-y-full"}`}
-        >
-            <p className="mb-2">{notification.message}</p>
-            <div className="flex gap-2 justify-end">
-                {showBidActions && (
-                    <>
-                        <Button
-                            variant="success"
-                            className="px-2 py-1"
-                            onClick={handleAccept}
-                        >
-                            Accept
-                        </Button>
-                        <Button
-                            variant="danger"
-                            className="px-2 py-1"
-                            onClick={handleDecline}
-                        >
-                            Decline
-                        </Button>
-                    </>
-                )}
-                <Button
-                    variant="ghost"
-                    className="px-2 py-1"
-                    onClick={handleClose}
-                >
+        <div className="fixed top-24 left-4 right-4 md:left-72 md:right-8 bg-blue-600 text-white p-4 rounded shadow-lg z-40 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <p className="font-semibold">
+                You have {bidText} awaiting action across {contractText}.
+            </p>
+            <div className="flex gap-2 flex-wrap">
+                <Button variant="success" className="px-3 py-1" onClick={handleReviewBids}>
+                    Review bids
+                </Button>
+                <Button variant="ghost" className="px-3 py-1" onClick={handleDismiss}>
                     Dismiss
                 </Button>
             </div>
