@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
-import { AuthProvider, AuthContext } from '../context/AuthContext';
+import { AuthProvider, AuthContext } from '../context';
 
 beforeEach(() => {
   localStorage.clear();

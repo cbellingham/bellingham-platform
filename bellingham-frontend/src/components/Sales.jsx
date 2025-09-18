@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const Sales = () => {
     const navigate = useNavigate();

@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import SignaturePad from 'signature_pad';
 import Button from './ui/Button';
 
 const SignatureModal = ({ onConfirm, onCancel }) => {
   const canvasRef = useRef(null);
-  const signaturePadRef = useRef(null);
+  const contextRef = useRef(null);
+  const isDrawingRef = useRef(false);
+  const isEmptyRef = useRef(true);
+  const ratioRef = useRef(1);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -26,32 +28,96 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
         context.scale(ratio, ratio);
         context.clearRect(0, 0, canvas.width, canvas.height);
       }
+
+      ratioRef.current = ratio;
+      isEmptyRef.current = true;
     };
 
     resizeCanvas();
 
-    const signaturePad = new SignaturePad(canvas, {
-      penColor: 'black',
-    });
+    if (context) {
+      context.lineCap = 'round';
+      context.lineJoin = 'round';
+      context.strokeStyle = 'black';
+      context.lineWidth = 2;
+      contextRef.current = context;
+    }
 
-    signaturePadRef.current = signaturePad;
+    const getPoint = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = ratioRef.current;
+      return {
+        x: (event.clientX - rect.left) * ratio,
+        y: (event.clientY - rect.top) * ratio,
+      };
+    };
+
+    const handlePointerDown = (event) => {
+      if (!contextRef.current) return;
+      if (canvas.setPointerCapture) {
+        canvas.setPointerCapture(event.pointerId);
+      }
+      const { x, y } = getPoint(event);
+      contextRef.current.beginPath();
+      contextRef.current.moveTo(x, y);
+      isDrawingRef.current = true;
+    };
+
+    const handlePointerMove = (event) => {
+      if (!isDrawingRef.current || !contextRef.current) return;
+      const { x, y } = getPoint(event);
+      contextRef.current.lineTo(x, y);
+      contextRef.current.stroke();
+      isEmptyRef.current = false;
+    };
+
+    const endDrawing = (event) => {
+      if (!isDrawingRef.current || !contextRef.current) return;
+      handlePointerMove(event);
+      contextRef.current.closePath();
+      isDrawingRef.current = false;
+      if (
+        canvas.releasePointerCapture &&
+        canvas.hasPointerCapture &&
+        canvas.hasPointerCapture(event.pointerId)
+      ) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+    };
+
+    canvas.style.touchAction = 'none';
+    canvas.addEventListener('pointerdown', handlePointerDown);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerup', endDrawing);
+    canvas.addEventListener('pointerleave', endDrawing);
+    canvas.addEventListener('pointercancel', endDrawing);
 
     window.addEventListener('resize', resizeCanvas);
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-      signaturePad.off();
-      signaturePadRef.current = null;
+      canvas.removeEventListener('pointerdown', handlePointerDown);
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      canvas.removeEventListener('pointerup', endDrawing);
+      canvas.removeEventListener('pointerleave', endDrawing);
+      canvas.removeEventListener('pointercancel', endDrawing);
+      contextRef.current = null;
     };
   }, []);
 
   const handleClear = () => {
-    signaturePadRef.current && signaturePadRef.current.clear();
+    const canvas = canvasRef.current;
+    const context = contextRef.current;
+    if (!canvas || !context) return;
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    isEmptyRef.current = true;
   };
 
   const handleSave = () => {
-    if (signaturePadRef.current && !signaturePadRef.current.isEmpty()) {
-      const data = signaturePadRef.current.toDataURL();
+    const canvas = canvasRef.current;
+    if (canvas && !isEmptyRef.current) {
+      const data = canvas.toDataURL('image/png');
       onConfirm(data);
     }
   };

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import logoImage from "../assets/login.png";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const Header = () => {
     const { username } = useContext(AuthContext);

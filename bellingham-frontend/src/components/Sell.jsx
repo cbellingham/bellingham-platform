@@ -4,7 +4,7 @@ import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import api from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const defaultAgreement = `Forward Data Sale Agreement (England & Wales Law)
 

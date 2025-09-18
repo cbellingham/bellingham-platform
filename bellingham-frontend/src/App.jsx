@@ -12,7 +12,7 @@ import Account from "./components/Account";
 import Settings from "./components/Settings";
 import History from "./components/History";
 import Logo from "./components/Logo";
-import { AuthContext } from "./context/AuthContext";
+import { AuthContext } from './context';
 
 const App = () => {
     const { token } = useContext(AuthContext);

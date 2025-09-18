@@ -2,7 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Login from '../components/Login';
-import { AuthProvider } from '../context/AuthContext';
+import { AuthProvider } from '../context';
 
 test('renders username and password fields', () => {
   render(

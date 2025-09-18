@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useContext } from "react";
 import api from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import Button from "./ui/Button";
