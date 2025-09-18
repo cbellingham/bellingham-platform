@@ -70,3 +70,13 @@ test('invokes handlers for actions', () => {
   fireEvent.click(screen.getByText('Clear'));
   expect(screen.getByTestId('signature-canvas')).toBeInTheDocument();
 });
+
+test('displays error if attempting to save without a signature', () => {
+  const onConfirm = vi.fn();
+  render(<SignatureModal onConfirm={onConfirm} onCancel={vi.fn()} />);
+
+  fireEvent.click(screen.getByText('Save'));
+
+  expect(onConfirm).not.toHaveBeenCalled();
+  expect(screen.getByRole('alert')).toHaveTextContent('Please provide your signature before saving.');
+});

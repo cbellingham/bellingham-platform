@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from './ui/Button';
 
 const SignatureModal = ({ onConfirm, onCancel }) => {
@@ -7,6 +7,7 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
   const isDrawingRef = useRef(false);
   const isEmptyRef = useRef(true);
   const ratioRef = useRef(1);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -112,14 +113,21 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     isEmptyRef.current = true;
+    setError('');
   };
 
   const handleSave = () => {
     const canvas = canvasRef.current;
-    if (canvas && !isEmptyRef.current) {
-      const data = canvas.toDataURL('image/png');
-      onConfirm(data);
+    if (!canvas) return;
+
+    if (isEmptyRef.current) {
+      setError('Please provide your signature before saving.');
+      return;
     }
+
+    setError('');
+    const data = canvas.toDataURL('image/png');
+    onConfirm(data);
   };
 
   return (
@@ -132,6 +140,7 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
           height={200}
           data-testid="signature-canvas"
         />
+        {error && <p className="mt-2 text-sm text-red-600" role="alert">{error}</p>}
         <div className="mt-2 flex justify-end gap-2">
           <Button variant="ghost" onClick={handleClear}>Clear</Button>
           <Button variant="danger" onClick={onCancel}>Cancel</Button>
