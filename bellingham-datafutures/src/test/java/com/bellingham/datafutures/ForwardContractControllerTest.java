@@ -2,7 +2,6 @@ package com.bellingham.datafutures;
 
 import com.bellingham.datafutures.controller.ForwardContractController;
 import com.bellingham.datafutures.model.ForwardContract;
-import com.bellingham.datafutures.repository.BidRepository;
 import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
@@ -45,8 +44,6 @@ class ForwardContractControllerTest {
     @MockBean
     private ContractActivityRepository activityRepository;
     @MockBean
-    private BidRepository bidRepository;
-    @MockBean
     private NotificationService notificationService;
 
     @Test
@@ -67,6 +64,8 @@ class ForwardContractControllerTest {
         ForwardContract contract = new ForwardContract();
         contract.setId(1L);
         contract.setStatus("Available");
+        contract.setTitle("Test Contract");
+        contract.setCreatorUsername("seller");
         given(repository.findById(1L)).willReturn(java.util.Optional.of(contract));
         given(repository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("user", "pass"));
@@ -77,5 +76,7 @@ class ForwardContractControllerTest {
                 .andExpect(status().isOk());
 
         org.junit.jupiter.api.Assertions.assertEquals("sig", contract.getBuyerSignature());
+        org.mockito.Mockito.verify(notificationService)
+                .notifyUser("seller", "Your contract Test Contract was purchased", 1L);
     }
 }

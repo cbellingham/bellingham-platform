@@ -19,7 +19,7 @@ const Buy = () => {
     const [maxPrice, setMaxPrice] = useState("");
     const [sellerFilter, setSellerFilter] = useState("");
 
-    const { token, logout } = useContext(AuthContext);
+    const { logout } = useContext(AuthContext);
 
     useEffect(() => {
         const fetchContracts = async () => {
@@ -51,41 +51,18 @@ const Buy = () => {
     };
 
     const confirmBuy = async (signature) => {
+        const contractId = pendingBuyId;
         try {
-            await api.post(`/api/contracts/${pendingBuyId}/buy`, { signature });
+            await api.post(`/api/contracts/${contractId}/buy`, { signature });
             alert("Contract purchased successfully!");
+            setContracts((prev) => prev.filter((contract) => contract.id !== contractId));
+            setSelectedContract((prev) => (prev && prev.id === contractId ? null : prev));
         } catch (err) {
             console.error(err);
             alert("Failed to purchase contract.");
         } finally {
             setShowSignature(false);
             setPendingBuyId(null);
-        }
-    };
-
-    const handleBid = async (contractId) => {
-        const price = prompt("Enter your bid price");
-        if (!price) return;
-
-        if (!token) {
-            alert("You must sign in to place a bid.");
-            navigate("/login");
-            return;
-        }
-
-        try {
-            await api.post(`/api/contracts/${contractId}/bids`, { amount: parseFloat(price) });
-            alert("Bid submitted!");
-        } catch (err) {
-            console.error(err);
-            if (err.response && err.response.status === 400) {
-                alert("Failed to submit bid: contract is not available.");
-            } else if (err.response && err.response.status === 401) {
-                alert("Session expired. Please sign in again.");
-                navigate("/login");
-            } else {
-                alert("Failed to submit bid.");
-            }
         }
     };
 
@@ -172,7 +149,7 @@ const Buy = () => {
                                     <td className="border p-2">{contract.seller}</td>
                                     <td className="border p-2">${contract.price}</td>
                                     <td className="border p-2">{contract.deliveryDate}</td>
-                                    <td className="border p-2 space-x-2">
+                                    <td className="border p-2">
                                         <Button
                                             variant="success"
                                             onClick={(e) => {
@@ -182,15 +159,6 @@ const Buy = () => {
                                             className="px-2 py-1"
                                         >
                                             Buy
-                                        </Button>
-                                        <Button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleBid(contract.id);
-                                            }}
-                                            className="px-2 py-1"
-                                        >
-                                            Bid
                                         </Button>
                                     </td>
                                 </tr>

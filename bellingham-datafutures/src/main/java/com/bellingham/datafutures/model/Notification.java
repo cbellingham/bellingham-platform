@@ -14,7 +14,6 @@ public class Notification {
     private LocalDateTime timestamp;
     private boolean readFlag = false;
     private Long contractId;
-    private Long bidId;
 
     public Long getId() {
         return id;
@@ -64,11 +63,4 @@ public class Notification {
         this.contractId = contractId;
     }
 
-    public Long getBidId() {
-        return bidId;
-    }
-
-    public void setBidId(Long bidId) {
-        this.bidId = bidId;
-    }
 }

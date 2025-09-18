@@ -35,49 +35,42 @@ const NotificationPopup = () => {
         }
     };
 
-    const outstandingBids = notifications.filter((notification) => {
-        if (notification.readFlag) return false;
-        if (!notification.message) return false;
-        const message = notification.message.toLowerCase();
-        return (
-            notification.bidId &&
-            notification.contractId &&
-            (message.includes("new bid") || message.includes("outstanding bid"))
-        );
-    });
+    const unreadNotifications = notifications.filter((notification) => !notification.readFlag);
 
     const handleDismiss = async () => {
-        const outstandingIds = outstandingBids.map((n) => n.id);
-        await Promise.all(outstandingIds.map((id) => markRead(id)));
+        const unreadIds = unreadNotifications.map((n) => n.id);
+        await Promise.all(unreadIds.map((id) => markRead(id)));
         setNotifications((prev) =>
             prev.map((notification) =>
-                outstandingIds.includes(notification.id)
+                unreadIds.includes(notification.id)
                     ? { ...notification, readFlag: true }
                     : notification
             )
         );
     };
 
-    if (!outstandingBids.length) return null;
+    if (!unreadNotifications.length) return null;
 
-    const bidCount = outstandingBids.length;
-    const contractCount = new Set(outstandingBids.map((n) => n.contractId)).size;
-    const bidText = bidCount === 1 ? "1 outstanding bid" : `${bidCount} outstanding bids`;
-    const contractText =
-        contractCount === 1 ? "1 contract" : `${contractCount} contracts`;
+    const unreadCount = unreadNotifications.length;
+    const latest = unreadNotifications[0];
 
-    const handleReviewBids = () => {
+    const handleViewContracts = () => {
         navigate("/sell");
     };
 
     return (
         <div className="fixed top-24 left-4 right-4 md:left-72 md:right-8 bg-gray-800 text-white p-4 rounded shadow-lg z-40 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <p className="font-semibold">
-                You have {bidText} awaiting action across {contractText}.
+                You have {unreadCount === 1 ? "1 unread notification" : `${unreadCount} unread notifications`}.
             </p>
+            {latest?.message && (
+                <p className="text-sm text-gray-300 flex-1">
+                    Latest: {latest.message}
+                </p>
+            )}
             <div className="flex gap-2 flex-wrap">
-                <Button variant="success" className="px-3 py-1" onClick={handleReviewBids}>
-                    Review bids
+                <Button variant="success" className="px-3 py-1" onClick={handleViewContracts}>
+                    View my contracts
                 </Button>
                 <Button variant="ghost" className="px-3 py-1" onClick={handleDismiss}>
                     Dismiss
