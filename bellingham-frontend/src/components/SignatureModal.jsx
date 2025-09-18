@@ -64,6 +64,7 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
           className="border border-gray-300"
           width={400}
           height={200}
+          data-testid="signature-canvas"
         />
         <div className="mt-2 flex justify-end gap-2">
           <Button variant="ghost" onClick={handleClear}>Clear</Button>
