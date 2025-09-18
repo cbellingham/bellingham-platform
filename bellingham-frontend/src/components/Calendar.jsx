@@ -4,7 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const ContractCalendar = () => {
     const navigate = useNavigate();

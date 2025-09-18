@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import BidChart from "./BidChart";
 import Button from "./ui/Button";
 import api from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const ContractDetailsPanel = ({
     contract,

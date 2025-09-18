@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const Settings = () => {
     const navigate = useNavigate();

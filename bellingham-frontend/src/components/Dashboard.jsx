@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import api from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const Dashboard = () => {
     const [contracts, setContracts] = useState([]);

@@ -4,7 +4,7 @@ import React, { useState, useContext } from "react";
 import LoginImage from "../assets/login.png";
 import Button from "./ui/Button";
 import api from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from '../context';
 
 const Login = () => {
     const [username, setUsername] = useState("");
