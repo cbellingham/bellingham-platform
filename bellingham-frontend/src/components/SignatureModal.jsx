@@ -1,17 +1,57 @@
-import React, { useRef } from 'react';
-import SignatureCanvas from 'react-signature-canvas';
+import React, { useEffect, useRef } from 'react';
+import SignaturePad from 'signature_pad';
 import Button from './ui/Button';
 
 const SignatureModal = ({ onConfirm, onCancel }) => {
-  const sigRef = useRef(null);
+  const canvasRef = useRef(null);
+  const signaturePadRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+
+    const context = canvas.getContext('2d');
+    const width = 400;
+    const height = 200;
+
+    const resizeCanvas = () => {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (context) {
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.scale(ratio, ratio);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    };
+
+    resizeCanvas();
+
+    const signaturePad = new SignaturePad(canvas, {
+      penColor: 'black',
+    });
+
+    signaturePadRef.current = signaturePad;
+
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      signaturePad.off();
+      signaturePadRef.current = null;
+    };
+  }, []);
 
   const handleClear = () => {
-    sigRef.current && sigRef.current.clear();
+    signaturePadRef.current && signaturePadRef.current.clear();
   };
 
   const handleSave = () => {
-    if (sigRef.current && !sigRef.current.isEmpty()) {
-      const data = sigRef.current.toDataURL();
+    if (signaturePadRef.current && !signaturePadRef.current.isEmpty()) {
+      const data = signaturePadRef.current.toDataURL();
       onConfirm(data);
     }
   };
@@ -19,10 +59,11 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-4 rounded shadow-md">
-        <SignatureCanvas
-          ref={sigRef}
-          penColor="black"
-          canvasProps={{ width: 400, height: 200, className: 'border border-gray-300' }}
+        <canvas
+          ref={canvasRef}
+          className="border border-gray-300"
+          width={400}
+          height={200}
         />
         <div className="mt-2 flex justify-end gap-2">
           <Button variant="ghost" onClick={handleClear}>Clear</Button>
