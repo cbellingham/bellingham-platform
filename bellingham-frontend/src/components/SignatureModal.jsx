@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import SignaturePad from 'signature_pad/dist/signature_pad.mjs';
+import SignaturePad from 'signature_pad';
 import Button from './ui/Button';
 
 const SignatureModal = ({ onConfirm, onCancel }) => {
