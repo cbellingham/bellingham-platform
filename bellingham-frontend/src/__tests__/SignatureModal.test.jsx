@@ -1,77 +1,57 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import SignatureModal from '../components/SignatureModal';
 
-const originalCanvasProps = {
-  getContext: HTMLCanvasElement.prototype.getContext,
-  toDataURL: HTMLCanvasElement.prototype.toDataURL,
-  getBoundingClientRect: HTMLCanvasElement.prototype.getBoundingClientRect,
-  setPointerCapture: HTMLCanvasElement.prototype.setPointerCapture,
-  releasePointerCapture: HTMLCanvasElement.prototype.releasePointerCapture,
-  hasPointerCapture: HTMLCanvasElement.prototype.hasPointerCapture,
-};
+vi.mock('signature_pad');
+import SignaturePad from 'signature_pad';
+
+const clearSpy = vi.spyOn(SignaturePad.prototype, 'clear');
+const isEmptySpy = vi.spyOn(SignaturePad.prototype, 'isEmpty');
+const toDataURLSpy = vi.spyOn(SignaturePad.prototype, 'toDataURL');
+
+const originalGetContext = HTMLCanvasElement.prototype.getContext;
 
 beforeAll(() => {
   HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
     setTransform: vi.fn(),
     scale: vi.fn(),
-    clearRect: vi.fn(),
-    beginPath: vi.fn(),
-    moveTo: vi.fn(),
-    lineTo: vi.fn(),
-    stroke: vi.fn(),
-    closePath: vi.fn(),
-    lineCap: 'round',
-    lineJoin: 'round',
-    strokeStyle: 'black',
-    lineWidth: 2,
   }));
-  HTMLCanvasElement.prototype.toDataURL = vi.fn(() => 'mock-data-url');
-  HTMLCanvasElement.prototype.getBoundingClientRect = vi.fn(() => ({
-    left: 0,
-    top: 0,
-    width: 400,
-    height: 200,
-  }));
-  HTMLCanvasElement.prototype.setPointerCapture = vi.fn();
-  HTMLCanvasElement.prototype.releasePointerCapture = vi.fn();
-  HTMLCanvasElement.prototype.hasPointerCapture = vi.fn(() => true);
+});
+
+beforeEach(() => {
+  clearSpy.mockClear();
+  isEmptySpy.mockReset().mockReturnValue(false);
+  toDataURLSpy.mockReset().mockReturnValue('mock-data-url');
+});
+
+afterEach(() => {
+  cleanup();
 });
 
 afterAll(() => {
-  HTMLCanvasElement.prototype.getContext = originalCanvasProps.getContext;
-  HTMLCanvasElement.prototype.toDataURL = originalCanvasProps.toDataURL;
-  HTMLCanvasElement.prototype.getBoundingClientRect =
-    originalCanvasProps.getBoundingClientRect;
-  HTMLCanvasElement.prototype.setPointerCapture =
-    originalCanvasProps.setPointerCapture;
-  HTMLCanvasElement.prototype.releasePointerCapture =
-    originalCanvasProps.releasePointerCapture;
-  HTMLCanvasElement.prototype.hasPointerCapture =
-    originalCanvasProps.hasPointerCapture;
+  HTMLCanvasElement.prototype.getContext = originalGetContext;
 });
 
 test('invokes handlers for actions', () => {
   const onConfirm = vi.fn();
   const onCancel = vi.fn();
   render(<SignatureModal onConfirm={onConfirm} onCancel={onCancel} />);
-  const canvas = screen.getByTestId('signature-canvas');
-
-  fireEvent.pointerDown(canvas, { clientX: 10, clientY: 10, pointerId: 1 });
-  fireEvent.pointerMove(canvas, { clientX: 20, clientY: 20, pointerId: 1 });
-  fireEvent.pointerUp(canvas, { clientX: 20, clientY: 20, pointerId: 1 });
 
   fireEvent.click(screen.getByText('Save'));
+  expect(isEmptySpy).toHaveBeenCalled();
   expect(onConfirm).toHaveBeenCalledWith('mock-data-url');
+
   fireEvent.click(screen.getByText('Cancel'));
   expect(onCancel).toHaveBeenCalled();
+
   fireEvent.click(screen.getByText('Clear'));
-  expect(screen.getByTestId('signature-canvas')).toBeInTheDocument();
+  expect(clearSpy).toHaveBeenCalled();
 });
 
 test('displays error if attempting to save without a signature', () => {
+  isEmptySpy.mockReturnValue(true);
   const onConfirm = vi.fn();
   render(<SignatureModal onConfirm={onConfirm} onCancel={vi.fn()} />);
 
