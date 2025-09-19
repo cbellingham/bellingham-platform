@@ -8,6 +8,7 @@ import Layout from "./Layout";
 import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "./NotificationBanner";
+import SignatureModal from "./SignatureModal";
 
 const Buy = () => {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Buy = () => {
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
     const [sellerFilter, setSellerFilter] = useState("");
+    const [pendingContractId, setPendingContractId] = useState(null);
 
     const { logout } = useContext(AuthContext);
 
@@ -66,6 +68,23 @@ const Buy = () => {
                 message: status ? `Unable to complete purchase (${status}): ${message}` : message,
             });
         }
+    };
+
+    const openSignatureModal = (contractId) => {
+        setPendingContractId(contractId);
+    };
+
+    const handleSignatureConfirm = async () => {
+        if (!pendingContractId) {
+            return;
+        }
+
+        await handleBuy(pendingContractId);
+        setPendingContractId(null);
+    };
+
+    const handleSignatureCancel = () => {
+        setPendingContractId(null);
     };
 
     const handleLogout = () => {
@@ -163,7 +182,7 @@ const Buy = () => {
                                             variant="success"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleBuy(contract.id);
+                                                openSignatureModal(contract.id);
                                             }}
                                             className="px-2 py-1"
                                         >
@@ -180,6 +199,12 @@ const Buy = () => {
                         onClose={() => setSelectedContract(null)}
                     />
                 </main>
+                {pendingContractId && (
+                    <SignatureModal
+                        onConfirm={handleSignatureConfirm}
+                        onCancel={handleSignatureCancel}
+                    />
+                )}
         </Layout>
         </>
     );
