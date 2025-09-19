@@ -13,6 +13,7 @@ const Buy = () => {
     const navigate = useNavigate();
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
+    const [feedback, setFeedback] = useState(null);
     const [selectedContract, setSelectedContract] = useState(null);
     const [search, setSearch] = useState("");
     const [minPrice, setMinPrice] = useState("");
@@ -46,20 +47,39 @@ const Buy = () => {
     const [pendingBuyId, setPendingBuyId] = useState(null);
 
     const handleBuy = (contractId) => {
+        setFeedback(null);
         setPendingBuyId(contractId);
         setShowSignature(true);
     };
 
     const confirmBuy = async (signature) => {
         const contractId = pendingBuyId;
+        if (!contractId) {
+            setFeedback({ type: "error", message: "We couldn't determine which contract to purchase." });
+            setShowSignature(false);
+            setPendingBuyId(null);
+            return;
+        }
+
         try {
-            await api.post(`/api/contracts/${contractId}/buy`, { signature });
-            alert("Contract purchased successfully!");
+            const response = await api.post(`/api/contracts/${contractId}/buy`, { signature });
+            const purchased = response?.data;
+            setFeedback({
+                type: "success",
+                message: purchased?.title
+                    ? `Contract "${purchased.title}" purchased successfully!`
+                    : "Contract purchased successfully!",
+            });
             setContracts((prev) => prev.filter((contract) => contract.id !== contractId));
             setSelectedContract((prev) => (prev && prev.id === contractId ? null : prev));
         } catch (err) {
             console.error(err);
-            alert("Failed to purchase contract.");
+            const status = err.response?.status;
+            const message = err.response?.data?.message || err.message || "Failed to purchase contract.";
+            setFeedback({
+                type: "error",
+                message: status ? `Unable to complete purchase (${status}): ${message}` : message,
+            });
         } finally {
             setShowSignature(false);
             setPendingBuyId(null);
@@ -92,6 +112,15 @@ const Buy = () => {
         <Layout onLogout={handleLogout}>
             <main className="flex-1 p-8 overflow-auto">
                 <h1 className="text-3xl font-bold mb-6">Available Contracts</h1>
+                {feedback && (
+                    <p
+                        className={`mb-4 ${
+                            feedback.type === "error" ? "text-red-500" : "text-green-500"
+                        }`}
+                    >
+                        {feedback.message}
+                    </p>
+                )}
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 <div className="mb-4 flex flex-wrap gap-4">
                         <input

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import SignatureModal from "./SignatureModal";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
@@ -99,19 +99,22 @@ const Sell = () => {
     const [message, setMessage] = useState("");
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const loadContracts = useCallback(async () => {
+        try {
+            const res = await api.get(`/api/contracts/my`);
+            setContracts(res.data.content);
+            setError("");
+        } catch (err) {
+            console.error(err);
+            setError("Failed to load contracts.");
+        }
+    }, []);
 
     useEffect(() => {
-        const fetchContracts = async () => {
-            try {
-                const res = await api.get(`/api/contracts/my`);
-                setContracts(res.data.content);
-            } catch (err) {
-                console.error(err);
-                setError("Failed to load contracts.");
-            }
-        };
-        fetchContracts();
-    }, []);
+        loadContracts();
+    }, [loadContracts]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -126,6 +129,7 @@ const Sell = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
 
         const data = {
             title: form.title,
@@ -148,13 +152,32 @@ const Sell = () => {
         }
         setPendingData(data);
         setShowSignature(true);
+        setMessage("");
     };
 
     const submitWithSignature = async (signature) => {
+        if (isSubmitting) return;
+        if (!pendingData) {
+            setMessage("❌ Something went wrong while preparing your contract. Please try again.");
+            setShowSignature(false);
+            return;
+        }
+
+        setIsSubmitting(true);
         try {
             const payload = { ...pendingData, sellerSignature: signature };
-            await api.post(`/api/contracts`, payload);
-            setMessage("✅ Data contract submitted!");
+            const response = await api.post(`/api/contracts`, payload);
+            const savedContract = response?.data;
+            if (savedContract) {
+                setContracts((prev) => [savedContract, ...prev]);
+            } else {
+                await loadContracts();
+            }
+            setMessage(
+                savedContract?.title
+                    ? `✅ "${savedContract.title}" has been listed successfully!`
+                    : "✅ Data contract submitted!"
+            );
             setForm({
                 effectiveDate: "",
                 sellerFullName: "",
@@ -173,9 +196,16 @@ const Sell = () => {
             });
             setSnippet(null);
         } catch (err) {
-            setMessage("❌ Submission failed.");
             console.error(err);
+            const status = err.response?.status;
+            const message = err.response?.data?.message || err.message || "Submission failed.";
+            setMessage(
+                status
+                    ? `❌ Submission failed (${status}): ${message}`
+                    : `❌ Submission failed: ${message}`
+            );
         } finally {
+            setIsSubmitting(false);
             setShowSignature(false);
             setPendingData(null);
         }
@@ -355,8 +385,8 @@ const Sell = () => {
                         accept=".csv,.json,.txt"
                     />
                 </div>
-                <Button type="submit" variant="success">
-                    Submit Contract
+                <Button type="submit" variant="success" disabled={isSubmitting}>
+                    {isSubmitting ? "Submitting..." : "Submit Contract"}
                 </Button>
             </form>
 
