@@ -1,6 +1,6 @@
 // src/components/Buy.jsx
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import api from "../utils/api";
 import { AuthContext } from '../context';
 import ContractDetailsPanel from "./ContractDetailsPanel";
@@ -8,12 +8,14 @@ import Layout from "./Layout";
 import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
 import SignatureModal from "./SignatureModal";
+import BidModal from "./BidModal";
+import NotificationBanner from "./NotificationBanner";
 
 const Buy = () => {
     const navigate = useNavigate();
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
-    const [feedback, setFeedback] = useState(null);
+    const [notification, setNotification] = useState(null);
     const [selectedContract, setSelectedContract] = useState(null);
     const [search, setSearch] = useState("");
     const [minPrice, setMinPrice] = useState("");
@@ -22,32 +24,35 @@ const Buy = () => {
 
     const { logout } = useContext(AuthContext);
 
-    useEffect(() => {
-        const fetchContracts = async () => {
-            try {
-                const res = await api.get(`/api/contracts/available`);
-                setContracts(res.data.content);
-            } catch (err) {
-                console.error(err);
-                if (err.response) {
-                    const status = err.response.status;
-                    const message = err.response.data?.message || err.message || "";
-                    setError(
-                        `Failed to fetch contracts (${status}${message ? `: ${message}` : ""})`
-                    );
-                } else {
-                    setError("Failed to fetch contracts");
-                }
+    const fetchContracts = useCallback(async () => {
+        try {
+            const res = await api.get(`/api/contracts/available`);
+            setContracts(res.data.content);
+        } catch (err) {
+            console.error(err);
+            if (err.response) {
+                const status = err.response.status;
+                const message = err.response.data?.message || err.message || "";
+                setError(
+                    `Failed to fetch contracts (${status}${message ? `: ${message}` : ""})`
+                );
+            } else {
+                setError("Failed to fetch contracts");
             }
-        };
-        fetchContracts();
+        }
     }, []);
+
+    useEffect(() => {
+        fetchContracts();
+    }, [fetchContracts]);
 
     const [showSignature, setShowSignature] = useState(false);
     const [pendingBuyId, setPendingBuyId] = useState(null);
+    const [showBidModal, setShowBidModal] = useState(false);
+    const [pendingBidId, setPendingBidId] = useState(null);
 
     const handleBuy = (contractId) => {
-        setFeedback(null);
+        setNotification(null);
         setPendingBuyId(contractId);
         setShowSignature(true);
     };
@@ -55,7 +60,7 @@ const Buy = () => {
     const confirmBuy = async (signature) => {
         const contractId = pendingBuyId;
         if (!contractId) {
-            setFeedback({ type: "error", message: "We couldn't determine which contract to purchase." });
+            setNotification({ type: "error", message: "We couldn't determine which contract to purchase." });
             setShowSignature(false);
             setPendingBuyId(null);
             return;
@@ -64,25 +69,62 @@ const Buy = () => {
         try {
             const response = await api.post(`/api/contracts/${contractId}/buy`, { signature });
             const purchased = response?.data;
-            setFeedback({
+            setNotification({
                 type: "success",
                 message: purchased?.title
                     ? `Contract "${purchased.title}" purchased successfully!`
                     : "Contract purchased successfully!",
             });
-            setContracts((prev) => prev.filter((contract) => contract.id !== contractId));
+            await fetchContracts();
             setSelectedContract((prev) => (prev && prev.id === contractId ? null : prev));
         } catch (err) {
             console.error(err);
             const status = err.response?.status;
             const message = err.response?.data?.message || err.message || "Failed to purchase contract.";
-            setFeedback({
+            setNotification({
                 type: "error",
                 message: status ? `Unable to complete purchase (${status}): ${message}` : message,
             });
         } finally {
             setShowSignature(false);
             setPendingBuyId(null);
+        }
+    };
+
+    const handleBid = (contractId) => {
+        setNotification(null);
+        setPendingBidId(contractId);
+        setShowBidModal(true);
+    };
+
+    const submitBid = async (amount) => {
+        const contractId = pendingBidId;
+
+        if (!contractId) {
+            setNotification({ type: "error", message: "We couldn't determine which contract to bid on." });
+            setShowBidModal(false);
+            setPendingBidId(null);
+            return;
+        }
+
+        try {
+            await api.post(`/api/contracts/${contractId}/bid`, { amount });
+            setNotification({
+                type: "success",
+                message: `Bid of $${amount} submitted successfully.`,
+            });
+            await fetchContracts();
+        } catch (err) {
+            console.error(err);
+            const status = err.response?.status;
+            const message = err.response?.data?.message || err.message || "Failed to submit bid.";
+            setNotification({
+                type: "error",
+                message: status ? `Unable to submit bid (${status}): ${message}` : message,
+            });
+        } finally {
+            setShowBidModal(false);
+            setPendingBidId(null);
         }
     };
 
@@ -112,14 +154,12 @@ const Buy = () => {
         <Layout onLogout={handleLogout}>
             <main className="flex-1 p-8 overflow-auto">
                 <h1 className="text-3xl font-bold mb-6">Available Contracts</h1>
-                {feedback && (
-                    <p
-                        className={`mb-4 ${
-                            feedback.type === "error" ? "text-red-500" : "text-green-500"
-                        }`}
-                    >
-                        {feedback.message}
-                    </p>
+                {notification && (
+                    <NotificationBanner
+                        type={notification.type}
+                        message={notification.message}
+                        onDismiss={() => setNotification(null)}
+                    />
                 )}
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 <div className="mb-4 flex flex-wrap gap-4">
@@ -189,6 +229,16 @@ const Buy = () => {
                                         >
                                             Buy
                                         </Button>
+                                        <Button
+                                            variant="primary"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleBid(contract.id);
+                                            }}
+                                            className="ml-2 px-2 py-1"
+                                        >
+                                            Bid
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}
@@ -205,6 +255,12 @@ const Buy = () => {
             <SignatureModal
                 onConfirm={confirmBuy}
                 onCancel={() => setShowSignature(false)}
+            />
+        )}
+        {showBidModal && (
+            <BidModal
+                onConfirm={submitBid}
+                onCancel={() => setShowBidModal(false)}
             />
         )}
         </>
