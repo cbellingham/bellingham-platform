@@ -19,7 +19,7 @@ const Sidebar = ({ onLogout }) => {
         });
 
         return sections;
-    }, [navItems]);
+    }, []);
 
     const toggleMobile = () => setIsMobileOpen((prev) => !prev);
     const closeMobile = () => setIsMobileOpen(false);

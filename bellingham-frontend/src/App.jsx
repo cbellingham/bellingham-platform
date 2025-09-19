@@ -12,6 +12,7 @@ import Account from "./components/Account";
 import Settings from "./components/Settings";
 import History from "./components/History";
 import Logo from "./components/Logo";
+import Notifications from "./components/Notifications";
 import { AuthContext } from './context';
 
 const App = () => {
@@ -57,6 +58,10 @@ const App = () => {
             <Route
                 path="/history"
                 element={token ? <History /> : <Navigate to="/login" />}
+            />
+            <Route
+                path="/notifications"
+                element={token ? <Notifications /> : <Navigate to="/login" />}
             />
         </Routes>
         <Logo />
