@@ -60,7 +60,7 @@ class ForwardContractControllerTest {
     }
 
     @Test
-    void buyContractStoresSignature() throws Exception {
+    void buyContractStoresSignatureWhenProvided() throws Exception {
         ForwardContract contract = new ForwardContract();
         contract.setId(1L);
         contract.setStatus("Available");
@@ -78,5 +78,25 @@ class ForwardContractControllerTest {
         org.junit.jupiter.api.Assertions.assertEquals("sig", contract.getBuyerSignature());
         org.mockito.Mockito.verify(notificationService)
                 .notifyUser("seller", "Your contract Test Contract was purchased", 1L);
+    }
+
+    @Test
+    void buyContractWithoutSignatureIsAllowed() throws Exception {
+        ForwardContract contract = new ForwardContract();
+        contract.setId(2L);
+        contract.setStatus("Available");
+        contract.setTitle("Second Contract");
+        contract.setCreatorUsername("seller2");
+        given(repository.findById(2L)).willReturn(java.util.Optional.of(contract));
+        given(repository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("buyer", "pass"));
+
+        mockMvc.perform(post("/api/contracts/2/buy")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        org.junit.jupiter.api.Assertions.assertNull(contract.getBuyerSignature());
+        org.mockito.Mockito.verify(notificationService)
+                .notifyUser("seller2", "Your contract Second Contract was purchased", 2L);
     }
 }
