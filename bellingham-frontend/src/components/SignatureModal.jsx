@@ -26,7 +26,7 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
       let context = null;
       try {
         context = canvas.getContext('2d');
-      } catch (err) {
+      } catch {
         context = null;
       }
 
