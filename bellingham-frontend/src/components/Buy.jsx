@@ -7,8 +7,6 @@ import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
-import SignatureModal from "./SignatureModal";
-import BidModal from "./BidModal";
 import NotificationBanner from "./NotificationBanner";
 
 const Buy = () => {
@@ -46,28 +44,10 @@ const Buy = () => {
         fetchContracts();
     }, [fetchContracts]);
 
-    const [showSignature, setShowSignature] = useState(false);
-    const [pendingBuyId, setPendingBuyId] = useState(null);
-    const [showBidModal, setShowBidModal] = useState(false);
-    const [pendingBidId, setPendingBidId] = useState(null);
-
-    const handleBuy = (contractId) => {
+    const handleBuy = async (contractId) => {
         setNotification(null);
-        setPendingBuyId(contractId);
-        setShowSignature(true);
-    };
-
-    const confirmBuy = async (signature) => {
-        const contractId = pendingBuyId;
-        if (!contractId) {
-            setNotification({ type: "error", message: "We couldn't determine which contract to purchase." });
-            setShowSignature(false);
-            setPendingBuyId(null);
-            return;
-        }
-
         try {
-            const response = await api.post(`/api/contracts/${contractId}/buy`, { signature });
+            const response = await api.post(`/api/contracts/${contractId}/buy`, {});
             const purchased = response?.data;
             setNotification({
                 type: "success",
@@ -85,46 +65,6 @@ const Buy = () => {
                 type: "error",
                 message: status ? `Unable to complete purchase (${status}): ${message}` : message,
             });
-        } finally {
-            setShowSignature(false);
-            setPendingBuyId(null);
-        }
-    };
-
-    const handleBid = (contractId) => {
-        setNotification(null);
-        setPendingBidId(contractId);
-        setShowBidModal(true);
-    };
-
-    const submitBid = async (amount) => {
-        const contractId = pendingBidId;
-
-        if (!contractId) {
-            setNotification({ type: "error", message: "We couldn't determine which contract to bid on." });
-            setShowBidModal(false);
-            setPendingBidId(null);
-            return;
-        }
-
-        try {
-            await api.post(`/api/contracts/${contractId}/bid`, { amount });
-            setNotification({
-                type: "success",
-                message: `Bid of $${amount} submitted successfully.`,
-            });
-            await fetchContracts();
-        } catch (err) {
-            console.error(err);
-            const status = err.response?.status;
-            const message = err.response?.data?.message || err.message || "Failed to submit bid.";
-            setNotification({
-                type: "error",
-                message: status ? `Unable to submit bid (${status}): ${message}` : message,
-            });
-        } finally {
-            setShowBidModal(false);
-            setPendingBidId(null);
         }
     };
 
@@ -229,16 +169,6 @@ const Buy = () => {
                                         >
                                             Buy
                                         </Button>
-                                        <Button
-                                            variant="primary"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleBid(contract.id);
-                                            }}
-                                            className="ml-2 px-2 py-1"
-                                        >
-                                            Bid
-                                        </Button>
                                     </td>
                                 </tr>
                             ))}
@@ -251,18 +181,6 @@ const Buy = () => {
                     />
                 </main>
         </Layout>
-        {showSignature && (
-            <SignatureModal
-                onConfirm={confirmBuy}
-                onCancel={() => setShowSignature(false)}
-            />
-        )}
-        {showBidModal && (
-            <BidModal
-                onConfirm={submitBid}
-                onCancel={() => setShowBidModal(false)}
-            />
-        )}
         </>
     );
 };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
-import SignatureModal from "./SignatureModal";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
@@ -84,9 +83,6 @@ const Sell = () => {
         setAgreementModalOpen(false);
     };
 
-    const [showSignature, setShowSignature] = useState(false);
-    const [pendingData, setPendingData] = useState(null);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (currentStep < steps.length - 1) {
@@ -114,23 +110,10 @@ const Sell = () => {
         if (snippet) {
             data.termsFileName = snippet.name;
         }
-        setPendingData(data);
-        setShowSignature(true);
         setMessage("");
-    };
-
-    const submitWithSignature = async (signature) => {
-        if (isSubmitting) return;
-        if (!pendingData) {
-            setMessage("❌ Something went wrong while preparing your contract. Please try again.");
-            setShowSignature(false);
-            return;
-        }
-
         setIsSubmitting(true);
         try {
-            const payload = { ...pendingData, sellerSignature: signature };
-            const response = await api.post(`/api/contracts`, payload);
+            const response = await api.post(`/api/contracts`, data);
             const savedContract = response?.data;
             if (savedContract) {
                 setContracts((prev) => [savedContract, ...prev]);
@@ -171,8 +154,6 @@ const Sell = () => {
             );
         } finally {
             setIsSubmitting(false);
-            setShowSignature(false);
-            setPendingData(null);
         }
     };
 
@@ -454,12 +435,6 @@ const Sell = () => {
                 initialValue={form.agreementText}
                 onSave={handleAgreementSave}
                 onCancel={handleAgreementCancel}
-            />
-        )}
-        {showSignature && (
-            <SignatureModal
-                onConfirm={submitWithSignature}
-                onCancel={() => setShowSignature(false)}
             />
         )}
         </>

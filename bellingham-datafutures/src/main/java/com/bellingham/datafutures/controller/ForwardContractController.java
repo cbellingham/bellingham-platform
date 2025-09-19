@@ -174,7 +174,8 @@ public class ForwardContractController {
     }
 
     @PostMapping("/{id}/buy")
-    public ResponseEntity<ForwardContract> buy(@PathVariable Long id, @RequestBody SignatureRequest signature) {
+    public ResponseEntity<ForwardContract> buy(@PathVariable Long id,
+                                               @RequestBody(required = false) SignatureRequest signature) {
         return repository.findById(id)
                 .map(contract -> {
                     if (!"Available".equalsIgnoreCase(contract.getStatus())) {
@@ -185,7 +186,11 @@ public class ForwardContractController {
                             .getContext().getAuthentication().getName();
                     contract.setBuyerUsername(username);
                     contract.setPurchaseDate(LocalDate.now());
-                    contract.setBuyerSignature(signature.getSignature());
+                    if (signature != null) {
+                        contract.setBuyerSignature(signature.getSignature());
+                    } else {
+                        contract.setBuyerSignature(null);
+                    }
                     ForwardContract saved = repository.save(contract);
                     logActivity(saved, username, "Purchased contract");
 
