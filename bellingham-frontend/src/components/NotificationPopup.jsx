@@ -26,68 +26,79 @@ const NotificationPopup = () => {
         return () => clearInterval(interval);
     }, [fetchNotifications]);
 
-    const markRead = useCallback(async (id) => {
-        if (!token) return;
-        try {
-            await api.post(`/api/notifications/${id}/read`);
-        } catch (err) {
-            console.error("Failed to mark notification read", err);
-        }
-    }, [token]);
+    const markRead = useCallback(
+        async (id) => {
+            if (!token) return;
+            try {
+                await api.post(`/api/notifications/${id}/read`);
+                setNotifications((prev) =>
+                    prev.map((notification) =>
+                        notification.id === id
+                            ? { ...notification, readFlag: true }
+                            : notification
+                    )
+                );
+            } catch (err) {
+                console.error("Failed to mark notification read", err);
+            }
+        },
+        [token]
+    );
 
-    const markAllUnreadAsRead = useCallback(async () => {
-        const unreadIds = notifications
-            .filter((notification) => !notification.readFlag)
-            .map((notification) => notification.id);
+    const unreadNotifications = notifications.filter(
+        (notification) => !notification.readFlag
+    );
 
-        if (!unreadIds.length) return;
+    const handleViewContracts = useCallback(
+        async (id) => {
+            await markRead(id);
+            navigate("/sell");
+        },
+        [markRead, navigate]
+    );
 
-        await Promise.all(unreadIds.map((id) => markRead(id)));
-        setNotifications((prev) =>
-            prev.map((notification) =>
-                unreadIds.includes(notification.id)
-                    ? { ...notification, readFlag: true }
-                    : notification
-            )
-        );
-    }, [markRead, notifications]);
-
-    const unreadNotifications = notifications.filter((notification) => !notification.readFlag);
-
-    const handleViewContracts = useCallback(async () => {
-        await markAllUnreadAsRead();
-        navigate("/sell");
-    }, [markAllUnreadAsRead, navigate]);
-
-    const handleDismiss = useCallback(async () => {
-        await markAllUnreadAsRead();
-    }, [markAllUnreadAsRead]);
+    const handleDismiss = useCallback(
+        async (id) => {
+            await markRead(id);
+        },
+        [markRead]
+    );
 
     if (!unreadNotifications.length) return null;
 
-    const unreadCount = unreadNotifications.length;
-    const latest = unreadNotifications[0];
-
     return (
-        <div className="fixed top-24 left-4 right-4 md:left-72 md:right-8 z-40 pointer-events-none">
-            <div className="bg-gray-800 text-white p-4 rounded shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-3 pointer-events-auto">
-                <p className="font-semibold">
-                    You have {unreadCount === 1 ? "1 unread notification" : `${unreadCount} unread notifications`}.
-                </p>
-                {latest?.message && (
-                    <p className="text-sm text-gray-300 flex-1">
-                        Latest: {latest.message}
+        <div className="pointer-events-none fixed top-28 right-6 z-40 flex max-w-xs flex-col gap-3">
+            {unreadNotifications.map((notification) => (
+                <div
+                    key={notification.id}
+                    className="pointer-events-auto w-full rounded-lg bg-gray-800 p-4 text-white shadow-xl"
+                >
+                    <p className="text-sm font-semibold">
+                        {notification.title || "New activity"}
                     </p>
-                )}
-                <div className="flex gap-2 flex-wrap">
-                    <Button variant="success" className="px-3 py-1" onClick={handleViewContracts}>
-                        View my contracts
-                    </Button>
-                    <Button variant="ghost" className="px-3 py-1" onClick={handleDismiss}>
-                        Dismiss
-                    </Button>
+                    {notification.message && (
+                        <p className="mt-1 text-sm text-gray-300">
+                            {notification.message}
+                        </p>
+                    )}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                        <Button
+                            variant="success"
+                            className="px-3 py-1 text-sm"
+                            onClick={() => handleViewContracts(notification.id)}
+                        >
+                            View contracts
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            className="px-3 py-1 text-sm"
+                            onClick={() => handleDismiss(notification.id)}
+                        >
+                            Dismiss
+                        </Button>
+                    </div>
                 </div>
-            </div>
+            ))}
         </div>
     );
 };
