@@ -11,7 +11,23 @@ test('renders navigation links from configuration', () => {
         </MemoryRouter>
     );
     navItems.forEach((item) => {
-        expect(screen.getByText(item.label)).toBeInTheDocument();
+        const matches = screen.getAllByText(item.label);
+        expect(matches.some((match) => match.getAttribute('href') === item.path)).toBe(true);
+    });
+});
+
+test('renders section headings for grouped navigation', () => {
+    render(
+        <MemoryRouter>
+            <Sidebar />
+        </MemoryRouter>
+    );
+
+    const sections = [...new Set(navItems.map((item) => item.section || 'General'))];
+
+    sections.forEach((section) => {
+        const headingMatches = screen.getAllByText(section);
+        expect(headingMatches.some((match) => match.tagName.toLowerCase() === 'p')).toBe(true);
     });
 });
 
@@ -23,4 +39,14 @@ test('highlights the active link', () => {
     );
     expect(screen.getByText('Sell')).toHaveClass('bg-gray-700');
     expect(screen.getByText('Home')).not.toHaveClass('bg-gray-700');
+});
+
+test('shows contextual action button', () => {
+    render(
+        <MemoryRouter>
+            <Sidebar />
+        </MemoryRouter>
+    );
+
+    expect(screen.getByText('New Listing')).toBeInTheDocument();
 });
