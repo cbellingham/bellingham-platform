@@ -26,19 +26,22 @@ const NotificationPopup = () => {
         return () => clearInterval(interval);
     }, [fetchNotifications]);
 
-    const markRead = async (id) => {
+    const markRead = useCallback(async (id) => {
         if (!token) return;
         try {
             await api.post(`/api/notifications/${id}/read`);
         } catch (err) {
             console.error("Failed to mark notification read", err);
         }
-    };
+    }, [token]);
 
-    const unreadNotifications = notifications.filter((notification) => !notification.readFlag);
+    const markAllUnreadAsRead = useCallback(async () => {
+        const unreadIds = notifications
+            .filter((notification) => !notification.readFlag)
+            .map((notification) => notification.id);
 
-    const handleDismiss = async () => {
-        const unreadIds = unreadNotifications.map((n) => n.id);
+        if (!unreadIds.length) return;
+
         await Promise.all(unreadIds.map((id) => markRead(id)));
         setNotifications((prev) =>
             prev.map((notification) =>
@@ -47,16 +50,23 @@ const NotificationPopup = () => {
                     : notification
             )
         );
-    };
+    }, [markRead, notifications]);
+
+    const unreadNotifications = notifications.filter((notification) => !notification.readFlag);
+
+    const handleViewContracts = useCallback(async () => {
+        await markAllUnreadAsRead();
+        navigate("/sell");
+    }, [markAllUnreadAsRead, navigate]);
+
+    const handleDismiss = useCallback(async () => {
+        await markAllUnreadAsRead();
+    }, [markAllUnreadAsRead]);
 
     if (!unreadNotifications.length) return null;
 
     const unreadCount = unreadNotifications.length;
     const latest = unreadNotifications[0];
-
-    const handleViewContracts = () => {
-        navigate("/sell");
-    };
 
     return (
         <div className="fixed top-24 left-4 right-4 md:left-72 md:right-8 z-40 pointer-events-none">
