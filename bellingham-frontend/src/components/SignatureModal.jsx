@@ -1,132 +1,93 @@
 import React, { useEffect, useRef, useState } from 'react';
+import SignaturePad from 'signature_pad';
 import Button from './ui/Button';
+
+const CANVAS_WIDTH = 400;
+const CANVAS_HEIGHT = 200;
 
 const SignatureModal = ({ onConfirm, onCancel }) => {
   const canvasRef = useRef(null);
-  const contextRef = useRef(null);
-  const isDrawingRef = useRef(false);
-  const isEmptyRef = useRef(true);
-  const ratioRef = useRef(1);
+  const signaturePadRef = useRef(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return undefined;
+    if (!canvas) {
+      return undefined;
+    }
 
-    const context = canvas.getContext('2d');
-    const width = 400;
-    const height = 200;
-
-    const resizeCanvas = () => {
+    const setupCanvas = () => {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      canvas.width = width * ratio;
-      canvas.height = height * ratio;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      canvas.width = CANVAS_WIDTH * ratio;
+      canvas.height = CANVAS_HEIGHT * ratio;
+      canvas.style.width = `${CANVAS_WIDTH}px`;
+      canvas.style.height = `${CANVAS_HEIGHT}px`;
+
+      let context = null;
+      try {
+        context = canvas.getContext('2d');
+      } catch (err) {
+        context = null;
+      }
 
       if (context) {
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.scale(ratio, ratio);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-      }
-
-      ratioRef.current = ratio;
-      isEmptyRef.current = true;
-    };
-
-    resizeCanvas();
-
-    if (context) {
-      context.lineCap = 'round';
-      context.lineJoin = 'round';
-      context.strokeStyle = 'black';
-      context.lineWidth = 2;
-      contextRef.current = context;
-    }
-
-    const getPoint = (event) => {
-      const rect = canvas.getBoundingClientRect();
-      const ratio = ratioRef.current;
-      return {
-        x: (event.clientX - rect.left) * ratio,
-        y: (event.clientY - rect.top) * ratio,
-      };
-    };
-
-    const handlePointerDown = (event) => {
-      if (!contextRef.current) return;
-      if (canvas.setPointerCapture) {
-        canvas.setPointerCapture(event.pointerId);
-      }
-      const { x, y } = getPoint(event);
-      contextRef.current.beginPath();
-      contextRef.current.moveTo(x, y);
-      isDrawingRef.current = true;
-    };
-
-    const handlePointerMove = (event) => {
-      if (!isDrawingRef.current || !contextRef.current) return;
-      const { x, y } = getPoint(event);
-      contextRef.current.lineTo(x, y);
-      contextRef.current.stroke();
-      isEmptyRef.current = false;
-    };
-
-    const endDrawing = (event) => {
-      if (!isDrawingRef.current || !contextRef.current) return;
-      handlePointerMove(event);
-      contextRef.current.closePath();
-      isDrawingRef.current = false;
-      if (
-        canvas.releasePointerCapture &&
-        canvas.hasPointerCapture &&
-        canvas.hasPointerCapture(event.pointerId)
-      ) {
-        canvas.releasePointerCapture(event.pointerId);
       }
     };
 
-    canvas.style.touchAction = 'none';
-    canvas.addEventListener('pointerdown', handlePointerDown);
-    canvas.addEventListener('pointermove', handlePointerMove);
-    canvas.addEventListener('pointerup', endDrawing);
-    canvas.addEventListener('pointerleave', endDrawing);
-    canvas.addEventListener('pointercancel', endDrawing);
+    setupCanvas();
 
-    window.addEventListener('resize', resizeCanvas);
+    const signaturePad = new SignaturePad(canvas, {
+      minWidth: 1,
+      maxWidth: 2.5,
+      penColor: '#000000',
+      backgroundColor: '#ffffff',
+    });
+
+    signaturePadRef.current = signaturePad;
+
+    const handleResize = () => {
+      setupCanvas();
+      signaturePad.clear();
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      canvas.removeEventListener('pointerdown', handlePointerDown);
-      canvas.removeEventListener('pointermove', handlePointerMove);
-      canvas.removeEventListener('pointerup', endDrawing);
-      canvas.removeEventListener('pointerleave', endDrawing);
-      canvas.removeEventListener('pointercancel', endDrawing);
-      contextRef.current = null;
+      window.removeEventListener('resize', handleResize);
+      if (signaturePadRef.current) {
+        if (typeof signaturePadRef.current.off === 'function') {
+          signaturePadRef.current.off();
+        }
+        signaturePadRef.current = null;
+      }
     };
   }, []);
 
   const handleClear = () => {
-    const canvas = canvasRef.current;
-    const context = contextRef.current;
-    if (!canvas || !context) return;
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    isEmptyRef.current = true;
+    const pad = signaturePadRef.current;
+    if (!pad) {
+      return;
+    }
+    pad.clear();
     setError('');
   };
 
   const handleSave = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const pad = signaturePadRef.current;
+    if (!pad) {
+      setError('Please provide your signature before saving.');
+      return;
+    }
 
-    if (isEmptyRef.current) {
+    if (typeof pad.isEmpty === 'function' && pad.isEmpty()) {
       setError('Please provide your signature before saving.');
       return;
     }
 
     setError('');
-    const data = canvas.toDataURL('image/png');
+    const data = pad.toDataURL('image/png');
     onConfirm(data);
   };
 

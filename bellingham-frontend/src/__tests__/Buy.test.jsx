@@ -7,6 +7,21 @@ import Buy from '../components/Buy';
 import { AuthContext } from '../context';
 import api from '../utils/api';
 
+vi.mock('signature_pad');
+
+const originalGetContext = HTMLCanvasElement.prototype.getContext;
+
+beforeAll(() => {
+  HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
+    setTransform: vi.fn(),
+    scale: vi.fn(),
+  }));
+});
+
+afterAll(() => {
+  HTMLCanvasElement.prototype.getContext = originalGetContext;
+});
+
 vi.mock('../utils/api');
 
 const renderWithProviders = (ui) => {
