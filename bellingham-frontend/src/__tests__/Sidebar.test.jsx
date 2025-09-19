@@ -12,7 +12,7 @@ test('renders navigation links from configuration', () => {
     );
     navItems.forEach((item) => {
         const matches = screen.getAllByText(item.label);
-        expect(matches.some((match) => match.getAttribute('href') === item.path)).toBe(true);
+        expect(matches.some((match) => match.closest('a')?.getAttribute('href') === item.path)).toBe(true);
     });
 });
 
@@ -37,8 +37,8 @@ test('highlights the active link', () => {
             <Sidebar />
         </MemoryRouter>
     );
-    expect(screen.getByText('Sell')).toHaveClass('bg-gray-700');
-    expect(screen.getByText('Home')).not.toHaveClass('bg-gray-700');
+    expect(screen.getByRole('link', { name: 'Sell' })).toHaveClass('bg-slate-800');
+    expect(screen.getByRole('link', { name: 'Home' })).not.toHaveClass('bg-slate-800');
 });
 
 test('shows contextual action button', () => {
