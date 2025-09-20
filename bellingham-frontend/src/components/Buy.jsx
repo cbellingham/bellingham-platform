@@ -109,104 +109,140 @@ const Buy = () => {
     });
 
     return (
-        <>
         <Layout onLogout={handleLogout}>
-            <main className="flex-1 p-8 overflow-auto">
-                <h1 className="text-3xl font-bold mb-6">Available Contracts</h1>
-                {notification && (
-                    <NotificationBanner
-                        type={notification.type}
-                        message={notification.message}
-                        onDismiss={() => setNotification(null)}
-                    />
-                )}
-                {error && <p className="text-red-500 mb-4">{error}</p>}
-                <div className="mb-4 flex flex-wrap gap-4">
-                        <input
-                            type="text"
-                            placeholder="Search by title or seller"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="p-2 bg-gray-800 rounded"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Min Price"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(e.target.value)}
-                            className="p-2 bg-gray-800 rounded w-24"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Max Price"
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(e.target.value)}
-                            className="p-2 bg-gray-800 rounded w-24"
-                        />
-                        <select
-                            value={sellerFilter}
-                            onChange={(e) => setSellerFilter(e.target.value)}
-                            className="p-2 bg-gray-800 rounded"
-                        >
-                            <option value="">All Sellers</option>
-                            {sellers.map((s) => (
-                                <option key={s} value={s}>
-                                    {s}
-                                </option>
-                            ))}
-                        </select>
+            <div className="flex flex-col gap-6 xl:flex-row">
+                <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+                    <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Trading Desk</p>
+                        <h1 className="text-3xl font-bold text-white">Available Contracts</h1>
+                        <p className="text-sm text-slate-400">
+                            Filter by counterparty, price range, or search by keyword to identify the right purchase opportunity.
+                        </p>
                     </div>
-                    <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
-                        <thead>
-                            <tr className="bg-gray-700 text-left">
-                                <th className="border p-2">Title</th>
-                                <th className="border p-2">Seller</th>
-                                <th className="border p-2">Ask Price</th>
-                                <th className="border p-2">Delivery</th>
-                                <th className="border p-2">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredContracts.map((contract) => (
-                                <tr
-                                    key={contract.id}
-                                    className="hover:bg-gray-600 cursor-pointer"
-                                    onClick={() => setSelectedContract(contract)}
-                                >
-                                    <td className="border p-2">{contract.title}</td>
-                                    <td className="border p-2">{contract.seller}</td>
-                                    <td className="border p-2">${contract.price}</td>
-                                    <td className="border p-2">{contract.deliveryDate}</td>
-                                    <td className="border p-2">
-                                        <Button
-                                            variant="success"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                openSignatureModal(contract.id);
-                                            }}
-                                            className="px-2 py-1"
-                                        >
-                                            Buy
-                                        </Button>
-                                    </td>
+
+                    {notification && (
+                        <div className="mt-6">
+                            <NotificationBanner
+                                type={notification.type}
+                                message={notification.message}
+                                onDismiss={() => setNotification(null)}
+                            />
+                        </div>
+                    )}
+                    {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+
+                    <div className="mt-6 grid gap-4 rounded-xl border border-slate-800 bg-slate-950/40 p-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Search
+                            <input
+                                type="text"
+                                placeholder="Title or seller"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Min Price
+                            <input
+                                type="number"
+                                placeholder="0"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(e.target.value)}
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Max Price
+                            <input
+                                type="number"
+                                placeholder="0"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(e.target.value)}
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Seller
+                            <select
+                                value={sellerFilter}
+                                onChange={(e) => setSellerFilter(e.target.value)}
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                            >
+                                <option value="">All Sellers</option>
+                                {sellers.map((s) => (
+                                    <option key={s} value={s}>
+                                        {s}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+
+                    <div className="mt-6 overflow-hidden rounded-xl border border-slate-800/80">
+                        <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
+                            <thead className="bg-slate-900/80 text-xs uppercase tracking-[0.18em] text-slate-400">
+                                <tr>
+                                    <th className="px-4 py-3">Title</th>
+                                    <th className="px-4 py-3">Seller</th>
+                                    <th className="px-4 py-3">Ask Price</th>
+                                    <th className="px-4 py-3">Delivery</th>
+                                    <th className="px-4 py-3">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-800/70">
+                                {filteredContracts.map((contract) => (
+                                    <tr
+                                        key={contract.id}
+                                        className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                        onClick={() => setSelectedContract(contract)}
+                                    >
+                                        <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
+                                        <td className="px-4 py-3">{contract.seller}</td>
+                                        <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
+                                        <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
+                                        <td className="px-4 py-3">
+                                            <Button
+                                                variant="success"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openSignatureModal(contract.id);
+                                                }}
+                                                className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                            >
+                                                Buy
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {filteredContracts.length === 0 && (
+                                    <tr>
+                                        <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                            No contracts match your current filters.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div className="xl:w-[360px]">
                     <ContractDetailsPanel
                         inline
+                        inlineWidth="w-full"
                         contract={selectedContract}
                         onClose={() => setSelectedContract(null)}
                     />
-                </main>
-                {pendingContractId && (
-                    <SignatureModal
-                        onConfirm={handleSignatureConfirm}
-                        onCancel={handleSignatureCancel}
-                    />
-                )}
+                </div>
+            </div>
+            {pendingContractId && (
+                <SignatureModal
+                    onConfirm={handleSignatureConfirm}
+                    onCancel={handleSignatureCancel}
+                />
+            )}
         </Layout>
-        </>
     );
 };
 

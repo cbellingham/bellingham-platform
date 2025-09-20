@@ -1,16 +1,16 @@
 import React from "react";
 import Header from "./Header";
-import Sidebar from "./Sidebar";
 import NotificationPopup from "./NotificationPopup";
 
 const Layout = ({ children, onLogout }) => (
-    <div className="flex flex-col min-h-screen font-sans bg-base text-contrast">
-        <Header />
-        <div className="flex flex-1 relative gap-0 md:gap-6 flex-col md:flex-row">
-            <Sidebar onLogout={onLogout} />
-            {children}
-            <NotificationPopup />
+    <div className="flex min-h-screen flex-col bg-slate-950 font-sans text-slate-100">
+        <Header onLogout={onLogout} />
+        <div className="flex-1">
+            <div className="mx-auto w-full max-w-7xl px-6 py-8">
+                {children}
+            </div>
         </div>
+        <NotificationPopup />
     </div>
 );
 

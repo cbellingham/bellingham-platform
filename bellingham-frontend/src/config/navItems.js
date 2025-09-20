@@ -1,4 +1,5 @@
 import {
+    BellAlertIcon,
     CalendarDaysIcon,
     ChartBarIcon,
     ClockIcon,
@@ -11,15 +12,16 @@ import {
 } from "@heroicons/react/24/outline";
 
 const navItems = [
-    { path: "/", label: "Home", section: "Overview", icon: HomeIcon },
-    { path: "/buy", label: "Buy", section: "Buyer", icon: ShoppingCartIcon },
-    { path: "/reports", label: "Reports", section: "Buyer", icon: DocumentMagnifyingGlassIcon },
-    { path: "/sell", label: "Sell", section: "Seller", icon: CurrencyDollarIcon },
-    { path: "/sales", label: "Sales", section: "Seller", icon: ChartBarIcon },
-    { path: "/calendar", label: "Calendar", section: "Operations", icon: CalendarDaysIcon },
-    { path: "/history", label: "History", section: "Operations", icon: ClockIcon },
-    { path: "/settings", label: "Settings", section: "Account", icon: Cog6ToothIcon },
-    { path: "/account", label: "Account", section: "Account", icon: UserCircleIcon },
+    { path: "/", label: "Home", icon: HomeIcon },
+    { path: "/buy", label: "Buy", icon: ShoppingCartIcon },
+    { path: "/reports", label: "Reports", icon: DocumentMagnifyingGlassIcon },
+    { path: "/sell", label: "Sell", icon: CurrencyDollarIcon },
+    { path: "/sales", label: "Sales", icon: ChartBarIcon },
+    { path: "/calendar", label: "Calendar", icon: CalendarDaysIcon },
+    { path: "/history", label: "History", icon: ClockIcon },
+    { path: "/settings", label: "Settings", icon: Cog6ToothIcon },
+    { path: "/account", label: "Account", icon: UserCircleIcon },
+    { path: "/notifications", label: "Notifications", icon: BellAlertIcon },
 ];
 
 export default navItems;
