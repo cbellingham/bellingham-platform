@@ -4,7 +4,7 @@ import logoImage from "../assets/login.png";
 const Logo = () => {
     const isLogin = window.location.pathname === "/login";
     const style = isLogin ? { right: "calc(1rem + 10px)" } : {};
-    const sizeClass = isLogin ? "w-[300px] h-[300px]" : "w-[360px] h-[360px]";
+    const sizeClass = isLogin ? "w-[180px] h-[180px]" : "w-[220px] h-[220px]";
 
     return (
         <img
