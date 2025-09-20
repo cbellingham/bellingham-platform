@@ -47,14 +47,14 @@ const Reports = () => {
         }
 
         const colors = [
-            "#4f46e5",
-            "#10b981",
-            "#f59e0b",
-            "#ef4444",
-            "#6366f1",
-            "#ec4899",
-            "#22d3ee",
+            "#34d399",
+            "#0ea5e9",
             "#a855f7",
+            "#f97316",
+            "#ef4444",
+            "#22d3ee",
+            "#facc15",
+            "#14b8a6",
         ];
 
         return {
@@ -63,7 +63,7 @@ const Reports = () => {
                 {
                     data: contracts.map((contract) => Number(contract.price || 0)),
                     backgroundColor: contracts.map((_, index) => colors[index % colors.length]),
-                    borderColor: "#111827",
+                    borderColor: "#0f172a",
                     borderWidth: 2,
                 },
             ],
@@ -76,7 +76,7 @@ const Reports = () => {
             legend: {
                 position: "right",
                 labels: {
-                    color: "#f9fafb",
+                    color: "#e2e8f0",
                     boxWidth: 16,
                     padding: 16,
                 },
@@ -140,98 +140,125 @@ const Reports = () => {
 
     return (
         <Layout onLogout={handleLogout}>
-            <main className="flex-1 p-8">
-                <h1 className="text-3xl font-bold mb-6">Purchased Contracts</h1>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
-                <div className="w-full max-w-4xl mx-auto mb-8">
-                    {contracts.length ? (
-                        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-md">
-                            <h2 className="text-xl font-semibold mb-4">Allocation Overview</h2>
-                            <div className="flex flex-col lg:flex-row items-center gap-6">
-                                <div className="w-full lg:w-1/2 max-w-lg lg:max-w-2xl mx-auto h-96">
-                                    <Pie data={pieData} options={pieOptions} />
-                                </div>
-                                <div className="w-full lg:w-1/2 space-y-2 text-sm text-gray-200">
-                                    {contracts.map((contract) => {
-                                        const price = Number(contract.price || 0);
-                                        const allocation = totalValue ? ((price / totalValue) * 100).toFixed(1) : "0.0";
+            <div className="flex flex-col gap-6 xl:flex-row">
+                <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+                    <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Analytics</p>
+                        <h1 className="text-3xl font-bold text-white">Purchased Contracts</h1>
+                        <p className="text-sm text-slate-400">
+                            Track portfolio allocation, performance, and lifecycle events across your acquired contracts.
+                        </p>
+                    </div>
+                    {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
 
-                                        return (
-                                            <div
-                                                key={contract.id}
-                                                className="bg-gray-900/60 border border-gray-700 rounded px-4 py-3"
-                                            >
-                                                <p className="font-semibold text-base">{contract.title}</p>
-                                                <p>Allocation: {allocation}% (${price.toFixed(2)})</p>
-                                                <p>Purchased: {formatDate(contract.purchaseDate)}</p>
-                                                <p>Delivery: {formatDate(contract.deliveryDate)}</p>
-                                            </div>
-                                        );
-                                    })}
+                    <div className="mt-6 grid gap-6">
+                        <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
+                            {contracts.length ? (
+                                <div className="flex flex-col gap-6 lg:flex-row">
+                                    <div className="h-72 w-full lg:h-96 lg:flex-1">
+                                        <Pie data={pieData} options={pieOptions} />
+                                    </div>
+                                    <div className="flex w-full flex-1 flex-col gap-4 text-sm text-slate-200">
+                                        {contracts.map((contract) => {
+                                            const price = Number(contract.price || 0);
+                                            const allocation = totalValue ? ((price / totalValue) * 100).toFixed(1) : "0.0";
+
+                                            return (
+                                                <div
+                                                    key={contract.id}
+                                                    className="rounded-xl border border-slate-800/80 bg-slate-900/60 px-4 py-3"
+                                                >
+                                                    <p className="text-base font-semibold text-white">{contract.title}</p>
+                                                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
+                                                        Allocation {allocation}%
+                                                    </p>
+                                                    <p className="text-sm text-slate-300">Value ${price.toFixed(2)}</p>
+                                                    <p className="text-sm text-slate-300">Purchased {formatDate(contract.purchaseDate)}</p>
+                                                    <p className="text-sm text-slate-300">Delivery {formatDate(contract.deliveryDate)}</p>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="rounded-xl border border-dashed border-slate-700/60 p-8 text-center text-slate-400">
+                                    No purchased contracts yet. Acquired contracts will appear here.
+                                </div>
+                            )}
                         </div>
-                    ) : (
-                        <div className="text-center text-gray-300 border border-dashed border-gray-600 rounded-lg p-8">
-                            <p>No purchased contracts yet. Acquired contracts will appear here.</p>
+
+                        <div className="overflow-hidden rounded-2xl border border-slate-800/80">
+                            <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
+                                <thead className="bg-slate-900/80 text-xs uppercase tracking-[0.18em] text-slate-400">
+                                    <tr>
+                                        <th className="px-4 py-3">Title</th>
+                                        <th className="px-4 py-3">Seller</th>
+                                        <th className="px-4 py-3">Ask Price</th>
+                                        <th className="px-4 py-3">Delivery</th>
+                                        <th className="px-4 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-800/70">
+                                    {contracts.map((contract) => (
+                                        <tr
+                                            key={contract.id}
+                                            className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                            onClick={() => setSelectedContract(contract)}
+                                        >
+                                            <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
+                                            <td className="px-4 py-3">{contract.seller}</td>
+                                            <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
+                                            <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex flex-wrap gap-2">
+                                                    <Button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleListForSale(contract.id);
+                                                        }}
+                                                        className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                                    >
+                                                        List for Sale
+                                                    </Button>
+                                                    <Button
+                                                        variant="danger"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleCloseout(contract.id);
+                                                        }}
+                                                        className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                                    >
+                                                        Closeout
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {contracts.length === 0 && (
+                                        <tr>
+                                            <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                No purchased contracts available.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
-                    )}
+
+                        <p className="text-lg font-semibold text-emerald-200">
+                            Portfolio Value ${totalValue.toFixed(2)}
+                        </p>
+                    </div>
+                </section>
+                <div className="xl:w-[360px]">
+                    <ContractDetailsPanel
+                        inline
+                        inlineWidth="w-full"
+                        contract={selectedContract}
+                        onClose={() => setSelectedContract(null)}
+                    />
                 </div>
-                <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
-                    <thead>
-                        <tr className="bg-gray-700 text-left">
-                            <th className="border p-2">Title</th>
-                            <th className="border p-2">Seller</th>
-                            <th className="border p-2">Ask Price</th>
-                            <th className="border p-2">Delivery</th>
-                            <th className="border p-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {contracts.map((contract) => (
-                            <tr
-                                key={contract.id}
-                                className="hover:bg-gray-600 cursor-pointer"
-                                onClick={() => setSelectedContract(contract)}
-                            >
-                                <td className="border p-2">{contract.title}</td>
-                                <td className="border p-2">{contract.seller}</td>
-                                <td className="border p-2">${contract.price}</td>
-                                <td className="border p-2">{contract.deliveryDate}</td>
-                                <td className="border p-2">
-                                    <Button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleListForSale(contract.id);
-                                        }}
-                                        className="px-2 py-1"
-                                    >
-                                        List for Sale
-                                    </Button>
-                                    <Button
-                                        variant="danger"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleCloseout(contract.id);
-                                        }}
-                                        className="ml-2 px-2 py-1"
-                                    >
-                                        Closeout
-                                    </Button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <p className="mt-4 text-lg font-semibold">
-                    Total Value: ${totalValue.toFixed(2)}
-                </p>
-                <ContractDetailsPanel
-                    inline
-                    contract={selectedContract}
-                    onClose={() => setSelectedContract(null)}
-                />
-            </main>
+            </div>
         </Layout>
     );
 };

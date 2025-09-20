@@ -7,6 +7,10 @@ import { AuthContext } from '../context';
 import AgreementEditorModal from "./AgreementEditorModal";
 import contractTemplate from "../config/contractTemplate";
 
+const inputClasses =
+    "mt-1 w-full rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none";
+const labelClasses = "block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
+
 const Sell = () => {
     const navigate = useNavigate();
     const { logout } = useContext(AuthContext);
@@ -171,272 +175,297 @@ const Sell = () => {
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <label className="block text-sm font-medium">Effective Date</label>
+                            <label className={labelClasses}>
+                                Effective Date
                                 <input
                                     type="date"
                                     name="effectiveDate"
                                     value={form.effectiveDate}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
+                                    className={inputClasses}
                                     required
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium">Platform Name</label>
+                            </label>
+                            <label className={labelClasses}>
+                                Platform Name
                                 <input
                                     type="text"
                                     name="platformName"
                                     value={form.platformName}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
+                                    className={inputClasses}
                                     required
                                 />
-                            </div>
+                            </label>
                         </div>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <label className="block text-sm font-medium">Title</label>
+                            <label className={labelClasses}>
+                                Listing Title
                                 <input
                                     type="text"
                                     name="title"
                                     value={form.title}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
+                                    className={inputClasses}
                                     required
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium">Ask Price ($)</label>
+                            </label>
+                            <label className={labelClasses}>
+                                Asking Price
                                 <input
                                     type="number"
+                                    min="0"
+                                    step="0.01"
                                     name="price"
                                     value={form.price}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
+                                    className={inputClasses}
                                     required
                                 />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium">Data Description</label>
-                            <input
-                                type="text"
-                                name="dataDescription"
-                                value={form.dataDescription}
-                                onChange={handleChange}
-                                className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                required
-                            />
+                            </label>
                         </div>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <label className="block text-sm font-medium">Seller Full Name</label>
+                            <label className={labelClasses}>
+                                Seller Full Name
                                 <input
                                     type="text"
                                     name="sellerFullName"
                                     value={form.sellerFullName}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
+                                    className={inputClasses}
                                     required
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium">Seller Entity Type</label>
+                            </label>
+                            <label className={labelClasses}>
+                                Seller Entity Type
                                 <input
                                     type="text"
                                     name="sellerEntityType"
                                     value={form.sellerEntityType}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                    required
+                                    className={inputClasses}
                                 />
-                            </div>
+                            </label>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium">Seller Address</label>
-                            <input
-                                type="text"
+                        <label className={labelClasses}>
+                            Seller Address
+                            <textarea
                                 name="sellerAddress"
                                 value={form.sellerAddress}
                                 onChange={handleChange}
-                                className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                required
+                                className={`${inputClasses} min-h-[100px]`}
                             />
-                        </div>
+                        </label>
                     </div>
                 );
             case "buyer":
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <label className="block text-sm font-medium">Buyer Full Name</label>
+                            <label className={labelClasses}>
+                                Buyer Full Name
                                 <input
                                     type="text"
                                     name="buyerFullName"
                                     value={form.buyerFullName}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                    required
+                                    className={inputClasses}
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium">Buyer Entity Type</label>
+                            </label>
+                            <label className={labelClasses}>
+                                Buyer Entity Type
                                 <input
                                     type="text"
                                     name="buyerEntityType"
                                     value={form.buyerEntityType}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                    required
+                                    className={inputClasses}
                                 />
-                            </div>
+                            </label>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium">Buyer Address</label>
-                            <input
-                                type="text"
+                        <label className={labelClasses}>
+                            Buyer Address
+                            <textarea
                                 name="buyerAddress"
                                 value={form.buyerAddress}
                                 onChange={handleChange}
-                                className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                required
+                                className={`${inputClasses} min-h-[100px]`}
                             />
-                        </div>
+                        </label>
+                        <label className={labelClasses}>
+                            Data Description
+                            <textarea
+                                name="dataDescription"
+                                value={form.dataDescription}
+                                onChange={handleChange}
+                                className={`${inputClasses} min-h-[120px]`}
+                                placeholder="Outline the dataset content, granularity, and key attributes"
+                            />
+                        </label>
                     </div>
                 );
             case "delivery":
-            default:
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <label className="block text-sm font-medium">Delivery Date</label>
+                            <label className={labelClasses}>
+                                Delivery Date
                                 <input
                                     type="date"
                                     name="deliveryDate"
                                     value={form.deliveryDate}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                    required
+                                    className={inputClasses}
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium">Delivery Format</label>
+                            </label>
+                            <label className={labelClasses}>
+                                Delivery Format
                                 <input
                                     type="text"
                                     name="deliveryFormat"
                                     value={form.deliveryFormat}
                                     onChange={handleChange}
-                                    className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                    required
+                                    className={inputClasses}
                                 />
-                            </div>
+                            </label>
                         </div>
-                        <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                                <div>
-                                    <h3 className="text-lg font-semibold">Agreement preview</h3>
-                                    <p className="text-sm text-gray-400">Review the key terms before submitting.</p>
-                                </div>
-                                <Button type="button" onClick={openAgreementModal} className="self-start" variant="primary">
-                                    Edit terms
-                                </Button>
-                            </div>
-                            <div className="mt-3 text-sm text-gray-300 whitespace-pre-line max-h-56 overflow-y-auto border border-gray-700 rounded p-3 bg-gray-900">
-                                {form.agreementText}
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium">Upload Data Snippet</label>
+                        <label className={labelClasses}>
+                            Upload Supporting Terms
                             <input
                                 type="file"
                                 onChange={handleFileChange}
-                                className="w-full p-2 mt-1 bg-gray-800 rounded"
-                                accept=".csv,.json,.txt"
+                                className={inputClasses}
                             />
+                        </label>
+                        <div className="space-y-2">
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Agreement Draft</p>
+                            <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 text-sm text-slate-200">
+                                <p className="mb-3 text-slate-300">
+                                    Review or update the legal agreement that will govern this contract. Buyers will receive this
+                                    text as part of the execution workflow.
+                                </p>
+                                <Button type="button" onClick={openAgreementModal} className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                    Edit Agreement
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 );
+            default:
+                return null;
         }
     };
 
     return (
         <>
-        <Layout onLogout={handleLogout}>
-            <main className="flex-1 p-8">
-                <h1 className="text-3xl font-bold mb-6">Sell Your Data Contract</h1>
-                {message && <p className="mb-4">{message}</p>}
-                <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
-                    <div>
-                        <div className="flex items-baseline justify-between mb-2">
-                            <p className="text-sm text-gray-400">Step {currentStep + 1} of {steps.length}</p>
-                            <span className="text-base font-medium">{steps[currentStep].title}</span>
+            <Layout onLogout={handleLogout}>
+                <div className="flex flex-col gap-8">
+                    <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+                        <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Primary Listing</p>
+                            <h1 className="text-3xl font-bold text-white">Sell Your Data Contract</h1>
+                            <p className="text-sm text-slate-400">
+                                Provide the core commercial terms, delivery requirements, and legal agreement to list a new contract.
+                            </p>
                         </div>
-                        <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-green-500 transition-all duration-300"
-                                style={{ width: `${progressPercentage}%` }}
-                            />
+                        {message && (
+                            <p className="mt-4 rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-3 text-sm text-slate-200">
+                                {message}
+                            </p>
+                        )}
+                        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+                            <div>
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                                        Step {currentStep + 1} of {steps.length}
+                                    </p>
+                                    <span className="text-sm font-semibold text-white">{steps[currentStep].title}</span>
+                                </div>
+                                <div className="mt-2 h-2 w-full overflow-hidden rounded-full border border-slate-800/60 bg-slate-950/60">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300"
+                                        style={{ width: `${progressPercentage}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            {renderStepContent()}
+
+                            <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
+                                {currentStep > 0 ? (
+                                    <Button type="button" variant="ghost" onClick={goToPreviousStep} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                        Back
+                                    </Button>
+                                ) : (
+                                    <span />
+                                )}
+                                {currentStep < steps.length - 1 ? (
+                                    <Button type="button" onClick={goToNextStep} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                        Next
+                                    </Button>
+                                ) : (
+                                    <Button type="submit" variant="success" disabled={isSubmitting} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                        {isSubmitting ? "Submitting..." : "Submit Contract"}
+                                    </Button>
+                                )}
+                            </div>
+                        </form>
+                    </section>
+
+                    <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+                        <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Portfolio</p>
+                            <h2 className="text-2xl font-bold text-white">My Contracts</h2>
+                            <p className="text-sm text-slate-400">
+                                Manage the contracts you currently have listed on the marketplace.
+                            </p>
                         </div>
-                    </div>
-
-                    {renderStepContent()}
-
-                    <div className="flex items-center justify-between pt-2">
-                        {currentStep > 0 ? (
-                            <Button type="button" variant="ghost" onClick={goToPreviousStep}>
-                                Back
-                            </Button>
-                        ) : (
-                            <span />
-                        )}
-                        {currentStep < steps.length - 1 ? (
-                            <Button type="button" onClick={goToNextStep}>
-                                Next
-                            </Button>
-                        ) : (
-                            <Button type="submit" variant="success" disabled={isSubmitting}>
-                                {isSubmitting ? "Submitting..." : "Submit Contract"}
-                            </Button>
-                        )}
-                    </div>
-                </form>
-
-            <h2 className="text-2xl font-bold mt-10 mb-4">My Contracts</h2>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            <table className="w-[90%] mx-auto table-auto border border-collapse border-gray-700 bg-gray-800 text-white shadow rounded">
-                <thead>
-                    <tr className="bg-gray-700 text-left">
-                        <th className="border p-2">Title</th>
-                        <th className="border p-2">Buyer</th>
-                        <th className="border p-2">Ask Price</th>
-                        <th className="border p-2">Delivery</th>
-                        <th className="border p-2">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {contracts.map((c) => (
-                        <tr key={c.id} className="hover:bg-gray-600">
-                            <td className="border p-2">{c.title}</td>
-                            <td className="border p-2">{c.buyerUsername || "-"}</td>
-                            <td className="border p-2">${c.price}</td>
-                            <td className="border p-2">{c.deliveryDate}</td>
-                            <td className="border p-2">{c.status}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </main>
-        </Layout>
-        {isAgreementModalOpen && (
-            <AgreementEditorModal
-                initialValue={form.agreementText}
-                onSave={handleAgreementSave}
-                onCancel={handleAgreementCancel}
-            />
-        )}
+                        {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+                        <div className="mt-6 overflow-hidden rounded-xl border border-slate-800/80">
+                            <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
+                                <thead className="bg-slate-900/80 text-xs uppercase tracking-[0.18em] text-slate-400">
+                                    <tr>
+                                        <th className="px-4 py-3">Title</th>
+                                        <th className="px-4 py-3">Buyer</th>
+                                        <th className="px-4 py-3">Ask Price</th>
+                                        <th className="px-4 py-3">Delivery</th>
+                                        <th className="px-4 py-3">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-800/70">
+                                    {contracts.map((c) => (
+                                        <tr key={c.id} className="bg-slate-950/40">
+                                            <td className="px-4 py-3 font-semibold text-slate-100">{c.title}</td>
+                                            <td className="px-4 py-3">{c.buyerUsername || "-"}</td>
+                                            <td className="px-4 py-3 font-semibold text-emerald-300">${c.price}</td>
+                                            <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
+                                            <td className="px-4 py-3">
+                                                <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                                                    {c.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {contracts.length === 0 && (
+                                        <tr>
+                                            <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                You have not listed any contracts yet.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </Layout>
+            {isAgreementModalOpen && (
+                <AgreementEditorModal
+                    initialValue={form.agreementText}
+                    onSave={handleAgreementSave}
+                    onCancel={handleAgreementCancel}
+                />
+            )}
         </>
     );
 };
