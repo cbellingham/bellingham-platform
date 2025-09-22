@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-// Allow the frontend to call these endpoints from any host during development.
-// In production the origin should be restricted via configuration.
-@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 @RequestMapping("/api")
 public class AuthController {
 
