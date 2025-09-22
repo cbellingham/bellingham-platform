@@ -17,12 +17,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.bellingham.datafutures.config.JwtProperties;
+import com.bellingham.datafutures.controller.dto.LoginRequest;
+import com.bellingham.datafutures.controller.dto.RegisterRequest;
 import com.bellingham.datafutures.model.User;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.security.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -44,23 +47,23 @@ public class AuthController {
     private PasswordEncoder encoder;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> creds,
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest creds,
             HttpServletRequest request) {
         System.out.println("🔥 AUTH ENDPOINT HIT");
         try {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            creds.get("username"),
-                            creds.get("password")
+                            creds.getUsername(),
+                            creds.getPassword()
                     ));
-            System.out.println("✅ AUTH SUCCESSFUL for user: " + creds.get("username"));
-            String token = jwtUtil.generateToken(creds.get("username"));
+            System.out.println("✅ AUTH SUCCESSFUL for user: " + creds.getUsername());
+            String token = jwtUtil.generateToken(creds.getUsername());
             Instant expiresAt = jwtUtil.extractExpiration(token).toInstant();
 
             ResponseCookie cookie = buildSessionCookie(token, Duration.ofMillis(jwtProperties.getExpirationMs()),
                     request.isSecure());
             Map<String, Object> response = new HashMap<>();
-            response.put("username", creds.get("username"));
+            response.put("username", creds.getUsername());
             response.put("expiresAt", expiresAt.toString());
 
             return ResponseEntity.ok()
@@ -95,35 +98,33 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody Map<String, String> creds) {
-        String username = creds.get("username");
-        String password = creds.get("password");
-        if (username == null || password == null) {
-            return "Username and password required";
-        }
+    public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody RegisterRequest request) {
+        String username = request.getUsername();
         if (userRepository.findByUsername(username).isPresent()) {
-            return "Username already exists";
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "Username already exists"));
         }
         User user = new User();
         user.setUsername(username);
-        user.setPassword(encoder.encode(password));
+        user.setPassword(encoder.encode(request.getPassword()));
         user.setRole("ROLE_USER");
 
-        user.setLegalBusinessName(creds.get("legalBusinessName"));
-        user.setName(creds.get("name"));
-        user.setCountryOfIncorporation(creds.get("countryOfIncorporation"));
-        user.setTaxId(creds.get("taxId"));
-        user.setCompanyRegistrationNumber(creds.get("companyRegistrationNumber"));
-        user.setPrimaryContactName(creds.get("primaryContactName"));
-        user.setPrimaryContactEmail(creds.get("primaryContactEmail"));
-        user.setPrimaryContactPhone(creds.get("primaryContactPhone"));
-        user.setTechnicalContactName(creds.get("technicalContactName"));
-        user.setTechnicalContactEmail(creds.get("technicalContactEmail"));
-        user.setTechnicalContactPhone(creds.get("technicalContactPhone"));
-        user.setCompanyDescription(creds.get("companyDescription"));
+        user.setLegalBusinessName(request.getLegalBusinessName());
+        user.setName(request.getName());
+        user.setCountryOfIncorporation(request.getCountryOfIncorporation());
+        user.setTaxId(request.getTaxId());
+        user.setCompanyRegistrationNumber(request.getCompanyRegistrationNumber());
+        user.setPrimaryContactName(request.getPrimaryContactName());
+        user.setPrimaryContactEmail(request.getPrimaryContactEmail());
+        user.setPrimaryContactPhone(request.getPrimaryContactPhone());
+        user.setTechnicalContactName(request.getTechnicalContactName());
+        user.setTechnicalContactEmail(request.getTechnicalContactEmail());
+        user.setTechnicalContactPhone(request.getTechnicalContactPhone());
+        user.setCompanyDescription(request.getCompanyDescription());
 
         userRepository.save(user);
-        return "User registered";
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "User registered"));
     }
 
     @GetMapping("/profile")
