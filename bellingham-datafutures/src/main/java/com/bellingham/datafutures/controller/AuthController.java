@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/api")
 public class AuthController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -49,14 +53,14 @@ public class AuthController {
     @PostMapping("/authenticate")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest creds,
             HttpServletRequest request) {
-        System.out.println("🔥 AUTH ENDPOINT HIT");
+        logger.info("Authentication endpoint hit");
         try {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getUsername(),
                             creds.getPassword()
                     ));
-            System.out.println("✅ AUTH SUCCESSFUL for user: " + creds.getUsername());
+            logger.info("Authentication successful for user: {}", creds.getUsername());
             String token = jwtUtil.generateToken(creds.getUsername());
             Instant expiresAt = jwtUtil.extractExpiration(token).toInstant();
 
@@ -70,7 +74,7 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(response);
         } catch (AuthenticationException e) {
-            System.out.println("❌ AUTH FAILED: " + e.getMessage());
+            logger.warn("Authentication failed for user: {}", creds.getUsername(), e);
             throw new BadCredentialsException("Invalid username or password");
         }
     }
