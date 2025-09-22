@@ -24,7 +24,7 @@ public class NotificationController {
     }
 
     @PostMapping("/{id}/read")
-    public void markRead(@PathVariable Long id) {
-        notificationService.markRead(id);
+    public void markRead(@PathVariable Long id, Authentication authentication) {
+        notificationService.markRead(id, authentication.getName());
     }
 }

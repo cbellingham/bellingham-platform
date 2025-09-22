@@ -2,7 +2,9 @@ package com.bellingham.datafutures.service;
 
 import com.bellingham.datafutures.model.Notification;
 import com.bellingham.datafutures.repository.NotificationRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -32,8 +34,11 @@ public class NotificationService {
         return repository.findByUsernameOrderByTimestampDesc(username);
     }
 
-    public void markRead(Long id) {
+    public void markRead(Long id, String username) {
         repository.findById(id).ifPresent(n -> {
+            if (!n.getUsername().equals(username)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot modify notifications for another user");
+            }
             n.setReadFlag(true);
             repository.save(n);
         });
