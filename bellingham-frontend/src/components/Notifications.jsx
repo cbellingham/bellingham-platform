@@ -1,78 +1,32 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "./Layout";
 import Button from "./ui/Button";
-import api from "../utils/api";
-import { AuthContext } from "../context";
+import { AuthContext, useNotifications } from "../context";
 
 const Notifications = () => {
-    const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
     const navigate = useNavigate();
     const { isAuthenticated, logout } = useContext(AuthContext);
+    const {
+        notifications,
+        loading,
+        error,
+        refresh: refreshNotifications,
+        markRead,
+        markAllRead,
+        unreadCount,
+    } = useNotifications();
 
     const handleLogout = useCallback(() => {
         logout();
         navigate("/login");
     }, [logout, navigate]);
 
-    const fetchNotifications = useCallback(async () => {
-        if (!isAuthenticated) return;
-        setLoading(true);
-        setError("");
-        try {
-            const res = await api.get(`/api/notifications`);
-            setNotifications(res.data || []);
-        } catch (err) {
-            console.error("Failed to load notifications", err);
-            setError("Failed to load notifications");
-        } finally {
-            setLoading(false);
-        }
-    }, [isAuthenticated]);
-
     useEffect(() => {
         if (!isAuthenticated) {
             navigate("/login");
-            return;
         }
-        fetchNotifications();
-    }, [fetchNotifications, isAuthenticated, navigate]);
-
-    const markRead = useCallback(
-        async (id) => {
-            if (!isAuthenticated) return;
-            try {
-                await api.post(`/api/notifications/${id}/read`);
-                setNotifications((prev) =>
-                    prev.map((notification) =>
-                        notification.id === id
-                            ? { ...notification, readFlag: true }
-                            : notification
-                    )
-                );
-            } catch (err) {
-                console.error("Failed to mark notification read", err);
-            }
-        },
-        [isAuthenticated]
-    );
-
-    const markAllRead = useCallback(async () => {
-        const unreadIds = notifications
-            .filter((notification) => !notification.readFlag)
-            .map((notification) => notification.id);
-
-        if (!unreadIds.length) return;
-
-        await Promise.all(unreadIds.map((id) => markRead(id)));
-    }, [markRead, notifications]);
-
-    const unreadCount = notifications.filter(
-        (notification) => !notification.readFlag
-    ).length;
+    }, [isAuthenticated, navigate]);
 
     return (
         <Layout onLogout={handleLogout}>
@@ -89,7 +43,7 @@ const Notifications = () => {
                         <Button
                             variant="ghost"
                             className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
-                            onClick={fetchNotifications}
+                            onClick={refreshNotifications}
                         >
                             Refresh
                         </Button>
