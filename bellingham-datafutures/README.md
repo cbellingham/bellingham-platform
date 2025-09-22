@@ -60,6 +60,13 @@ spring.datasource.password=bdf_pass
 The following environment variables can be used to configure the runtime:
 
 - `server.port` – optional port the API listens on. Defaults to `8080`.
+- `APP_ADMIN_PASSWORD` – **required** bootstrap credential used to create
+  or update the initial administrative account. The value must be at
+  least 12 characters and should be unique per deployment. The
+  application refuses to start if this value is missing or a common
+  default (`admin`, `password`, `changeme`). Operators can alternately
+  provide the same value via the Spring property
+  `app.bootstrap.admin-password`.
 
 Start the service with the Maven wrapper:
 

@@ -52,19 +52,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/register-default")
-    public String registerDefaultUser() {
-        if (userRepository.findByUsername("admin").isPresent()) {
-            return "Admin already exists";
-        }
-        User user = new User();
-        user.setUsername("admin");
-        user.setPassword(encoder.encode("admin")); // bcrypt
-        user.setRole("ROLE_USER");
-        userRepository.save(user);
-        return "✅ Default user created";
-    }
-
     @PostMapping("/register")
     public String registerUser(@RequestBody Map<String, String> creds) {
         String username = creds.get("username");
