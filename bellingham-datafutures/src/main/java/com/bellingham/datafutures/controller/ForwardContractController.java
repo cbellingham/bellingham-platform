@@ -1,5 +1,6 @@
 package com.bellingham.datafutures.controller;
 
+import com.bellingham.datafutures.dto.ForwardContractCreateRequest;
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.model.ContractActivity;
 import com.bellingham.datafutures.model.SignatureRequest;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -84,7 +86,8 @@ public class ForwardContractController {
     }
 
     @PostMapping
-    public ForwardContract create(@RequestBody ForwardContract contract) {
+    public ForwardContract create(@Valid @RequestBody ForwardContractCreateRequest request) {
+        ForwardContract contract = mapToContract(request);
         contract.setStatus("Available");
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -94,6 +97,27 @@ public class ForwardContractController {
         ForwardContract saved = repository.save(contract);
         logActivity(saved, username, "Created contract");
         return saved;
+    }
+
+    private ForwardContract mapToContract(ForwardContractCreateRequest request) {
+        ForwardContract contract = new ForwardContract();
+        contract.setTitle(request.getTitle());
+        contract.setPrice(request.getPrice());
+        contract.setDeliveryDate(request.getDeliveryDate());
+        contract.setDeliveryFormat(request.getDeliveryFormat());
+        contract.setPlatformName(request.getPlatformName());
+        contract.setDataDescription(request.getDataDescription());
+        contract.setTermsFileName(request.getTermsFileName());
+        contract.setAgreementText(request.getAgreementText());
+        contract.setEffectiveDate(request.getEffectiveDate());
+        contract.setSellerFullName(request.getSellerFullName());
+        contract.setSellerEntityType(request.getSellerEntityType());
+        contract.setSellerAddress(request.getSellerAddress());
+        contract.setBuyerFullName(request.getBuyerFullName());
+        contract.setBuyerEntityType(request.getBuyerEntityType());
+        contract.setBuyerAddress(request.getBuyerAddress());
+        contract.setSellerSignature(request.getSellerSignature());
+        return contract;
     }
 
     private void fillSellerDetails(ForwardContract contract, User user) {

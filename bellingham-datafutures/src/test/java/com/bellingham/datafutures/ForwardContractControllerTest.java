@@ -1,6 +1,7 @@
 package com.bellingham.datafutures;
 
 import com.bellingham.datafutures.controller.ForwardContractController;
+import com.bellingham.datafutures.dto.ForwardContractCreateRequest;
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
@@ -18,8 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Optional;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,6 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ForwardContractControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private ForwardContractRepository repository;
@@ -57,6 +65,51 @@ class ForwardContractControllerTest {
         mockMvc.perform(get("/api/contracts/available"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Test Contract"));
+    }
+
+    @Test
+    void createContractValidatesAndMapsDto() throws Exception {
+        ForwardContractCreateRequest request = new ForwardContractCreateRequest();
+        request.setTitle("Contract");
+        request.setPrice(BigDecimal.valueOf(150));
+        request.setDeliveryDate(LocalDate.now().plusDays(5));
+        request.setDeliveryFormat("Digital");
+        request.setPlatformName("Platform");
+        request.setDataDescription("Description");
+        request.setEffectiveDate(LocalDate.now());
+        request.setAgreementText("Agreement");
+        request.setTermsFileName("terms.pdf");
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken("seller", "pass"));
+        given(userRepository.findByUsername("seller")).willReturn(Optional.empty());
+        given(repository.save(any())).willAnswer(invocation -> {
+            ForwardContract saved = invocation.getArgument(0);
+            saved.setId(99L);
+            return saved;
+        });
+
+        mockMvc.perform(post("/api/contracts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(99))
+                .andExpect(jsonPath("$.status").value("Available"))
+                .andExpect(jsonPath("$.creatorUsername").value("seller"))
+                .andExpect(jsonPath("$.title").value("Contract"));
+    }
+
+    @Test
+    void createContractRejectsInvalidPayload() throws Exception {
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken("seller", "pass"));
+
+        mockMvc.perform(post("/api/contracts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+
+        org.mockito.Mockito.verify(repository, org.mockito.Mockito.never()).save(any());
     }
 
     @Test
