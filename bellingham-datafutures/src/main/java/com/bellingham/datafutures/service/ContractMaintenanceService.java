@@ -1,11 +1,10 @@
 package com.bellingham.datafutures.service;
 
-import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import java.time.LocalDate;
-import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ContractMaintenanceService {
@@ -17,21 +16,10 @@ public class ContractMaintenanceService {
     }
 
     @Scheduled(cron = "0 0 * * * *")
+    @Transactional
     public void updateExpiredContracts() {
         LocalDate today = LocalDate.now();
-        List<ForwardContract> contracts = repository.findAll();
-        for (ForwardContract contract : contracts) {
-            LocalDate delivery = contract.getDeliveryDate();
-            if (delivery != null && delivery.isBefore(today)) {
-                String status = contract.getStatus();
-                if ("Available".equalsIgnoreCase(status)) {
-                    contract.setStatus("Void");
-                    repository.save(contract);
-                } else if ("Purchased".equalsIgnoreCase(status)) {
-                    contract.setStatus("Delivered");
-                    repository.save(contract);
-                }
-            }
-        }
+        repository.updateStatusForExpiredContracts(today, "Available", "Void");
+        repository.updateStatusForExpiredContracts(today, "Purchased", "Delivered");
     }
 }
