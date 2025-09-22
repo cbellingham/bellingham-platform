@@ -230,8 +230,11 @@ public class ForwardContractController {
         return repository.findById(id)
                 .map(contract -> {
                     String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    if (!username.equals(contract.getCreatorUsername())) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                                .<ForwardContract>build();
+                    }
                     userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
-                    contract.setCreatorUsername(username);
                     contract.setStatus("Available");
                     contract.setBuyerUsername(null);
                     contract.setPurchaseDate(null);
