@@ -3,6 +3,7 @@ package com.bellingham.datafutures;
 import com.bellingham.datafutures.model.Notification;
 import com.bellingham.datafutures.repository.NotificationRepository;
 import com.bellingham.datafutures.service.NotificationService;
+import com.bellingham.datafutures.service.NotificationStreamService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,7 +16,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(NotificationService.class)
+@Import({NotificationService.class, NotificationStreamService.class})
 @ActiveProfiles("test")
 class NotificationServiceTest {
 
@@ -56,7 +57,7 @@ class NotificationServiceTest {
         n.setTimestamp(LocalDateTime.now());
         notificationRepository.save(n);
 
-        notificationService.markRead(n.getId());
+        notificationService.markRead(n.getId(), "bob");
 
         Notification updated = notificationRepository.findById(n.getId()).orElseThrow();
         assertThat(updated.isReadFlag()).isTrue();
