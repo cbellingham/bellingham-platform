@@ -48,7 +48,7 @@ public class RegisterRequest {
     private String primaryContactEmail;
 
     @NotBlank
-    @Pattern(regexp = "^\+?[0-9 .\-()]{7,20}$",
+    @Pattern(regexp = "^\+?[-0-9 .()]{7,20}$",
             message = "Primary contact phone must be a valid international phone number")
     private String primaryContactPhone;
 
@@ -62,7 +62,7 @@ public class RegisterRequest {
     private String technicalContactEmail;
 
     @NotBlank
-    @Pattern(regexp = "^\+?[0-9 .\-()]{7,20}$",
+    @Pattern(regexp = "^\+?[-0-9 .()]{7,20}$",
             message = "Technical contact phone must be a valid international phone number")
     private String technicalContactPhone;
 
