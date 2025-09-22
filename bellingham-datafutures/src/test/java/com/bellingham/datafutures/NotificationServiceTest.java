@@ -13,7 +13,11 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import({NotificationService.class, NotificationStreamService.class})
@@ -61,5 +65,12 @@ class NotificationServiceTest {
 
         Notification updated = notificationRepository.findById(n.getId()).orElseThrow();
         assertThat(updated.isReadFlag()).isTrue();
+    }
+
+    @Test
+    void markReadThrowsWhenNotificationMissing() {
+        assertThatThrownBy(() -> notificationService.markRead(999L, "bob"))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND));
     }
 }
