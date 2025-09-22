@@ -17,3 +17,8 @@ jwt:
   rotation:
     initial-key-id: ${JWT_INITIAL_KEY_ID:local-dev-key}
     initial-secret: ${JWT_INITIAL_SECRET:dGhpc19pc19hX2xvY2FsX3Rlc3Rfc2VjcmV0X2tleV9mb3JfZGV2ZWxvcG1lbnQ=}
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:3000
