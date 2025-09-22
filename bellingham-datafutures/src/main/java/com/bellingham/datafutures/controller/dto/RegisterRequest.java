@@ -13,7 +13,7 @@ public class RegisterRequest {
 
     @NotBlank
     @Size(min = 12, max = 128, message = "Password must be between 12 and 128 characters")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[\\p{Punct}]).+$",
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).+$",
             message = "Password must include upper and lower case letters, a number, and a special character")
     private String password;
 
@@ -48,7 +48,7 @@ public class RegisterRequest {
     private String primaryContactEmail;
 
     @NotBlank
-    @Pattern(regexp = "^\+?[-0-9 .()]{7,20}$",
+    @Pattern(regexp = "^(?:\\+)?[0-9 .()\\-]{7,20}$",
             message = "Primary contact phone must be a valid international phone number")
     private String primaryContactPhone;
 
@@ -62,7 +62,7 @@ public class RegisterRequest {
     private String technicalContactEmail;
 
     @NotBlank
-    @Pattern(regexp = "^\+?[-0-9 .()]{7,20}$",
+    @Pattern(regexp = "^(?:\\+)?[0-9 .()\\-]{7,20}$",
             message = "Technical contact phone must be a valid international phone number")
     private String technicalContactPhone;
 
