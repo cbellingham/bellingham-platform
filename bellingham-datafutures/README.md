@@ -4,8 +4,45 @@ This module contains the Spring Boot API used by the platform.
 
 ## Configuration
 
-The API requires a secret key for signing JSON Web Tokens. The value is
-hard-coded in `JwtUtil` so no additional configuration is necessary.
+The API now sources its JWT signing material from configuration so each
+environment can supply its own values and rotate them without a
+deployment. Provide the following properties (environment variables
+shown in parentheses) for each runtime:
+
+- `jwt.rotation.initial-key-id` (`JWT_INITIAL_KEY_ID`) – Identifier for
+  the active signing key. Recommended format is a timestamped string such
+  as `2024-05-rotation-a`.
+- `jwt.rotation.initial-secret` (`JWT_INITIAL_SECRET`) – Base64-encoded
+  256-bit shared secret used to sign new tokens.
+- `jwt.expirationMs` – Token lifetime in milliseconds (default
+  `86400000`).
+
+On startup the application ensures an active signing key exists in the
+`jwt_signing_keys` table, inserting one with the configured ID and secret
+if necessary. This seed process only runs when no active key is present,
+allowing keys to be managed entirely in the database afterwards.
+
+### Rotation plan
+
+JWT keys are stored in the `jwt_signing_keys` table with active/revoked
+status. To rotate keys or revoke outstanding tokens without deploying:
+
+1. **Insert a new key** with a unique `key_id` and secret. You can use
+   the `JwtKeyService.rotate` method from an administrative job or run a
+   SQL insert/update directly.
+2. **Mark the previous key inactive** so newly minted tokens use the new
+   secret. The helper service sets the existing active key to inactive
+   automatically when `rotate` is called.
+3. **Verify traffic**. Tokens signed with the old key remain valid until
+   you revoke it, enabling gradual rotation.
+4. **Revoke the old key** by setting `revoked_at` and `active = false`
+   (the `JwtKeyService.revoke` helper does this). Once revoked, tokens
+   signed with that key are rejected immediately, effectively logging out
+   holders.
+
+This approach allows operators to update key state via database changes
+or scheduled jobs, satisfying the requirement to revoke tokens without
+redeploying the service.
 
 ## Running the application
 
