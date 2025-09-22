@@ -2,39 +2,71 @@ package com.bellingham.datafutures.controller.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class RegisterRequest {
 
     @NotBlank
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
 
     @NotBlank
+    @Size(min = 12, max = 128, message = "Password must be between 12 and 128 characters")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[\\p{Punct}]).+$",
+            message = "Password must include upper and lower case letters, a number, and a special character")
     private String password;
 
+    @NotBlank
+    @Size(max = 255, message = "Legal business name must be 255 characters or fewer")
     private String legalBusinessName;
 
+    @NotBlank
+    @Size(max = 255, message = "Contact name must be 255 characters or fewer")
     private String name;
 
+    @NotBlank
+    @Size(max = 100, message = "Country of incorporation must be 100 characters or fewer")
     private String countryOfIncorporation;
 
+    @NotBlank
+    @Pattern(regexp = "^[A-Za-z0-9-]{8,20}$", message = "Tax ID must be 8-20 alphanumeric characters or hyphens")
     private String taxId;
 
+    @NotBlank
+    @Pattern(regexp = "^[A-Za-z0-9-]{5,20}$",
+            message = "Company registration number must be 5-20 alphanumeric characters or hyphens")
     private String companyRegistrationNumber;
 
+    @NotBlank
+    @Size(max = 255, message = "Primary contact name must be 255 characters or fewer")
     private String primaryContactName;
 
+    @NotBlank
     @Email
+    @Size(max = 255, message = "Primary contact email must be 255 characters or fewer")
     private String primaryContactEmail;
 
+    @NotBlank
+    @Pattern(regexp = "^\+?[0-9 .\-()]{7,20}$",
+            message = "Primary contact phone must be a valid international phone number")
     private String primaryContactPhone;
 
+    @NotBlank
+    @Size(max = 255, message = "Technical contact name must be 255 characters or fewer")
     private String technicalContactName;
 
+    @NotBlank
     @Email
+    @Size(max = 255, message = "Technical contact email must be 255 characters or fewer")
     private String technicalContactEmail;
 
+    @NotBlank
+    @Pattern(regexp = "^\+?[0-9 .\-()]{7,20}$",
+            message = "Technical contact phone must be a valid international phone number")
     private String technicalContactPhone;
 
+    @Size(max = 2000, message = "Company description must be 2000 characters or fewer")
     private String companyDescription;
 
     public String getUsername() {
