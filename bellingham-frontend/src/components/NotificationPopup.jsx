@@ -21,10 +21,61 @@ const NotificationPopup = () => {
     }, [isAuthenticated]);
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            setNotifications([]);
+            return undefined;
+        }
+
         fetchNotifications();
-        const interval = setInterval(fetchNotifications, 10000);
-        return () => clearInterval(interval);
-    }, [fetchNotifications]);
+
+        if (typeof window === "undefined" || typeof window.EventSource === "undefined") {
+            return undefined;
+        }
+
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
+        let streamUrl;
+
+        try {
+            streamUrl = new URL(
+                "/api/notifications/stream",
+                baseUrl || window.location.origin
+            ).toString();
+        } catch (err) {
+            console.error("Failed to construct notification stream URL", err);
+            streamUrl = "/api/notifications/stream";
+        }
+
+        const eventSource = new EventSource(streamUrl, {
+            withCredentials: true,
+        });
+
+        const handleNotification = (event) => {
+            try {
+                const notification = JSON.parse(event.data);
+                setNotifications((prev) => {
+                    const existingIndex = prev.findIndex((n) => n.id === notification.id);
+                    if (existingIndex !== -1) {
+                        const updated = [...prev];
+                        updated[existingIndex] = { ...prev[existingIndex], ...notification };
+                        return updated;
+                    }
+                    return [notification, ...prev];
+                });
+            } catch (err) {
+                console.error("Failed to parse notification event", err);
+            }
+        };
+
+        eventSource.addEventListener("notification", handleNotification);
+        eventSource.onerror = (err) => {
+            console.error("Notification stream error", err);
+        };
+
+        return () => {
+            eventSource.removeEventListener("notification", handleNotification);
+            eventSource.close();
+        };
+    }, [fetchNotifications, isAuthenticated]);
 
     const markRead = useCallback(
         async (id) => {

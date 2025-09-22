@@ -12,9 +12,11 @@ import java.time.LocalDateTime;
 public class NotificationService {
 
     private final NotificationRepository repository;
+    private final NotificationStreamService streamService;
 
-    public NotificationService(NotificationRepository repository) {
+    public NotificationService(NotificationRepository repository, NotificationStreamService streamService) {
         this.repository = repository;
+        this.streamService = streamService;
     }
 
     public void notifyUser(String username, String message) {
@@ -27,7 +29,8 @@ public class NotificationService {
         n.setMessage(message);
         n.setTimestamp(LocalDateTime.now());
         n.setContractId(contractId);
-        repository.save(n);
+        Notification saved = repository.save(n);
+        streamService.sendNotification(username, saved);
     }
 
     public java.util.List<Notification> getNotifications(String username) {
@@ -40,7 +43,8 @@ public class NotificationService {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot modify notifications for another user");
             }
             n.setReadFlag(true);
-            repository.save(n);
+            Notification saved = repository.save(n);
+            streamService.sendNotification(username, saved);
         });
     }
 }

@@ -3,14 +3,15 @@ package com.bellingham.datafutures;
 import com.bellingham.datafutures.controller.NotificationController;
 import com.bellingham.datafutures.model.Notification;
 import com.bellingham.datafutures.service.NotificationService;
+import com.bellingham.datafutures.service.NotificationStreamService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,9 @@ class NotificationControllerTest {
 
     @MockBean
     private NotificationService notificationService;
+
+    @MockBean
+    private NotificationStreamService notificationStreamService;
 
     @Test
     void getNotificationsReturnsResults() throws Exception {
@@ -53,6 +57,20 @@ class NotificationControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.user("user")))
                 .andExpect(status().isOk());
 
-        verify(notificationService).markRead(5L);
+        verify(notificationService).markRead(5L, "user");
+    }
+
+    @Test
+    void streamRegistersEmitter() throws Exception {
+        given(notificationStreamService.subscribe("user"))
+                .willReturn(new SseEmitter(0L));
+
+        mockMvc.perform(get("/api/notifications/stream")
+                        .with(SecurityMockMvcRequestPostProcessors.user("user")))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .contentTypeCompatibleWith(org.springframework.http.MediaType.TEXT_EVENT_STREAM));
+
+        verify(notificationStreamService).subscribe("user");
     }
 }
