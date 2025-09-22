@@ -13,7 +13,7 @@ const getStoredItem = (key) => {
   }
   try {
     return window.localStorage.getItem(key);
-  } catch (error) {
+  } catch {
     return null;
   }
 };
