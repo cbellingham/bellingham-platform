@@ -38,13 +38,15 @@ public class NotificationService {
     }
 
     public void markRead(Long id, String username) {
-        repository.findById(id).ifPresent(n -> {
-            if (!n.getUsername().equals(username)) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot modify notifications for another user");
-            }
-            n.setReadFlag(true);
-            Notification saved = repository.save(n);
-            streamService.sendNotification(username, saved);
-        });
+        Notification notification = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification not found"));
+
+        if (!notification.getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot modify notifications for another user");
+        }
+
+        notification.setReadFlag(true);
+        Notification saved = repository.save(notification);
+        streamService.sendNotification(username, saved);
     }
 }
