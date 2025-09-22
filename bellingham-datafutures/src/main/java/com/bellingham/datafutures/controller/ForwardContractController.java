@@ -150,9 +150,30 @@ public class ForwardContractController {
     public ResponseEntity<ForwardContract> update(@PathVariable Long id, @RequestBody ForwardContract updated) {
         return repository.findById(id)
                 .map(existing -> {
-                    updated.setId(id);
-                    ForwardContract saved = repository.save(updated);
                     String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    if (!username.equals(existing.getCreatorUsername())) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                                .<ForwardContract>build();
+                    }
+
+                    existing.setTitle(updated.getTitle());
+                    existing.setPrice(updated.getPrice());
+                    existing.setDeliveryDate(updated.getDeliveryDate());
+                    existing.setDeliveryFormat(updated.getDeliveryFormat());
+                    existing.setPlatformName(updated.getPlatformName());
+                    existing.setDataDescription(updated.getDataDescription());
+                    existing.setTermsFileName(updated.getTermsFileName());
+                    existing.setAgreementText(updated.getAgreementText());
+                    existing.setEffectiveDate(updated.getEffectiveDate());
+                    existing.setSellerFullName(updated.getSellerFullName());
+                    existing.setSellerEntityType(updated.getSellerEntityType());
+                    existing.setSellerAddress(updated.getSellerAddress());
+                    existing.setBuyerFullName(updated.getBuyerFullName());
+                    existing.setBuyerEntityType(updated.getBuyerEntityType());
+                    existing.setBuyerAddress(updated.getBuyerAddress());
+                    existing.setSellerSignature(updated.getSellerSignature());
+
+                    ForwardContract saved = repository.save(existing);
                     logActivity(saved, username, "Updated contract");
                     return ResponseEntity.ok(saved);
                 })
