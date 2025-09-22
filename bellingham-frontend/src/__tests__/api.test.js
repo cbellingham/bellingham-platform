@@ -1,22 +1,33 @@
-/* eslint-env jest */
+import { describe, expect, test, vi } from 'vitest';
 import api from '../utils/api';
 
-test('attaches auth header when token exists', async () => {
-  localStorage.setItem('token', 'testtoken');
-  await api.get('/test', {
-    adapter: (config) => {
-      expect(config.headers.Authorization).toBe('Bearer testtoken');
-      return Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config });
-    },
+describe('api utility', () => {
+  test('requests include credentials for cookie-based auth', async () => {
+    await api.get('/test', {
+      adapter: (config) => {
+        expect(config.withCredentials).toBe(true);
+        expect(config.headers.Authorization).toBeUndefined();
+        return Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config });
+      },
+    });
   });
-});
 
-test('does not attach auth header when token missing', async () => {
-  localStorage.removeItem('token');
-  await api.get('/test', {
-    adapter: (config) => {
-      expect(config.headers.Authorization).toBeUndefined();
-      return Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config });
-    },
+  test('dispatches session-expired event on 401 responses', async () => {
+    const listener = vi.fn();
+    window.addEventListener('session-expired', listener);
+
+    const error = {
+      response: { status: 401 },
+      config: {},
+      isAxiosError: true,
+      toJSON: () => ({}),
+    };
+
+    await expect(api.get('/test', {
+      adapter: () => Promise.reject(error),
+    })).rejects.toEqual(error);
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    window.removeEventListener('session-expired', listener);
   });
 });

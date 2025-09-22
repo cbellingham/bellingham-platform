@@ -46,6 +46,12 @@ public class JwtUtil {
                 .getSubject();
     }
 
+    public Date extractExpiration(String token) {
+        return parseToken(token)
+                .getBody()
+                .getExpiration();
+    }
+
     public boolean validateToken(String token) {
         try {
             parseToken(token);

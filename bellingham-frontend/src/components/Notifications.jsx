@@ -11,7 +11,7 @@ const Notifications = () => {
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
-    const { token, logout } = useContext(AuthContext);
+    const { isAuthenticated, logout } = useContext(AuthContext);
 
     const handleLogout = useCallback(() => {
         logout();
@@ -19,7 +19,7 @@ const Notifications = () => {
     }, [logout, navigate]);
 
     const fetchNotifications = useCallback(async () => {
-        if (!token) return;
+        if (!isAuthenticated) return;
         setLoading(true);
         setError("");
         try {
@@ -31,19 +31,19 @@ const Notifications = () => {
         } finally {
             setLoading(false);
         }
-    }, [token]);
+    }, [isAuthenticated]);
 
     useEffect(() => {
-        if (!token) {
+        if (!isAuthenticated) {
             navigate("/login");
             return;
         }
         fetchNotifications();
-    }, [fetchNotifications, navigate, token]);
+    }, [fetchNotifications, isAuthenticated, navigate]);
 
     const markRead = useCallback(
         async (id) => {
-            if (!token) return;
+            if (!isAuthenticated) return;
             try {
                 await api.post(`/api/notifications/${id}/read`);
                 setNotifications((prev) =>
@@ -57,7 +57,7 @@ const Notifications = () => {
                 console.error("Failed to mark notification read", err);
             }
         },
-        [token]
+        [isAuthenticated]
     );
 
     const markAllRead = useCallback(async () => {

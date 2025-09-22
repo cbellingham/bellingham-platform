@@ -20,12 +20,12 @@ const Login = () => {
 
         try {
             const res = await api.post(`/api/authenticate`, { username, password });
-            const token = res.data.id_token;
-            if (token) {
-                login(token, username);
+            const { username: responseUsername, expiresAt } = res.data || {};
+            if (responseUsername && expiresAt) {
+                login({ username: responseUsername, expiresAt });
                 window.location.href = "/";
             } else {
-                setError("Login failed: No token received.");
+                setError("Login failed: Invalid session response.");
             }
         } catch (err) {
             console.error("❌ Login Error:", err);

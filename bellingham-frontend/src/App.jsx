@@ -16,52 +16,52 @@ import Notifications from "./components/Notifications";
 import { AuthContext } from './context';
 
 const App = () => {
-    const { token } = useContext(AuthContext);
+    const { isAuthenticated } = useContext(AuthContext);
 
     return (
         <>
         <Routes>
             <Route
                 path="/"
-                element={token ? <Dashboard /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
             />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route
                 path="/buy"
-                element={token ? <Buy /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Buy /> : <Navigate to="/login" />}
             />
             <Route
                 path="/sell"
-                element={token ? <Sell /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Sell /> : <Navigate to="/login" />}
             />
             <Route
                 path="/reports"
-                element={token ? <Reports /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Reports /> : <Navigate to="/login" />}
             />
             <Route
                 path="/sales"
-                element={token ? <Sales /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Sales /> : <Navigate to="/login" />}
             />
             <Route
                 path="/calendar"
-                element={token ? <Calendar /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Calendar /> : <Navigate to="/login" />}
             />
             <Route
                 path="/settings"
-                element={token ? <Settings /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Settings /> : <Navigate to="/login" />}
             />
             <Route
                 path="/account"
-                element={token ? <Account /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Account /> : <Navigate to="/login" />}
             />
             <Route
                 path="/history"
-                element={token ? <History /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <History /> : <Navigate to="/login" />}
             />
             <Route
                 path="/notifications"
-                element={token ? <Notifications /> : <Navigate to="/login" />}
+                element={isAuthenticated ? <Notifications /> : <Navigate to="/login" />}
             />
         </Routes>
         <Logo />

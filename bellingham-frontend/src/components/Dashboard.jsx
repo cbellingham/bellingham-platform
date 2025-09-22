@@ -12,12 +12,12 @@ const Dashboard = () => {
     const [selectedContract, setSelectedContract] = useState(null);
     const navigate = useNavigate();
 
-    const { token, logout } = useContext(AuthContext);
+    const { isAuthenticated, logout } = useContext(AuthContext);
 
     useEffect(() => {
         const fetchContracts = async () => {
             try {
-                if (!token) {
+                if (!isAuthenticated) {
                     navigate("/login");
                     return;
                 }
@@ -31,7 +31,7 @@ const Dashboard = () => {
         };
 
         fetchContracts();
-    }, [navigate, token, logout]);
+    }, [isAuthenticated, logout, navigate]);
 
     const handleLogout = () => {
         logout();

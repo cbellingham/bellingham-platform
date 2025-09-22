@@ -1,17 +1,28 @@
 package com.bellingham.datafutures.controller;
 
-import org.springframework.security.core.AuthenticationException;
-import com.bellingham.datafutures.model.User;
-import com.bellingham.datafutures.repository.UserRepository;
-import com.bellingham.datafutures.security.JwtUtil;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.bellingham.datafutures.config.JwtProperties;
+import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.repository.UserRepository;
+import com.bellingham.datafutures.security.JwtUtil;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api")
@@ -24,13 +35,17 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @Autowired
+    private JwtProperties jwtProperties;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder encoder;
 
     @PostMapping("/authenticate")
-    public Map<String, String> login(@RequestBody Map<String, String> creds) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> creds,
+            HttpServletRequest request) {
         System.out.println("🔥 AUTH ENDPOINT HIT");
         try {
             Authentication auth = authenticationManager.authenticate(
@@ -40,13 +55,43 @@ public class AuthController {
                     ));
             System.out.println("✅ AUTH SUCCESSFUL for user: " + creds.get("username"));
             String token = jwtUtil.generateToken(creds.get("username"));
-            Map<String, String> response = new HashMap<>();
-            response.put("id_token", token);
-            return response;
+            Instant expiresAt = jwtUtil.extractExpiration(token).toInstant();
+
+            ResponseCookie cookie = buildSessionCookie(token, Duration.ofMillis(jwtProperties.getExpirationMs()),
+                    request.isSecure());
+            Map<String, Object> response = new HashMap<>();
+            response.put("username", creds.get("username"));
+            response.put("expiresAt", expiresAt.toString());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(response);
         } catch (AuthenticationException e) {
             System.out.println("❌ AUTH FAILED: " + e.getMessage());
             throw new BadCredentialsException("Invalid username or password");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request) {
+        ResponseCookie expiredCookie = buildSessionCookie("", Duration.ZERO, request.isSecure());
+        Map<String, String> response = Map.of("message", "Logged out");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, expiredCookie.toString())
+                .body(response);
+    }
+
+    @GetMapping("/session")
+    public ResponseEntity<Map<String, Object>> session(HttpServletRequest request) {
+        String token = resolveTokenFromRequest(request);
+        if (token == null || !jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of());
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("username", jwtUtil.extractUsername(token));
+        response.put("expiresAt", jwtUtil.extractExpiration(token).toInstant().toString());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
@@ -158,5 +203,29 @@ public class AuthController {
         map.put("technicalContactPhone", user.getTechnicalContactPhone());
         map.put("companyDescription", user.getCompanyDescription());
         return map;
+    }
+
+    private ResponseCookie buildSessionCookie(String value, Duration maxAge, boolean secureTransport) {
+        boolean secureAttribute = jwtProperties.getCookie().isSecure() && secureTransport;
+        return ResponseCookie.from(jwtProperties.getCookie().getName(), value)
+                .httpOnly(true)
+                .secure(secureAttribute)
+                .sameSite(jwtProperties.getCookie().getSameSite())
+                .path(jwtProperties.getCookie().getPath())
+                .maxAge(maxAge)
+                .build();
+    }
+
+    private String resolveTokenFromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (jwtProperties.getCookie().getName().equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }
