@@ -127,9 +127,11 @@ const Notifications = () => {
                                                     {notification.message}
                                                 </p>
                                             )}
-                                            {notification.createdAt && (
+                                            {(notification.timestamp || notification.createdAt) && (
                                                 <p className="text-xs text-slate-500">
-                                                    {new Date(notification.createdAt).toLocaleString()}
+                                                    {new Date(
+                                                        notification.timestamp || notification.createdAt
+                                                    ).toLocaleString()}
                                                 </p>
                                             )}
                                         </div>
