@@ -1,7 +1,7 @@
 package com.bellingham.datafutures.config;
 
-import com.bellingham.datafutures.model.User;
-import com.bellingham.datafutures.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,9 +9,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
+import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.repository.UserRepository;
+
 @Configuration
 public class DefaultAdminSetup {
 
+    private static final Logger logger = LoggerFactory.getLogger(DefaultAdminSetup.class);
     private static final String ADMIN_USERNAME = "admin";
     private static final int MIN_PASSWORD_LENGTH = 12;
 
@@ -24,9 +28,9 @@ public class DefaultAdminSetup {
                 if (!encoder.matches(bootstrapPassword, user.getPassword())) {
                     user.setPassword(encoder.encode(bootstrapPassword));
                     users.save(user);
-                    System.out.println("🔐 Admin password synchronized with bootstrap configuration");
+                    logger.info("Admin password synchronized with bootstrap configuration");
                 } else {
-                    System.out.println("ℹ️ Admin password already matches bootstrap configuration");
+                    logger.info("Admin password already matches bootstrap configuration");
                 }
             }, () -> {
                 User user = new User();
@@ -34,7 +38,7 @@ public class DefaultAdminSetup {
                 user.setPassword(encoder.encode(bootstrapPassword));
                 user.setRole("ROLE_USER");
                 users.save(user);
-                System.out.println("✅ Bootstrap admin user created");
+                logger.info("Bootstrap admin user created");
             });
         };
     }

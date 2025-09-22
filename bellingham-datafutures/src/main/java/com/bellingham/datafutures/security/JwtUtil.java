@@ -1,5 +1,14 @@
 package com.bellingham.datafutures.security;
 
+import java.security.Key;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.bellingham.datafutures.config.JwtProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,16 +18,13 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
-import java.security.Key;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
 
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     private final JwtProperties jwtProperties;
     private final JwtKeyService jwtKeyService;
@@ -57,7 +63,7 @@ public class JwtUtil {
             parseToken(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            System.out.println("❌ Invalid JWT: " + e.getMessage());
+            logger.warn("Invalid JWT", e);
             return false;
         }
     }

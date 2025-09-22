@@ -2,6 +2,8 @@ package com.bellingham.datafutures.security;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +23,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
@@ -38,10 +42,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 if (jwtUtil.validateToken(token)) {
                     username = jwtUtil.extractUsername(token);
                 } else {
-                    System.out.println("❌ Token validation failed.");
+                    logger.warn("Token validation failed for request URI: {}", request.getRequestURI());
                 }
             } catch (Exception e) {
-                System.out.println("❌ Error parsing JWT: " + e.getMessage());
+                logger.error("Error parsing JWT for request URI: {}", request.getRequestURI(), e);
             }
         }
 
