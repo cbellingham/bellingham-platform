@@ -1,10 +1,7 @@
 package com.bellingham.datafutures.security;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,27 +10,30 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import com.bellingham.datafutures.config.JwtProperties;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
-        String token = null;
+        String token = resolveTokenFromCookies(request.getCookies());
         String username = null;
 
-        if (header != null && header.startsWith("Bearer ")) {
+        if (token == null && header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
+        }
+
+        if (token != null) {
             try {
                 if (jwtUtil.validateToken(token)) {
                     username = jwtUtil.extractUsername(token);
@@ -57,6 +57,28 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
+    private final JwtProperties jwtProperties;
+
+    public JwtFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService, JwtProperties jwtProperties) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.jwtProperties = jwtProperties;
+    }
+
+    private String resolveTokenFromCookies(Cookie[] cookies) {
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (jwtProperties.getCookie().getName().equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }
 

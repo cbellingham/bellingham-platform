@@ -7,6 +7,7 @@ public class JwtProperties {
 
     private long expirationMs;
     private Rotation rotation = new Rotation();
+    private Cookie cookie = new Cookie();
 
     public long getExpirationMs() {
         return expirationMs;
@@ -22,6 +23,14 @@ public class JwtProperties {
 
     public void setRotation(Rotation rotation) {
         this.rotation = rotation;
+    }
+
+    public Cookie getCookie() {
+        return cookie;
+    }
+
+    public void setCookie(Cookie cookie) {
+        this.cookie = cookie;
     }
 
     public static class Rotation {
@@ -42,6 +51,45 @@ public class JwtProperties {
 
         public void setInitialSecret(String initialSecret) {
             this.initialSecret = initialSecret;
+        }
+    }
+
+    public static class Cookie {
+        private String name = "bdf_session";
+        private boolean secure = true;
+        private String sameSite = "None";
+        private String path = "/";
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public boolean isSecure() {
+            return secure;
+        }
+
+        public void setSecure(boolean secure) {
+            this.secure = secure;
+        }
+
+        public String getSameSite() {
+            return sameSite;
+        }
+
+        public void setSameSite(String sameSite) {
+            this.sameSite = sameSite;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
         }
     }
 }

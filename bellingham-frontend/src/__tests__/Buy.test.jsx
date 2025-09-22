@@ -27,7 +27,7 @@ vi.mock('../utils/api');
 const renderWithProviders = (ui) => {
   const logout = vi.fn();
   return render(
-    <AuthContext.Provider value={{ token: 'token', logout }}>
+    <AuthContext.Provider value={{ isAuthenticated: true, logout }}>
       <MemoryRouter>
         {ui}
       </MemoryRouter>

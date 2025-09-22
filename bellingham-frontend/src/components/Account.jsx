@@ -16,7 +16,7 @@ const Account = () => {
     const [formData, setFormData] = useState({});
     const navigate = useNavigate();
 
-    const { token, logout } = useContext(AuthContext);
+    const { isAuthenticated, logout } = useContext(AuthContext);
 
     const handleLogout = () => {
         logout();
@@ -26,7 +26,7 @@ const Account = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                if (!token) {
+                if (!isAuthenticated) {
                     navigate("/login");
                     return;
                 }
@@ -39,7 +39,7 @@ const Account = () => {
             }
         };
         fetchProfile();
-    }, [navigate, token]);
+    }, [isAuthenticated, navigate]);
 
     if (error) {
         return (

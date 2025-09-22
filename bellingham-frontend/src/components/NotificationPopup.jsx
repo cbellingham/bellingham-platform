@@ -7,18 +7,18 @@ import { AuthContext } from "../context";
 const NotificationPopup = () => {
     const [notifications, setNotifications] = useState([]);
 
-    const { token } = useContext(AuthContext);
+    const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const fetchNotifications = useCallback(async () => {
-        if (!token) return;
+        if (!isAuthenticated) return;
         try {
             const res = await api.get(`/api/notifications`);
             setNotifications(res.data || []);
         } catch (err) {
             console.error("Failed to fetch notifications", err);
         }
-    }, [token]);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         fetchNotifications();
@@ -28,7 +28,7 @@ const NotificationPopup = () => {
 
     const markRead = useCallback(
         async (id) => {
-            if (!token) return;
+            if (!isAuthenticated) return;
             try {
                 await api.post(`/api/notifications/${id}/read`);
                 setNotifications((prev) =>
@@ -42,7 +42,7 @@ const NotificationPopup = () => {
                 console.error("Failed to mark notification read", err);
             }
         },
-        [token]
+        [isAuthenticated]
     );
 
     const unreadNotifications = notifications.filter(
