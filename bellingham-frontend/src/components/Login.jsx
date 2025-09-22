@@ -1,6 +1,7 @@
 // src/components/Login.jsx
 
 import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import LoginImage from "../assets/login.png";
 import Button from "./ui/Button";
 import api from "../utils/api";
@@ -11,7 +12,7 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-
+    const navigate = useNavigate();
     const { login } = useContext(AuthContext);
 
     const handleLogin = async (e) => {
@@ -23,7 +24,7 @@ const Login = () => {
             const { username: responseUsername, expiresAt } = res.data || {};
             if (responseUsername && expiresAt) {
                 login({ username: responseUsername, expiresAt });
-                window.location.href = "/";
+                navigate("/");
             } else {
                 setError("Login failed: Invalid session response.");
             }
@@ -71,7 +72,7 @@ const Login = () => {
                     type="button"
                     variant="link"
                     className="w-full mt-2"
-                    onClick={() => (window.location.href = "/signup")}
+                    onClick={() => navigate("/signup")}
                 >
                     Create Account
                 </Button>
