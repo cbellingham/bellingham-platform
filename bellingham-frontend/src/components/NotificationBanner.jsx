@@ -2,10 +2,10 @@ import React from 'react';
 import Button from './ui/Button';
 
 const styles = {
-  info: 'bg-blue-100 text-blue-800 border-blue-300',
-  success: 'bg-green-100 text-green-800 border-green-300',
-  error: 'bg-red-100 text-red-800 border-red-300',
-  warning: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+  info: 'bg-slate-900/80 text-slate-100 border-slate-700/80',
+  success: 'bg-emerald-900/80 text-emerald-100 border-emerald-700/80',
+  error: 'bg-rose-900/80 text-rose-100 border-rose-700/80',
+  warning: 'bg-amber-900/80 text-amber-100 border-amber-700/80',
 };
 
 const NotificationBanner = ({ type = 'info', message, onDismiss }) => {
@@ -16,10 +16,14 @@ const NotificationBanner = ({ type = 'info', message, onDismiss }) => {
   const tone = styles[type] || styles.info;
 
   return (
-    <div className={`mb-4 flex items-center justify-between rounded border px-4 py-3 text-sm ${tone}`}>
-      <span>{message}</span>
+    <div className={`mb-4 flex items-start gap-4 rounded border px-4 py-3 text-base font-medium shadow-sm backdrop-blur ${tone}`}>
+      <span className="flex-1 leading-relaxed">{message}</span>
       {onDismiss && (
-        <Button variant="link" onClick={onDismiss} className="text-current">
+        <Button
+          variant="link"
+          onClick={onDismiss}
+          className="text-current font-semibold hover:text-white/90"
+        >
           Dismiss
         </Button>
       )}
