@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
     CalendarDaysIcon,
+    ChevronDownIcon,
     CurrencyDollarIcon,
     DocumentTextIcon,
     InformationCircleIcon,
@@ -45,6 +46,7 @@ const ContractDetailsPanel = ({
     inlineWidth = "w-full max-w-md",
 }) => {
     const [visible, setVisible] = useState(false);
+    const [openSections, setOpenSections] = useState({});
 
     useEffect(() => {
         if (contract) {
@@ -239,6 +241,28 @@ const ContractDetailsPanel = ({
             .filter((section) => section.fields.length > 0);
     }, [contract]);
 
+    useEffect(() => {
+        if (!sections.length) {
+            setOpenSections({});
+            return;
+        }
+
+        setOpenSections((prev) => {
+            const next = {};
+            sections.forEach((section, index) => {
+                next[section.title] = prev[section.title] ?? index === 0;
+            });
+            return next;
+        });
+    }, [sections]);
+
+    const toggleSection = (title) => {
+        setOpenSections((prev) => ({
+            ...prev,
+            [title]: !prev[title],
+        }));
+    };
+
     if (!contract && inline) {
         return (
             <div
@@ -290,30 +314,56 @@ const ContractDetailsPanel = ({
                     ))}
                 </div>
 
-                <div className="space-y-6">
-                    {sections.map((section) => (
-                        <section key={section.title} className="space-y-4">
-                            <div className="flex items-center gap-2 text-slate-200">
-                                {React.createElement(section.icon, { className: "h-5 w-5" })}
-                                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-200">
-                                    {section.title}
-                                </h3>
-                            </div>
-                            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                {section.fields.map(({ key, label, value }) => (
-                                    <div
-                                        key={key}
-                                        className="flex flex-col gap-1 rounded-xl border border-slate-800 bg-slate-950/30 p-4"
-                                    >
-                                        <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                                            {label}
-                                        </dt>
-                                        <dd className="font-semibold text-slate-100">{value}</dd>
-                                    </div>
-                                ))}
-                            </dl>
-                        </section>
-                    ))}
+                <div className="space-y-4">
+                    {sections.map((section, index) => {
+                        const isOpen = openSections[section.title];
+                        const contentId = `contract-section-${index}`;
+
+                        return (
+                            <section
+                                key={section.title}
+                                className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-4 shadow-inner"
+                            >
+                                <button
+                                    type="button"
+                                    className="flex w-full items-center justify-between gap-4 text-left text-slate-200"
+                                    onClick={() => toggleSection(section.title)}
+                                    aria-expanded={isOpen}
+                                    aria-controls={contentId}
+                                >
+                                    <span className="flex items-center gap-2">
+                                        {React.createElement(section.icon, { className: "h-5 w-5" })}
+                                        <span className="text-sm font-semibold uppercase tracking-[0.2em]">
+                                            {section.title}
+                                        </span>
+                                    </span>
+                                    <ChevronDownIcon
+                                        className={`h-4 w-4 flex-shrink-0 transition-transform ${
+                                            isOpen ? "rotate-180" : "rotate-0"
+                                        }`}
+                                    />
+                                </button>
+                                <dl
+                                    id={contentId}
+                                    className={`${
+                                        isOpen ? "mt-4 grid" : "mt-0 hidden"
+                                    } grid-cols-1 gap-4 sm:grid-cols-2`}
+                                >
+                                    {section.fields.map(({ key, label, value }) => (
+                                        <div
+                                            key={key}
+                                            className="flex flex-col gap-1 rounded-xl border border-slate-800 bg-slate-950/30 p-4"
+                                        >
+                                            <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                                {label}
+                                            </dt>
+                                            <dd className="font-semibold text-slate-100">{value}</dd>
+                                        </div>
+                                    ))}
+                                </dl>
+                            </section>
+                        );
+                    })}
                 </div>
             </div>
         </div>
