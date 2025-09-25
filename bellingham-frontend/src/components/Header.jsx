@@ -17,7 +17,7 @@ const Header = ({ onLogout }) => {
                         <img
                             src={logoImage}
                             alt="Bellingham Data Futures logo"
-                            className="h-12 w-12 rounded-full border border-emerald-400/40 bg-slate-900/80 p-2 shadow-[0_6px_18px_rgba(16,185,129,0.25)]"
+                            className="h-10 w-10 rounded-full border border-emerald-400/40 bg-slate-900/80 p-2 shadow-[0_6px_18px_rgba(16,185,129,0.25)] sm:h-11 sm:w-11 lg:h-12 lg:w-12"
                         />
                         <div className="hidden flex-col leading-tight sm:flex">
                             <span className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-200/80">
