@@ -239,6 +239,24 @@ const ContractDetailsPanel = ({
             .filter((section) => section.fields.length > 0);
     }, [contract]);
 
+    if (!contract && inline) {
+        return (
+            <div
+                className={`${inlineWidth} flex h-full items-center justify-center rounded-2xl border border-dashed border-slate-800/70 bg-slate-900/40 p-6 text-center text-slate-400`}
+            >
+                <div className="flex flex-col items-center gap-4">
+                    <DocumentTextIcon className="h-12 w-12 text-slate-600" />
+                    <div className="space-y-2">
+                        <h2 className="text-lg font-semibold text-slate-200">Select a contract</h2>
+                        <p className="max-w-xs text-sm text-slate-400">
+                            Choose a contract from the list to see its key dates, participants, and agreement details here.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     if (!contract && !visible) return null;
 
     return (
