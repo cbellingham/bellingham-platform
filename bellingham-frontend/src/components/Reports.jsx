@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from '../context';
+import TableSkeleton from "./ui/TableSkeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -15,6 +16,7 @@ const Reports = () => {
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
     const [selectedContract, setSelectedContract] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const totalValue = contracts.reduce(
         (sum, contract) => sum + Number(contract.price || 0),
@@ -104,10 +106,14 @@ const Reports = () => {
     useEffect(() => {
         const fetchPurchased = async () => {
             try {
+                setIsLoading(true);
                 const res = await api.get(`/api/contracts/purchased`);
                 setContracts(res.data.content);
+                setError("");
             } catch {
                 setError("Failed to load purchased contracts.");
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchPurchased();
@@ -153,7 +159,11 @@ const Reports = () => {
 
                     <div className="mt-6 grid gap-6">
                         <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
-                            {contracts.length ? (
+                            {isLoading ? (
+                                <div className="flex h-72 items-center justify-center lg:h-96">
+                                    <div className="h-12 w-12 animate-spin rounded-full border-2 border-emerald-400 border-t-transparent" />
+                                </div>
+                            ) : contracts.length ? (
                                 <div className="flex flex-col gap-6 lg:flex-row">
                                     <div className="h-72 w-full lg:h-96 lg:flex-1">
                                         <Pie data={pieData} options={pieOptions} />
@@ -199,47 +209,53 @@ const Reports = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-800/70">
-                                    {contracts.map((contract) => (
-                                        <tr
-                                            key={contract.id}
-                                            className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
-                                            onClick={() => setSelectedContract(contract)}
-                                        >
-                                            <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
-                                            <td className="px-4 py-3">{contract.seller}</td>
-                                            <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
-                                            <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex flex-wrap gap-2">
-                                                    <Button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleListForSale(contract.id);
-                                                        }}
-                                                        className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
-                                                    >
-                                                        List for Sale
-                                                    </Button>
-                                                    <Button
-                                                        variant="danger"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleCloseout(contract.id);
-                                                        }}
-                                                        className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
-                                                    >
-                                                        Closeout
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {contracts.length === 0 && (
-                                        <tr>
-                                            <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
-                                                No purchased contracts available.
-                                            </td>
-                                        </tr>
+                                    {isLoading ? (
+                                        <TableSkeleton columns={5} rows={5} />
+                                    ) : (
+                                        <>
+                                            {contracts.map((contract) => (
+                                                <tr
+                                                    key={contract.id}
+                                                    className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                                    onClick={() => setSelectedContract(contract)}
+                                                >
+                                                    <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
+                                                    <td className="px-4 py-3">{contract.seller}</td>
+                                                    <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
+                                                    <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
+                                                    <td className="px-4 py-3">
+                                                        <div className="flex flex-wrap gap-2">
+                                                            <Button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleListForSale(contract.id);
+                                                                }}
+                                                                className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                                            >
+                                                                List for Sale
+                                                            </Button>
+                                                            <Button
+                                                                variant="danger"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleCloseout(contract.id);
+                                                                }}
+                                                                className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                                            >
+                                                                Closeout
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {contracts.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                        No purchased contracts available.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </>
                                     )}
                                 </tbody>
                             </table>

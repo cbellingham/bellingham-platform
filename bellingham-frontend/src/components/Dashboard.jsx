@@ -6,10 +6,12 @@ import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import api from "../utils/api";
 import { AuthContext } from '../context';
+import TableSkeleton from "./ui/TableSkeleton";
 
 const Dashboard = () => {
     const [contracts, setContracts] = useState([]);
     const [selectedContract, setSelectedContract] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
     const { isAuthenticated, logout } = useContext(AuthContext);
@@ -21,12 +23,15 @@ const Dashboard = () => {
                     navigate("/login");
                     return;
                 }
+                setIsLoading(true);
                 const res = await api.get(`/api/contracts/available`);
                 setContracts(res.data.content);
             } catch (err) {
                 console.error("Error fetching contracts", err);
                 logout();
                 navigate("/login");
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -61,31 +66,37 @@ const Dashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-800/70">
-                                {contracts.map((contract) => (
-                                    <tr
-                                        key={contract.id}
-                                        className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
-                                        onClick={() => setSelectedContract(contract)}
-                                    >
-                                        <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
-                                        <td className="px-4 py-3">{contract.seller}</td>
-                                        <td className="px-4 py-3 font-semibold text-emerald-300">
-                                            ${contract.price}
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
-                                                {contract.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
-                                    </tr>
-                                ))}
-                                {contracts.length === 0 && (
-                                    <tr>
-                                        <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
-                                            No contracts available at the moment.
-                                        </td>
-                                    </tr>
+                                {isLoading ? (
+                                    <TableSkeleton columns={5} rows={5} />
+                                ) : (
+                                    <>
+                                        {contracts.map((contract) => (
+                                            <tr
+                                                key={contract.id}
+                                                className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                                onClick={() => setSelectedContract(contract)}
+                                            >
+                                                <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
+                                                <td className="px-4 py-3">{contract.seller}</td>
+                                                <td className="px-4 py-3 font-semibold text-emerald-300">
+                                                    ${contract.price}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                                                        {contract.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
+                                            </tr>
+                                        ))}
+                                        {contracts.length === 0 && (
+                                            <tr>
+                                                <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                    No contracts available at the moment.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </>
                                 )}
                             </tbody>
                         </table>
