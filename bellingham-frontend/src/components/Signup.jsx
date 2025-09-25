@@ -269,7 +269,13 @@ const Signup = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-base text-contrast font-sans">
+        <div
+            className="flex flex-col min-h-screen text-contrast font-sans"
+            style={{
+                backgroundColor: 'var(--bg-color)',
+                backgroundImage: 'var(--bg-gradient)',
+            }}
+        >
             <Header />
             <div className="relative flex flex-col flex-1 items-center justify-center">
                 <Button
