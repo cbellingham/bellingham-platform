@@ -63,8 +63,8 @@ const Login = () => {
                                     src={LoginImage}
                                     alt="Bellingham Data Futures logo"
                                     className={[
-                                        "h-12 w-12 rounded-xl border border-slate-700/70 bg-slate-950/60 p-2 shadow-lg",
-                                        "sm:h-14 sm:w-14",
+                                        "h-9 w-9 rounded-xl border border-slate-700/70 bg-slate-950/60 p-2 shadow-lg",
+                                        "sm:h-10 sm:w-10",
                                     ].join(" ")}
                                 />
                                 <div>
