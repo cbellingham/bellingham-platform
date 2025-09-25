@@ -1,6 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    CalendarDaysIcon,
+    CurrencyDollarIcon,
+    DocumentTextIcon,
+    InformationCircleIcon,
+    UserCircleIcon,
+} from "@heroicons/react/24/outline";
 import Button from "./ui/Button";
 import api from "../utils/api";
+
+const STATUS_STYLES = {
+    open: "border-emerald-400/50 bg-emerald-500/15 text-emerald-100",
+    purchased: "border-sky-400/40 bg-sky-500/15 text-sky-100",
+    closed: "border-slate-500/40 bg-slate-600/10 text-slate-200",
+    default: "border-amber-400/40 bg-amber-500/15 text-amber-100",
+};
+
+const formatCurrency = (value) => {
+    if (value === null || value === undefined || value === "") return null;
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) return String(value);
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 2,
+    }).format(numericValue);
+};
+
+const formatDate = (value) => {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+};
 
 const ContractDetailsPanel = ({
     contract,
@@ -18,13 +54,12 @@ const ContractDetailsPanel = ({
         }
     }, [contract]);
 
-    if (!contract && !visible) return null;
-
     const panelClasses = inline
         ? `${inlineWidth} rounded-2xl border border-slate-800 bg-slate-900/70 p-6 text-slate-100 shadow-[0_20px_45px_rgba(2,12,32,0.55)] transition-transform duration-300 backdrop-blur`
         : `fixed top-0 right-0 z-20 h-full w-full transform bg-slate-900/95 p-6 text-slate-100 shadow-lg transition-transform duration-300 sm:w-1/3`;
 
     const handleDownload = async () => {
+        if (!contract) return;
         const res = await api.get(`/api/contracts/${contract.id}/pdf`, { responseType: "blob" });
         const blob = res.data;
         const url = window.URL.createObjectURL(blob);
@@ -42,6 +77,170 @@ const ContractDetailsPanel = ({
         }, 300);
     };
 
+    const headerChips = useMemo(() => {
+        if (!contract) return [];
+
+        const chips = [];
+
+        if (contract.status) {
+            const key = contract.status.toLowerCase();
+            chips.push({
+                key: "status",
+                label: contract.status,
+                icon: InformationCircleIcon,
+                className: STATUS_STYLES[key] || STATUS_STYLES.default,
+            });
+        }
+
+        [
+            { key: "effectiveDate", label: "Effective", icon: CalendarDaysIcon },
+            { key: "deliveryDate", label: "Delivery", icon: CalendarDaysIcon },
+            { key: "purchaseDate", label: "Purchased", icon: CalendarDaysIcon },
+        ].forEach(({ key, label, icon }) => {
+            const formatted = formatDate(contract[key]);
+            if (formatted) {
+                chips.push({
+                    key,
+                    label: `${label}: ${formatted}`,
+                    icon,
+                    className: "border-slate-700 bg-slate-800/60 text-slate-200",
+                });
+            }
+        });
+
+        return chips;
+    }, [contract]);
+
+    const sections = useMemo(() => {
+        if (!contract) return [];
+
+        return [
+            {
+                title: "Contract Overview",
+                icon: DocumentTextIcon,
+                fields: [
+                    { key: "title", label: "Contract Title" },
+                    { key: "dataDescription", label: "Data Description" },
+                    { key: "platformName", label: "Platform" },
+                    { key: "deliveryFormat", label: "Delivery Format" },
+                    { key: "termsFileName", label: "Supporting Terms" },
+                ],
+            },
+            {
+                title: "Financials",
+                icon: CurrencyDollarIcon,
+                fields: [
+                    {
+                        key: "price",
+                        label: "Contract Value",
+                        formatter: formatCurrency,
+                    },
+                ],
+            },
+            {
+                title: "Participants",
+                icon: UserCircleIcon,
+                fields: [
+                    { key: "seller", label: "Seller Username" },
+                    { key: "sellerFullName", label: "Seller Name" },
+                    { key: "sellerEntityType", label: "Seller Entity Type" },
+                    { key: "sellerAddress", label: "Seller Address" },
+                    { key: "buyerUsername", label: "Buyer Username" },
+                    { key: "buyerFullName", label: "Buyer Name" },
+                    { key: "buyerEntityType", label: "Buyer Entity Type" },
+                    { key: "buyerAddress", label: "Buyer Address" },
+                    { key: "creatorUsername", label: "Created By" },
+                ],
+            },
+            {
+                title: "Corporate Profile",
+                icon: InformationCircleIcon,
+                fields: [
+                    { key: "legalBusinessName", label: "Legal Business Name" },
+                    { key: "name", label: "Business DBA" },
+                    { key: "countryOfIncorporation", label: "Country of Incorporation" },
+                    { key: "taxId", label: "Tax ID" },
+                    {
+                        key: "companyRegistrationNumber",
+                        label: "Registration Number",
+                    },
+                    { key: "companyDescription", label: "Company Description" },
+                ],
+            },
+            {
+                title: "Primary Contact",
+                icon: UserCircleIcon,
+                fields: [
+                    { key: "primaryContactName", label: "Name" },
+                    { key: "primaryContactEmail", label: "Email" },
+                    { key: "primaryContactPhone", label: "Phone" },
+                ],
+            },
+            {
+                title: "Technical Contact",
+                icon: UserCircleIcon,
+                fields: [
+                    { key: "technicalContactName", label: "Name" },
+                    { key: "technicalContactEmail", label: "Email" },
+                    { key: "technicalContactPhone", label: "Phone" },
+                ],
+            },
+            {
+                title: "Agreement",
+                icon: DocumentTextIcon,
+                fields: [
+                    {
+                        key: "agreementText",
+                        label: "Agreement Text",
+                        render: (value) => (
+                            <pre className="whitespace-pre-wrap rounded-lg border border-slate-800 bg-slate-950/50 p-3 text-slate-200">
+                                {value}
+                            </pre>
+                        ),
+                    },
+                ],
+            },
+        ]
+            .map((section) => ({
+                ...section,
+                fields: section.fields
+                    .map((field) => {
+                        const rawValue = contract[field.key];
+                        if (rawValue === undefined || rawValue === null || rawValue === "") {
+                            return null;
+                        }
+
+                        if (field.render) {
+                            return {
+                                ...field,
+                                value: field.render(rawValue),
+                            };
+                        }
+
+                        if (field.formatter) {
+                            const formatted = field.formatter(rawValue);
+                            if (!formatted) {
+                                return null;
+                            }
+
+                            return {
+                                ...field,
+                                value: formatted,
+                            };
+                        }
+
+                        return {
+                            ...field,
+                            value: String(rawValue),
+                        };
+                    })
+                    .filter(Boolean),
+            }))
+            .filter((section) => section.fields.length > 0);
+    }, [contract]);
+
+    if (!contract && !visible) return null;
+
     return (
         <div className={`${panelClasses} ${visible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}`}>
             <div className="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
@@ -54,27 +253,50 @@ const ContractDetailsPanel = ({
                     Close
                 </Button>
             </div>
-            <div className="mt-4 flex flex-col gap-4 text-sm text-slate-300">
-                <Button
-                    className="self-start border border-emerald-400/50 bg-emerald-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100 hover:bg-emerald-500/20"
-                    onClick={handleDownload}
-                >
-                    Download PDF
-                </Button>
-                <ul className="space-y-3">
-                    {Object.entries(contract || {}).map(([key, value]) => (
-                        <li key={key} className="flex flex-col gap-1">
-                            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{key}</span>
-                            {key === "agreementText" ? (
-                                <pre className="whitespace-pre-wrap rounded-lg border border-slate-800 bg-slate-950/50 p-3 text-slate-200">
-                                    {value}
-                                </pre>
-                            ) : (
-                                <span className="font-semibold text-slate-100">{String(value)}</span>
-                            )}
-                        </li>
+            <div className="mt-4 flex flex-col gap-6 text-sm text-slate-300">
+                <div className="flex flex-wrap gap-2">
+                    <Button
+                        className="border border-emerald-400/50 bg-emerald-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100 hover:bg-emerald-500/20"
+                        onClick={handleDownload}
+                    >
+                        Download PDF
+                    </Button>
+                    {headerChips.map(({ key, label, icon, className }) => (
+                        <span
+                            key={key}
+                            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${className}`}
+                        >
+                            {React.createElement(icon, { className: "h-4 w-4" })}
+                            {label}
+                        </span>
                     ))}
-                </ul>
+                </div>
+
+                <div className="space-y-6">
+                    {sections.map((section) => (
+                        <section key={section.title} className="space-y-4">
+                            <div className="flex items-center gap-2 text-slate-200">
+                                {React.createElement(section.icon, { className: "h-5 w-5" })}
+                                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-200">
+                                    {section.title}
+                                </h3>
+                            </div>
+                            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                {section.fields.map(({ key, label, value }) => (
+                                    <div
+                                        key={key}
+                                        className="flex flex-col gap-1 rounded-xl border border-slate-800 bg-slate-950/30 p-4"
+                                    >
+                                        <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                            {label}
+                                        </dt>
+                                        <dd className="font-semibold text-slate-100">{value}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                        </section>
+                    ))}
+                </div>
             </div>
         </div>
     );
