@@ -3,9 +3,9 @@ import { NavLink } from "react-router-dom";
 
 const baseClasses = {
     header:
-        "group relative inline-flex items-center gap-2 rounded-lg px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.18em] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400",
+        "group relative inline-flex rounded-lg px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.18em] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400",
     sidebar:
-        "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900",
+        "group flex rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900",
 };
 
 const activeClasses = {
@@ -20,21 +20,8 @@ const inactiveClasses = {
     sidebar: "text-slate-200 hover:bg-slate-800/70",
 };
 
-const iconClasses = {
-    header: {
-        base: "h-4 w-4 transition-colors duration-200",
-        active: "text-emerald-200",
-        inactive: "text-emerald-300/80",
-    },
-    sidebar: {
-        base: "h-5 w-5 text-emerald-300",
-        active: "",
-        inactive: "",
-    },
-};
-
 const NavMenuItem = ({ item, layout = "header", onNavigate }) => {
-    const { path, label, icon: Icon } = item;
+    const { path, label } = item;
 
     return (
         <NavLink
@@ -46,17 +33,7 @@ const NavMenuItem = ({ item, layout = "header", onNavigate }) => {
                 `${baseClasses[layout]} ${isActive ? activeClasses[layout] : inactiveClasses[layout]}`
             }
         >
-            {({ isActive }) => (
-                <>
-                    {Icon && (
-                        <Icon
-                            aria-hidden="true"
-                            className={`${iconClasses[layout].base} ${isActive ? iconClasses[layout].active : iconClasses[layout].inactive}`}
-                        />
-                    )}
-                    <span>{label}</span>
-                </>
-            )}
+            {() => <span>{label}</span>}
         </NavLink>
     );
 };
