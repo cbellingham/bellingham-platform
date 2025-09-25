@@ -9,6 +9,7 @@ import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "./NotificationBanner";
 import SignatureModal from "./SignatureModal";
+import TableSkeleton from "./ui/TableSkeleton";
 
 const Buy = () => {
     const navigate = useNavigate();
@@ -21,13 +22,16 @@ const Buy = () => {
     const [maxPrice, setMaxPrice] = useState("");
     const [sellerFilter, setSellerFilter] = useState("");
     const [pendingContractId, setPendingContractId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const { logout } = useContext(AuthContext);
 
     const fetchContracts = useCallback(async () => {
         try {
+            setIsLoading(true);
             const res = await api.get(`/api/contracts/available`);
             setContracts(res.data.content);
+            setError("");
         } catch (err) {
             console.error(err);
             if (err.response) {
@@ -39,6 +43,8 @@ const Buy = () => {
             } else {
                 setError("Failed to fetch contracts");
             }
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
@@ -191,36 +197,42 @@ const Buy = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-800/70">
-                                {filteredContracts.map((contract) => (
-                                    <tr
-                                        key={contract.id}
-                                        className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
-                                        onClick={() => setSelectedContract(contract)}
-                                    >
-                                        <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
-                                        <td className="px-4 py-3">{contract.seller}</td>
-                                        <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
-                                        <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
-                                        <td className="px-4 py-3">
-                                            <Button
-                                                variant="success"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    openSignatureModal(contract.id);
-                                                }}
-                                                className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                {isLoading ? (
+                                    <TableSkeleton columns={5} rows={5} />
+                                ) : (
+                                    <>
+                                        {filteredContracts.map((contract) => (
+                                            <tr
+                                                key={contract.id}
+                                                className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                                onClick={() => setSelectedContract(contract)}
                                             >
-                                                Buy
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {filteredContracts.length === 0 && (
-                                    <tr>
-                                        <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
-                                            No contracts match your current filters.
-                                        </td>
-                                    </tr>
+                                                <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
+                                                <td className="px-4 py-3">{contract.seller}</td>
+                                                <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
+                                                <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
+                                                <td className="px-4 py-3">
+                                                    <Button
+                                                        variant="success"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            openSignatureModal(contract.id);
+                                                        }}
+                                                        className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                                    >
+                                                        Buy
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {filteredContracts.length === 0 && (
+                                            <tr>
+                                                <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                    No contracts match your current filters.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </>
                                 )}
                             </tbody>
                         </table>

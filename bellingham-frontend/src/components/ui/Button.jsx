@@ -73,6 +73,8 @@ const Button = forwardRef(
       ? renderIcon(loadingIcon, 'h-4 w-4 animate-spin') || <DefaultSpinner />
       : null;
 
+    const childContent = isLoading ? <span className="opacity-90">{children}</span> : children;
+
     return (
       <button
         ref={ref}
@@ -85,7 +87,7 @@ const Button = forwardRef(
       >
         {loadingIconNode && <span className="flex items-center" aria-hidden="true">{loadingIconNode}</span>}
         {leadingIconNode && <span className="flex items-center" aria-hidden="true">{leadingIconNode}</span>}
-        <span className={isLoading ? 'opacity-90' : undefined}>{children}</span>
+        {childContent}
       </button>
     );
   },
