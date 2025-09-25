@@ -3,7 +3,13 @@ import Header from "./Header";
 import NotificationPopup from "./NotificationPopup";
 
 const Layout = ({ children, onLogout }) => (
-    <div className="flex min-h-screen flex-col bg-slate-950 font-sans text-slate-100">
+    <div
+        className="flex min-h-screen flex-col font-sans text-contrast"
+        style={{
+            backgroundColor: 'var(--bg-color)',
+            backgroundImage: 'var(--bg-gradient)',
+        }}
+    >
         <a href="#main-content" className="skip-link">
             Skip to main content
         </a>

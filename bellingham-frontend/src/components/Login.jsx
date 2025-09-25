@@ -48,7 +48,13 @@ const Login = () => {
         : "border-slate-700/80 focus:border-sky-400 focus:ring-sky-500/50";
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100">
+        <div
+            className="min-h-screen text-contrast"
+            style={{
+                backgroundColor: 'var(--bg-color)',
+                backgroundImage: 'var(--bg-gradient)',
+            }}
+        >
             <div className="mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-6 py-16">
                 <div className="relative w-full overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-900/70 shadow-[0_40px_80px_-20px_rgba(15,23,42,0.9)] backdrop-blur">
                     <div className="pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
