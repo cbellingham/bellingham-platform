@@ -62,7 +62,10 @@ const Login = () => {
                                 <img
                                     src={LoginImage}
                                     alt="Bellingham Data Futures logo"
-                                    className="h-16 w-16 rounded-xl border border-slate-700/70 bg-slate-950/60 p-3 shadow-lg"
+                                    className={[
+                                        "h-12 w-12 rounded-xl border border-slate-700/70 bg-slate-950/60 p-2 shadow-lg",
+                                        "sm:h-14 sm:w-14",
+                                    ].join(" ")}
                                 />
                                 <div>
                                     <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
