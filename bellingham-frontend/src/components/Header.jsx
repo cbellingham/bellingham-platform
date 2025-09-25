@@ -1,13 +1,15 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { BellAlertIcon } from "@heroicons/react/24/outline";
 
 import logoImage from "../assets/login.png";
-import { AuthContext } from "../context";
+import { AuthContext, useNotifications } from "../context";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
 
 const Header = ({ onLogout }) => {
     const { username } = useContext(AuthContext);
+    const { unreadCount } = useNotifications();
     const [isNavOpen, setIsNavOpen] = useState(false);
 
     const toggleNavigation = () => {
@@ -35,26 +37,45 @@ const Header = ({ onLogout }) => {
                             <span className="text-lg font-semibold text-white">Markets Platform</span>
                         </div>
                     </Link>
-
-                    {username && (
-                        <div className="flex items-center gap-4">
-                            <div className="text-right">
-                                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.38em] text-slate-400">
-                                    Logged in as
-                                </p>
-                                <p className="text-sm font-semibold text-white">{username}</p>
-                            </div>
-                            {onLogout && (
-                                <button
-                                    type="button"
-                                    onClick={onLogout}
-                                    className="rounded-lg border border-emerald-400/50 bg-emerald-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-100 transition-colors hover:bg-emerald-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-                                >
-                                    Log Out
-                                </button>
+                    <div className="flex items-center gap-4">
+                        <Link
+                            to="/notifications"
+                            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/40 bg-slate-900/80 text-emerald-100 shadow-[0_6px_18px_rgba(16,185,129,0.25)] transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                            aria-label={
+                                unreadCount > 0
+                                    ? `${unreadCount} unread notifications`
+                                    : "Notifications"
+                            }
+                        >
+                            <BellAlertIcon aria-hidden="true" className="h-5 w-5" />
+                            <span className="sr-only">Open notifications</span>
+                            {unreadCount > 0 && (
+                                <span className="absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-emerald-400 px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-slate-950 shadow-lg">
+                                    {unreadCount > 99 ? "99+" : unreadCount}
+                                </span>
                             )}
-                        </div>
-                    )}
+                        </Link>
+
+                        {username && (
+                            <>
+                                <div className="text-right">
+                                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.38em] text-slate-400">
+                                        Logged in as
+                                    </p>
+                                    <p className="text-sm font-semibold text-white">{username}</p>
+                                </div>
+                                {onLogout && (
+                                    <button
+                                        type="button"
+                                        onClick={onLogout}
+                                        className="rounded-lg border border-emerald-400/50 bg-emerald-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-100 transition-colors hover:bg-emerald-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                                    >
+                                        Log Out
+                                    </button>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-inner shadow-black/20">
