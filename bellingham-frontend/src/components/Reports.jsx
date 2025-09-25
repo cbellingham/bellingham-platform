@@ -395,7 +395,7 @@ const Reports = () => {
 
                         <div className="overflow-hidden rounded-2xl border border-slate-800/80">
                             <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
-                                <thead className="bg-slate-900/80 text-xs uppercase tracking-[0.18em] text-slate-400">
+                                <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
                                     <tr>
                                         <th className="px-4 py-3">Title</th>
                                         <th className="px-4 py-3">Seller</th>
