@@ -4,12 +4,15 @@ import NotificationPopup from "./NotificationPopup";
 
 const Layout = ({ children, onLogout }) => (
     <div className="flex min-h-screen flex-col bg-slate-950 font-sans text-slate-100">
+        <a href="#main-content" className="skip-link">
+            Skip to main content
+        </a>
         <Header onLogout={onLogout} />
-        <div className="flex-1">
+        <main id="main-content" tabIndex="-1" className="flex-1">
             <div className="mx-auto w-full max-w-7xl px-6 py-8">
                 {children}
             </div>
-        </div>
+        </main>
         <NotificationPopup />
     </div>
 );
