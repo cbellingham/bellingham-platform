@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import { useNotifications } from "../context";
@@ -6,6 +6,43 @@ import { useNotifications } from "../context";
 const NotificationPopup = () => {
     const navigate = useNavigate();
     const { unreadNotifications, markRead } = useNotifications();
+    const autoDismissTimers = useRef({});
+
+    useEffect(() => {
+        const timers = autoDismissTimers.current;
+
+        unreadNotifications.forEach((notification) => {
+            const id = String(notification.id);
+
+            if (timers[id]) return;
+
+            timers[id] = window.setTimeout(() => {
+                markRead(notification.id);
+                delete timers[id];
+            }, notification.autoDismissMs ?? 8000);
+        });
+
+        Object.keys(timers).forEach((id) => {
+            const stillVisible = unreadNotifications.some(
+                (notification) => String(notification.id) === id
+            );
+
+            if (!stillVisible) {
+                clearTimeout(timers[id]);
+                delete timers[id];
+            }
+        });
+    }, [markRead, unreadNotifications]);
+
+    useEffect(
+        () => () => {
+            Object.values(autoDismissTimers.current).forEach((timeoutId) =>
+                clearTimeout(timeoutId)
+            );
+            autoDismissTimers.current = {};
+        },
+        []
+    );
 
     const handleViewContracts = useCallback(
         async (id) => {
@@ -25,39 +62,49 @@ const NotificationPopup = () => {
     if (!unreadNotifications.length) return null;
 
     return (
-        <div className="pointer-events-none fixed top-28 right-6 z-40 flex max-w-xs flex-col gap-3">
-            {unreadNotifications.map((notification) => (
-                <div
-                    key={notification.id}
-                    className="pointer-events-auto w-full rounded-lg bg-gray-800 p-4 text-white shadow-xl"
-                >
-                    <p className="text-sm font-semibold">
-                        {notification.title || "New activity"}
-                    </p>
-                    {notification.message && (
-                        <p className="mt-1 text-sm text-gray-300">
-                            {notification.message}
-                        </p>
-                    )}
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        <Button
-                            variant="success"
-                            className="px-3 py-1 text-sm"
-                            onClick={() => handleViewContracts(notification.id)}
+        <section
+            className="pointer-events-none fixed top-24 right-4 z-40 max-h-[calc(100vh-6rem)] w-full max-w-sm overflow-y-auto pr-1 sm:right-6"
+            aria-live="assertive"
+            aria-label="Notifications"
+            role="region"
+        >
+            <ol className="flex flex-col gap-4" role="list">
+                {unreadNotifications.map((notification) => (
+                    <li key={notification.id} role="listitem" className="pointer-events-auto">
+                        <article
+                            className="rounded-lg bg-gray-800 p-4 text-white shadow-xl ring-1 ring-black/10"
+                            role="status"
+                            aria-atomic="true"
                         >
-                            View contracts
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            className="px-3 py-1 text-sm"
-                            onClick={() => handleDismiss(notification.id)}
-                        >
-                            Dismiss
-                        </Button>
-                    </div>
-                </div>
-            ))}
-        </div>
+                            <p className="text-sm font-semibold">
+                                {notification.title || "New activity"}
+                            </p>
+                            {notification.message && (
+                                <p className="mt-1 text-sm text-gray-300">
+                                    {notification.message}
+                                </p>
+                            )}
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                <Button
+                                    variant="success"
+                                    className="px-3 py-1 text-sm"
+                                    onClick={() => handleViewContracts(notification.id)}
+                                >
+                                    View contracts
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    className="px-3 py-1 text-sm"
+                                    onClick={() => handleDismiss(notification.id)}
+                                >
+                                    Dismiss
+                                </Button>
+                            </div>
+                        </article>
+                    </li>
+                ))}
+            </ol>
+        </section>
     );
 };
 
