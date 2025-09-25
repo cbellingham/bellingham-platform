@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useMemo } from "react";
+import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import ContractDetailsPanel from "./ContractDetailsPanel";
@@ -11,12 +11,165 @@ import TableSkeleton from "./ui/TableSkeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+const ACCESSIBLE_PALETTE = [
+    "#2dd4bf",
+    "#38bdf8",
+    "#f97316",
+    "#8b5cf6",
+    "#facc15",
+    "#f472b6",
+    "#22d3ee",
+    "#a3e635",
+];
+
+const hexToRgb = (hex) => {
+    if (!hex) {
+        return { r: 0, g: 0, b: 0 };
+    }
+
+    const normalized = hex.replace("#", "");
+    const matches =
+        normalized.length === 3
+            ? normalized
+                  .split("")
+                  .map((char) => char + char)
+                  .join("")
+            : normalized.padEnd(6, "0");
+
+    const value = parseInt(matches, 16);
+
+    return {
+        r: (value >> 16) & 255,
+        g: (value >> 8) & 255,
+        b: value & 255,
+    };
+};
+
+const withAlpha = (hex, alpha = 1) => {
+    const { r, g, b } = hexToRgb(hex);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+const PATTERN_DEFINITIONS = [
+    {
+        id: "diagonal-forward",
+        css: (color) => ({
+            backgroundColor: withAlpha(color, 0.78),
+            backgroundImage: `repeating-linear-gradient(135deg, transparent 0 6px, rgba(15, 23, 42, 0.45) 6px 9px)`,
+            backgroundSize: "12px 12px",
+        }),
+        createPattern: (ctx, color) => {
+            const size = 32;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const patternCtx = canvas.getContext("2d");
+
+            patternCtx.fillStyle = withAlpha(color, 0.8);
+            patternCtx.fillRect(0, 0, size, size);
+
+            patternCtx.strokeStyle = "rgba(15, 23, 42, 0.55)";
+            patternCtx.lineWidth = 4;
+
+            patternCtx.beginPath();
+            patternCtx.moveTo(-size * 0.25, size);
+            patternCtx.lineTo(size, -size * 0.25);
+            patternCtx.moveTo(0, size * 1.25);
+            patternCtx.lineTo(size * 1.25, 0);
+            patternCtx.stroke();
+
+            return ctx.createPattern(canvas, "repeat");
+        },
+    },
+    {
+        id: "diagonal-back",
+        css: (color) => ({
+            backgroundColor: withAlpha(color, 0.78),
+            backgroundImage: `repeating-linear-gradient(45deg, transparent 0 6px, rgba(15, 23, 42, 0.4) 6px 9px)`,
+            backgroundSize: "12px 12px",
+        }),
+        createPattern: (ctx, color) => {
+            const size = 32;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const patternCtx = canvas.getContext("2d");
+
+            patternCtx.fillStyle = withAlpha(color, 0.8);
+            patternCtx.fillRect(0, 0, size, size);
+
+            patternCtx.strokeStyle = "rgba(15, 23, 42, 0.55)";
+            patternCtx.lineWidth = 4;
+
+            patternCtx.beginPath();
+            patternCtx.moveTo(-size * 0.25, 0);
+            patternCtx.lineTo(size, size * 1.25);
+            patternCtx.moveTo(0, -size * 0.25);
+            patternCtx.lineTo(size * 1.25, size);
+            patternCtx.stroke();
+
+            return ctx.createPattern(canvas, "repeat");
+        },
+    },
+    {
+        id: "horizontal",
+        css: (color) => ({
+            backgroundColor: withAlpha(color, 0.78),
+            backgroundImage: `repeating-linear-gradient(0deg, transparent 0 7px, rgba(15, 23, 42, 0.45) 7px 11px)`,
+            backgroundSize: "14px 14px",
+        }),
+        createPattern: (ctx, color) => {
+            const size = 32;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const patternCtx = canvas.getContext("2d");
+
+            patternCtx.fillStyle = withAlpha(color, 0.8);
+            patternCtx.fillRect(0, 0, size, size);
+
+            patternCtx.fillStyle = "rgba(15, 23, 42, 0.5)";
+            patternCtx.fillRect(0, 0, size, size / 4);
+
+            return ctx.createPattern(canvas, "repeat");
+        },
+    },
+    {
+        id: "dots",
+        css: (color) => ({
+            backgroundColor: withAlpha(color, 0.78),
+            backgroundImage: `radial-gradient(rgba(15, 23, 42, 0.55) 15%, transparent 16%)`,
+            backgroundSize: "12px 12px",
+        }),
+        createPattern: (ctx, color) => {
+            const size = 32;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const patternCtx = canvas.getContext("2d");
+
+            patternCtx.fillStyle = withAlpha(color, 0.8);
+            patternCtx.fillRect(0, 0, size, size);
+
+            patternCtx.fillStyle = "rgba(15, 23, 42, 0.6)";
+            const radius = size * 0.18;
+            patternCtx.beginPath();
+            patternCtx.arc(size * 0.35, size * 0.35, radius, 0, Math.PI * 2);
+            patternCtx.arc(size * 0.85, size * 0.85, radius, 0, Math.PI * 2);
+            patternCtx.fill();
+
+            return ctx.createPattern(canvas, "repeat");
+        },
+    },
+];
+
 const Reports = () => {
     const navigate = useNavigate();
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
     const [selectedContract, setSelectedContract] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const patternCache = useRef({});
 
     const totalValue = contracts.reduce(
         (sum, contract) => sum + Number(contract.price || 0),
@@ -48,23 +201,28 @@ const Reports = () => {
             };
         }
 
-        const colors = [
-            "#34d399",
-            "#0ea5e9",
-            "#a855f7",
-            "#f97316",
-            "#ef4444",
-            "#22d3ee",
-            "#facc15",
-            "#14b8a6",
-        ];
-
         return {
             labels: contracts.map((contract) => contract.title || "Untitled Contract"),
             datasets: [
                 {
                     data: contracts.map((contract) => Number(contract.price || 0)),
-                    backgroundColor: contracts.map((_, index) => colors[index % colors.length]),
+                    backgroundColor: (context) => {
+                        const dataIndex = context.dataIndex ?? 0;
+                        const baseColor = ACCESSIBLE_PALETTE[dataIndex % ACCESSIBLE_PALETTE.length];
+                        const pattern = PATTERN_DEFINITIONS[dataIndex % PATTERN_DEFINITIONS.length];
+                        const cacheKey = `${pattern.id}-${baseColor}`;
+                        const chartCtx = context?.chart?.ctx;
+
+                        if (!chartCtx || typeof document === "undefined") {
+                            return baseColor;
+                        }
+
+                        if (!patternCache.current[cacheKey]) {
+                            patternCache.current[cacheKey] = pattern.createPattern(chartCtx, baseColor);
+                        }
+
+                        return patternCache.current[cacheKey];
+                    },
                     borderColor: "#0f172a",
                     borderWidth: 2,
                 },
@@ -76,12 +234,7 @@ const Reports = () => {
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: "right",
-                labels: {
-                    color: "#e2e8f0",
-                    boxWidth: 16,
-                    padding: 16,
-                },
+                display: false,
             },
             tooltip: {
                 callbacks: {
@@ -165,20 +318,63 @@ const Reports = () => {
                                 </div>
                             ) : contracts.length ? (
                                 <div className="flex flex-col gap-6 lg:flex-row">
-                                    <div className="h-72 w-full lg:h-96 lg:flex-1">
-                                        <Pie data={pieData} options={pieOptions} />
+                                    <div className="flex w-full flex-col gap-4 lg:flex-1">
+                                        <div className="h-72 w-full lg:h-96">
+                                            <Pie data={pieData} options={pieOptions} />
+                                        </div>
+                                        <div className="grid gap-3 rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 text-sm text-slate-200 sm:grid-cols-2">
+                                            {contracts.map((contract, index) => {
+                                                const baseColor = ACCESSIBLE_PALETTE[index % ACCESSIBLE_PALETTE.length];
+                                                const pattern = PATTERN_DEFINITIONS[index % PATTERN_DEFINITIONS.length];
+                                                const price = Number(contract.price || 0);
+                                                const allocation = totalValue ? ((price / totalValue) * 100).toFixed(1) : "0.0";
+
+                                                return (
+                                                    <div key={contract.id ?? index} className="flex items-start gap-3 rounded-lg border border-slate-800/60 bg-slate-900/60 p-3">
+                                                        <span
+                                                            aria-hidden="true"
+                                                            className="mt-1 h-10 w-10 flex-shrink-0 rounded-md border border-slate-800/80 shadow-inner"
+                                                            style={{
+                                                                ...pattern.css(baseColor),
+                                                                borderColor: "rgba(15, 23, 42, 0.55)",
+                                                            }}
+                                                        />
+                                                        <div className="flex flex-1 flex-col gap-1">
+                                                            <p className="text-sm font-semibold text-white">
+                                                                <span className="sr-only">Slice {index + 1}: </span>
+                                                                {contract.title || "Untitled Contract"}
+                                                            </p>
+                                                            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{allocation}% of portfolio</p>
+                                                            <p className="text-xs text-slate-300">Value ${price.toFixed(2)}</p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                     <div className="flex w-full flex-1 flex-col gap-4 text-sm text-slate-200">
-                                        {contracts.map((contract) => {
+                                        {contracts.map((contract, index) => {
                                             const price = Number(contract.price || 0);
                                             const allocation = totalValue ? ((price / totalValue) * 100).toFixed(1) : "0.0";
+                                            const baseColor = ACCESSIBLE_PALETTE[index % ACCESSIBLE_PALETTE.length];
+                                            const pattern = PATTERN_DEFINITIONS[index % PATTERN_DEFINITIONS.length];
 
                                             return (
                                                 <div
                                                     key={contract.id}
                                                     className="rounded-xl border border-slate-800/80 bg-slate-900/60 px-4 py-3"
                                                 >
-                                                    <p className="text-base font-semibold text-white">{contract.title}</p>
+                                                    <div className="mb-3 flex items-center gap-3">
+                                                        <span
+                                                            aria-hidden="true"
+                                                            className="h-9 w-9 flex-shrink-0 rounded-md border border-slate-800/70 shadow-inner"
+                                                            style={{
+                                                                ...pattern.css(baseColor),
+                                                                borderColor: "rgba(15, 23, 42, 0.45)",
+                                                            }}
+                                                        />
+                                                        <p className="text-base font-semibold text-white">{contract.title}</p>
+                                                    </div>
                                                     <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
                                                         Allocation {allocation}%
                                                     </p>
