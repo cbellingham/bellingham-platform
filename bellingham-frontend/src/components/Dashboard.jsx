@@ -1,6 +1,6 @@
 // src/components/Dashboard.jsx
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
@@ -43,6 +43,43 @@ const Dashboard = () => {
         navigate("/login");
     };
 
+    const kpis = useMemo(() => {
+        if (!contracts.length) {
+            return {
+                openContracts: 0,
+                totalVolume: 0,
+                averageAsk: 0,
+                activeSellers: 0,
+            };
+        }
+
+        const totalVolume = contracts.reduce((sum, contract) => {
+            const price = Number(contract?.price ?? 0);
+            return Number.isFinite(price) ? sum + price : sum;
+        }, 0);
+        const averageAsk = totalVolume / contracts.length;
+        const activeSellers = new Set(contracts.map((contract) => contract.seller)).size;
+
+        return {
+            openContracts: contracts.length,
+            totalVolume,
+            averageAsk,
+            activeSellers,
+        };
+    }, [contracts]);
+
+    const formatCurrency = (value) =>
+        new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0,
+        }).format(value ?? 0);
+
+    const formatNumber = (value) =>
+        new Intl.NumberFormat("en-US", {
+            maximumFractionDigits: 0,
+        }).format(value ?? 0);
+
     return (
         <Layout onLogout={handleLogout}>
             <div className="flex flex-col gap-6 xl:flex-row">
@@ -53,6 +90,39 @@ const Dashboard = () => {
                         <p className="text-sm text-slate-400">
                             Monitor current opportunities and select a contract to inspect the full trade details.
                         </p>
+                    </div>
+                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                        {isLoading ? (
+                            Array.from({ length: 4 }).map((_, index) => (
+                                <div
+                                    key={`kpi-skeleton-${index}`}
+                                    className="h-24 animate-pulse rounded-xl border border-slate-800/70 bg-slate-950/40"
+                                />
+                            ))
+                        ) : (
+                            <>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Open Contracts</p>
+                                    <p className="mt-3 text-3xl font-bold text-white">{formatNumber(kpis.openContracts)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Currently listed opportunities</p>
+                                </div>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
+                                    <p className="mt-3 text-3xl font-bold text-emerald-300">{formatCurrency(kpis.totalVolume)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
+                                </div>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
+                                    <p className="mt-3 text-3xl font-bold text-white">{formatCurrency(kpis.averageAsk)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
+                                </div>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
+                                    <p className="mt-3 text-3xl font-bold text-white">{formatNumber(kpis.activeSellers)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
+                                </div>
+                            </>
+                        )}
                     </div>
                     <div className="mt-6 overflow-hidden rounded-xl border border-slate-800/80">
                         <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
