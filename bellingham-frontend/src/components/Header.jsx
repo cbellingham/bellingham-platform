@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { BellAlertIcon } from "@heroicons/react/24/outline";
 
-import logoImage from "../assets/login.png";
 import { AuthContext, useNotifications } from "../context";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
@@ -24,18 +23,11 @@ const Header = ({ onLogout }) => {
         <header className="relative z-20 border-b border-slate-800/70 bg-slate-950/95 shadow-[0_16px_40px_rgba(8,20,45,0.65)]">
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                    <Link to="/" className="flex items-center gap-3">
-                        <img
-                            src={logoImage}
-                            alt="Bellingham Data Futures logo"
-                            className="h-8 w-8 rounded-full border border-emerald-400/40 bg-slate-900/80 p-1.5 shadow-[0_6px_18px_rgba(16,185,129,0.25)] sm:h-9 sm:w-9"
-                        />
-                        <div className="hidden flex-col leading-tight sm:flex">
-                            <span className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-200/80">
-                                Bellingham
-                            </span>
-                            <span className="text-lg font-semibold text-white">Markets Platform</span>
-                        </div>
+                    <Link to="/" className="flex flex-col leading-tight">
+                        <span className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-200/80">
+                            Bellingham
+                        </span>
+                        <span className="text-lg font-semibold text-white">Markets Platform</span>
                     </Link>
                     <div className="flex items-center gap-4">
                         <Link

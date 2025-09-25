@@ -2,7 +2,6 @@
 
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginImage from "../assets/login.png";
 import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from "../context";
@@ -58,23 +57,13 @@ const Login = () => {
                     </div>
                     <div className="relative grid gap-12 p-10 md:grid-cols-2 lg:p-16">
                         <div className="flex flex-col justify-between gap-8">
-                            <div className="flex items-center gap-4">
-                                <img
-                                    src={LoginImage}
-                                    alt="Bellingham Data Futures logo"
-                                    className={[
-                                        "h-8 w-8 rounded-xl border border-slate-700/70 bg-slate-950/60 p-1.5 shadow-lg",
-                                        "sm:h-9 sm:w-9",
-                                    ].join(" ")}
-                                />
-                                <div>
-                                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
-                                        Bellingham Data Futures
-                                    </p>
-                                    <h1 className="text-3xl font-semibold text-slate-50 sm:text-4xl">
-                                        Welcome back.
-                                    </h1>
-                                </div>
+                            <div>
+                                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
+                                    Bellingham Data Futures
+                                </p>
+                                <h1 className="text-3xl font-semibold text-slate-50 sm:text-4xl">
+                                    Welcome back.
+                                </h1>
                             </div>
                             <div className="space-y-4 text-slate-300">
                                 <p className="text-base leading-relaxed">

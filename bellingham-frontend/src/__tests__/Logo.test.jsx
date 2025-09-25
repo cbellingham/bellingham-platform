@@ -1,10 +1,9 @@
 /* eslint-env jest */
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Logo from '../components/Logo';
 
-test('renders logo image', () => {
-  render(<Logo />);
-  const img = screen.getByAltText(/logo/i);
-  expect(img).toBeInTheDocument();
+test('renders nothing while logo is disabled', () => {
+  const { container } = render(<Logo />);
+  expect(container.firstChild).toBeNull();
 });
