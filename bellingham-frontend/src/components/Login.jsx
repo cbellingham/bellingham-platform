@@ -11,6 +11,8 @@ const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [authError, setAuthError] = useState(false);
 
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
@@ -18,6 +20,7 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
+        setAuthError(false);
 
         try {
             const res = await api.post(`/api/authenticate`, { username, password });
@@ -32,11 +35,18 @@ const Login = () => {
             console.error("❌ Login Error:", err);
             if (err.response && err.response.status === 403) {
                 setError("Invalid username or password.");
+                setAuthError(true);
             } else {
                 setError("Login failed. Please try again.");
             }
         }
     };
+
+    const inputBaseClasses =
+        "w-full rounded-lg border bg-slate-900/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 transition-colors focus:outline-none focus:ring-2";
+    const inputStateClasses = authError
+        ? "border-red-500/70 focus:border-red-400 focus:ring-red-500/40"
+        : "border-slate-700/80 focus:border-sky-400 focus:ring-sky-500/50";
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -114,22 +124,44 @@ const Login = () => {
                                     type="text"
                                     placeholder="Enter your username"
                                     value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    className="w-full rounded-lg border border-slate-700/80 bg-slate-900/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+                                    onChange={(e) => {
+                                        setUsername(e.target.value);
+                                        if (authError) {
+                                            setAuthError(false);
+                                        }
+                                    }}
+                                    className={`${inputBaseClasses} ${inputStateClasses}`}
+                                    aria-invalid={authError || undefined}
                                 />
                             </div>
                             <div className="space-y-2">
                                 <label htmlFor="password" className="text-sm font-medium text-slate-300">
                                     Password
                                 </label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full rounded-lg border border-slate-700/80 bg-slate-900/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50"
-                                />
+                                <div className="relative">
+                                    <input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                            if (authError) {
+                                                setAuthError(false);
+                                            }
+                                        }}
+                                        className={`${inputBaseClasses} ${inputStateClasses} pr-12`}
+                                        aria-invalid={authError || undefined}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                        className="absolute inset-y-0 right-3 inline-flex items-center text-xs font-semibold uppercase tracking-wide text-slate-400 transition hover:text-slate-200 focus:outline-none"
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? "Hide" : "Show"}
+                                    </button>
+                                </div>
                             </div>
                             <Button type="submit" className="w-full rounded-lg py-3 text-base font-semibold shadow-lg shadow-sky-500/20" variant="primary">
                                 Sign In
