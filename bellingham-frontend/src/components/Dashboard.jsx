@@ -82,7 +82,7 @@ const Dashboard = () => {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[260px_minmax(0,1fr)_320px]">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[260px_minmax(0,1fr)_320px] xl:gap-8">
                 <main className="order-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)] xl:order-2">
                     <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
                         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
