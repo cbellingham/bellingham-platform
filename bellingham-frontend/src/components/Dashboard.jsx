@@ -103,22 +103,22 @@ const Dashboard = () => {
                             <>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Open Contracts</p>
-                                    <p className="mt-3 text-3xl font-bold text-[#00D1FF]">{formatNumber(kpis.openContracts)}</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatNumber(kpis.openContracts)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Currently listed opportunities</p>
                                 </div>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
-                                    <p className="mt-3 text-3xl font-bold text-[#3BAEAB]">{formatCurrency(kpis.totalVolume)}</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#3BAEAB]">{formatCurrency(kpis.totalVolume)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
                                 </div>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
-                                    <p className="mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
                                 </div>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
-                                    <p className="mt-3 text-3xl font-bold text-[#7465A8]">{formatNumber(kpis.activeSellers)}</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#7465A8]">{formatNumber(kpis.activeSellers)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
                                 </div>
                             </>
@@ -148,7 +148,7 @@ const Dashboard = () => {
                                             >
                                                 <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
                                                 <td className="px-4 py-3">{contract.seller}</td>
-                                                <td className="px-4 py-3 font-semibold text-[#3BAEAB]">
+                                                <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">
                                                     ${contract.price}
                                                 </td>
                                                 <td className="px-4 py-3">

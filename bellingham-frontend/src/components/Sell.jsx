@@ -377,7 +377,8 @@ const Sell = () => {
                             <div>
                                 <div className="flex flex-wrap items-center justify-between gap-3">
                                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                                        Step {currentStep + 1} of {steps.length}
+                                        Step <span className="numeric-text">{currentStep + 1}</span> of{' '}
+                                        <span className="numeric-text">{steps.length}</span>
                                     </p>
                                     <span className="text-sm font-semibold text-white">{steps[currentStep].title}</span>
                                 </div>
@@ -437,7 +438,7 @@ const Sell = () => {
                                         <tr key={c.id} className="bg-slate-950/40">
                                             <td className="px-4 py-3 font-semibold text-slate-100">{c.title}</td>
                                             <td className="px-4 py-3">{c.buyerUsername || "-"}</td>
-                                            <td className="px-4 py-3 font-semibold text-[#3BAEAB]">${c.price}</td>
+                                            <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${c.price}</td>
                                             <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
                                             <td className="px-4 py-3">
                                                 <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">

@@ -33,6 +33,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.numeric-text {
+  font-family: 'Roboto Mono', 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
 .skip-link {
   position: absolute;
   top: 0;

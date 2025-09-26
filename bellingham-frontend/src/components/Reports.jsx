@@ -344,8 +344,12 @@ const Reports = () => {
                                                                 <span className="sr-only">Slice {index + 1}: </span>
                                                                 {contract.title || "Untitled Contract"}
                                                             </p>
-                                                            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{allocation}% of portfolio</p>
-                                                            <p className="text-xs text-slate-300">Value ${price.toFixed(2)}</p>
+                                                            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
+                                                                <span className="numeric-text">{allocation}%</span> of portfolio
+                                                            </p>
+                                                            <p className="text-xs text-slate-300">
+                                                                Value <span className="numeric-text">${price.toFixed(2)}</span>
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 );
@@ -376,9 +380,11 @@ const Reports = () => {
                                                         <p className="text-base font-semibold text-white">{contract.title}</p>
                                                     </div>
                                                     <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
-                                                        Allocation {allocation}%
+                                                        Allocation <span className="numeric-text">{allocation}%</span>
                                                     </p>
-                                                    <p className="text-sm text-slate-300">Value ${price.toFixed(2)}</p>
+                                                    <p className="text-sm text-slate-300">
+                                                        Value <span className="numeric-text">${price.toFixed(2)}</span>
+                                                    </p>
                                                     <p className="text-sm text-slate-300">Purchased {formatDate(contract.purchaseDate)}</p>
                                                     <p className="text-sm text-slate-300">Delivery {formatDate(contract.deliveryDate)}</p>
                                                 </div>
@@ -417,7 +423,7 @@ const Reports = () => {
                                                 >
                                                     <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
                                                     <td className="px-4 py-3">{contract.seller}</td>
-                                                    <td className="px-4 py-3 font-semibold text-[#3BAEAB]">${contract.price}</td>
+                                                    <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${contract.price}</td>
                                                     <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
                                                     <td className="px-4 py-3">
                                                         <div className="flex flex-wrap gap-2">
@@ -458,7 +464,7 @@ const Reports = () => {
                         </div>
 
                         <p className="text-lg font-semibold text-[#00D1FF]">
-                            Portfolio Value ${totalValue.toFixed(2)}
+                            Portfolio Value <span className="numeric-text">${totalValue.toFixed(2)}</span>
                         </p>
                     </div>
                 </section>
