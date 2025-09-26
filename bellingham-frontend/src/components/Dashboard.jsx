@@ -82,47 +82,14 @@ const Dashboard = () => {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="flex flex-col gap-6 xl:flex-row">
-                <main className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[260px_minmax(0,1fr)_320px]">
+                <main className="order-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)] xl:order-2">
                     <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
                         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
                         <h2 className="text-3xl font-bold text-white">Open Contracts</h2>
                         <p className="text-sm text-slate-400">
                             Monitor current opportunities and select a contract to inspect the full trade details.
                         </p>
-                    </div>
-                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                        {isLoading ? (
-                            Array.from({ length: 4 }).map((_, index) => (
-                                <div
-                                    key={`kpi-skeleton-${index}`}
-                                    className="h-24 animate-pulse rounded-xl border border-slate-800/70 bg-slate-950/40"
-                                />
-                            ))
-                        ) : (
-                            <>
-                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Open Contracts</p>
-                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatNumber(kpis.openContracts)}</p>
-                                    <p className="mt-1 text-xs text-slate-500">Currently listed opportunities</p>
-                                </div>
-                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
-                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#3BAEAB]">{formatCurrency(kpis.totalVolume)}</p>
-                                    <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
-                                </div>
-                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
-                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
-                                    <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
-                                </div>
-                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
-                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#7465A8]">{formatNumber(kpis.activeSellers)}</p>
-                                    <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
-                                </div>
-                            </>
-                        )}
                     </div>
                     <div className="mt-6 overflow-hidden rounded-xl border border-slate-800/80">
                         <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
@@ -172,14 +139,56 @@ const Dashboard = () => {
                         </table>
                     </div>
                 </main>
-                <div className="xl:w-[360px]">
+                <aside className="order-2 space-y-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.45)] xl:order-1">
+                    <div className="border-b border-slate-800 pb-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#3BAEAB]/80">Analytics</p>
+                        <h3 className="text-2xl font-semibold text-white">Marketplace KPIs</h3>
+                        <p className="mt-2 text-sm text-slate-400">
+                            Track headline performance metrics alongside the live order book.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                        {isLoading ? (
+                            Array.from({ length: 4 }).map((_, index) => (
+                                <div
+                                    key={`kpi-skeleton-${index}`}
+                                    className="h-24 animate-pulse rounded-xl border border-slate-800/70 bg-slate-950/40"
+                                />
+                            ))
+                        ) : (
+                            <>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Open Contracts</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatNumber(kpis.openContracts)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Currently listed opportunities</p>
+                                </div>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#3BAEAB]">{formatCurrency(kpis.totalVolume)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
+                                </div>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
+                                </div>
+                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
+                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#7465A8]">{formatNumber(kpis.activeSellers)}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </aside>
+                <aside className="order-3 xl:order-3">
                     <ContractDetailsPanel
                         inline
                         inlineWidth="w-full"
                         contract={selectedContract}
                         onClose={() => setSelectedContract(null)}
                     />
-                </div>
+                </aside>
             </div>
         </Layout>
     );
