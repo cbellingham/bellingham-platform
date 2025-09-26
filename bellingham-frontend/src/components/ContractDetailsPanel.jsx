@@ -12,9 +12,9 @@ import api from "../utils/api";
 
 const STATUS_STYLES = {
     open: "border-[#00D1FF]/50 bg-[#00D1FF]/10 text-[#00D1FF]",
-    purchased: "border-[#FF4D9B]/50 bg-[#FF4D9B]/10 text-[#FF4D9B]",
+    purchased: "border-[#7465A8]/50 bg-[#7465A8]/12 text-[#C5BEE4]",
     closed: "border-slate-500/40 bg-slate-600/10 text-slate-200",
-    default: "border-[#FF4D9B]/50 bg-[#FF4D9B]/10 text-[#FF4D9B]",
+    default: "border-[#3BAEAB]/50 bg-[#3BAEAB]/12 text-[#9CD8D6]",
 };
 
 const formatCurrency = (value) => {
@@ -298,7 +298,7 @@ const ContractDetailsPanel = ({
             <div className="mt-4 flex flex-col gap-6 text-sm text-slate-300">
                 <div className="flex flex-wrap gap-2">
                     <Button
-                        className="border border-[#FF4D9B]/50 bg-[#FF4D9B]/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#FF4D9B] hover:bg-[#FF4D9B]/20"
+                        className="border border-[#7465A8]/50 bg-[#7465A8]/12 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#C5BEE4] hover:bg-[#7465A8]/20"
                         onClick={handleDownload}
                     >
                         Download PDF

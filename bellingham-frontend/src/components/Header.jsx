@@ -42,7 +42,7 @@ const Header = ({ onLogout }) => {
                             <BellAlertIcon aria-hidden="true" className="h-5 w-5" />
                             <span className="sr-only">Open notifications</span>
                             {unreadCount > 0 && (
-                                <span className="absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#FF4D9B] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-slate-950 shadow-lg">
+                                <span className="absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#7465A8] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-white shadow-lg">
                                     {unreadCount > 99 ? "99+" : unreadCount}
                                 </span>
                             )}
@@ -60,7 +60,7 @@ const Header = ({ onLogout }) => {
                                     <button
                                         type="button"
                                         onClick={onLogout}
-                                        className="rounded-lg border border-[#FF4D9B]/50 bg-[#FF4D9B]/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#FF4D9B] transition-colors hover:bg-[#FF4D9B]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
+                                        className="rounded-lg border border-[#3BAEAB]/60 bg-[#3BAEAB]/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#9CD8D6] transition-colors hover:bg-[#3BAEAB]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
                                     >
                                         Log Out
                                     </button>

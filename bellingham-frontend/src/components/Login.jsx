@@ -59,7 +59,7 @@ const Login = () => {
                 <div className="relative w-full overflow-hidden rounded-3xl border border-slate-800/70 bg-slate-900/70 shadow-[0_40px_80px_-20px_rgba(15,23,42,0.9)] backdrop-blur">
                     <div className="pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
                         <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-[#00D1FF]/30 blur-3xl" />
-                        <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-[#FF4D9B]/25 blur-3xl" />
+                        <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-[#7465A8]/25 blur-3xl" />
                     </div>
                     <div className="relative grid gap-12 p-10 md:grid-cols-2 lg:p-16">
                         <div className="flex flex-col justify-between gap-8">
@@ -82,7 +82,7 @@ const Login = () => {
                                         <span>Track portfolio performance with high-contrast visualisations.</span>
                                     </li>
                                     <li className="flex items-start gap-3">
-                                        <span className="mt-1 inline-flex h-2.5 w-2.5 flex-shrink-0 rounded-full bg-[#FF4D9B]" />
+                                        <span className="mt-1 inline-flex h-2.5 w-2.5 flex-shrink-0 rounded-full bg-[#7465A8]" />
                                         <span>Coordinate bids and settlements securely from a single control room.</span>
                                     </li>
                                     <li className="flex items-start gap-3">
@@ -96,7 +96,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => navigate("/signup")}
-                                    className="font-medium text-[#00D1FF] transition hover:text-[#FF4D9B]"
+                                    className="font-medium text-[#00D1FF] transition hover:text-[#3BAEAB]"
                                 >
                                     Request access
                                 </button>
@@ -167,7 +167,7 @@ const Login = () => {
                             <Button
                                 type="button"
                                 variant="link"
-                                className="text-center text-sm text-[#00D1FF] hover:text-[#FF4D9B]"
+                                className="text-center text-sm text-[#00D1FF] hover:text-[#3BAEAB]"
                                 onClick={() => navigate("/signup")}
                             >
                                 Create Account

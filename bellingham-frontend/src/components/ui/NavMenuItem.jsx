@@ -16,7 +16,7 @@ const activeClasses = {
 
 const inactiveClasses = {
     header:
-        "border border-transparent text-slate-300 hover:border-[#FF4D9B]/50 hover:bg-slate-800/60 hover:text-[#FF4D9B]",
+        "border border-transparent text-slate-300 hover:border-[#7465A8]/50 hover:bg-slate-800/60 hover:text-[#3BAEAB]",
     sidebar: "text-slate-200 hover:bg-slate-800/70",
 };
 
