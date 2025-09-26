@@ -21,11 +21,13 @@ const formatCurrency = (value) => {
     if (value === null || value === undefined || value === "") return null;
     const numericValue = Number(value);
     if (Number.isNaN(numericValue)) return String(value);
-    return new Intl.NumberFormat("en-US", {
+    const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         maximumFractionDigits: 2,
     }).format(numericValue);
+
+    return <span className="numeric-text">{formatted}</span>;
 };
 
 const formatDate = (value) => {
