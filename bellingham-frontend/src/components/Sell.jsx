@@ -361,101 +361,105 @@ const Sell = () => {
             <Layout onLogout={handleLogout}>
                 <div className="flex flex-col gap-8">
                     <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
-                        <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Primary Listing</p>
-                            <h1 className="text-3xl font-bold text-white">Sell Your Data Contract</h1>
-                            <p className="text-sm text-slate-400">
-                                Provide the core commercial terms, delivery requirements, and legal agreement to list a new contract.
-                            </p>
+                        <div className="space-y-6">
+                            <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Primary Listing</p>
+                                <h1 className="text-3xl font-bold text-white">Sell Your Data Contract</h1>
+                                <p className="text-sm text-slate-400">
+                                    Provide the core commercial terms, delivery requirements, and legal agreement to list a new contract.
+                                </p>
+                            </div>
+                            {message && (
+                                <p className="rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-3 text-sm text-slate-200">
+                                    {message}
+                                </p>
+                            )}
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div>
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                                            Step <span className="numeric-text">{currentStep + 1}</span> of{' '}
+                                            <span className="numeric-text">{steps.length}</span>
+                                        </p>
+                                        <span className="text-sm font-semibold text-white">{steps[currentStep].title}</span>
+                                    </div>
+                                    <div className="mt-2 h-2 w-full overflow-hidden rounded-full border border-slate-800/60 bg-slate-950/60">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-[#3BAEAB] to-[#7465A8] transition-all duration-300"
+                                            style={{ width: `${progressPercentage}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {renderStepContent()}
+
+                                <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
+                                    {currentStep > 0 ? (
+                                        <Button type="button" variant="ghost" onClick={goToPreviousStep} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                            Back
+                                        </Button>
+                                    ) : (
+                                        <span />
+                                    )}
+                                    {currentStep < steps.length - 1 ? (
+                                        <Button type="button" onClick={goToNextStep} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                            Next
+                                        </Button>
+                                    ) : (
+                                        <Button type="submit" variant="success" disabled={isSubmitting} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                            {isSubmitting ? "Submitting..." : "Submit Contract"}
+                                        </Button>
+                                    )}
+                                </div>
+                            </form>
                         </div>
-                        {message && (
-                            <p className="mt-4 rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-3 text-sm text-slate-200">
-                                {message}
-                            </p>
-                        )}
-                        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-                            <div>
-                                <div className="flex flex-wrap items-center justify-between gap-3">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                                        Step <span className="numeric-text">{currentStep + 1}</span> of{' '}
-                                        <span className="numeric-text">{steps.length}</span>
-                                    </p>
-                                    <span className="text-sm font-semibold text-white">{steps[currentStep].title}</span>
-                                </div>
-                                <div className="mt-2 h-2 w-full overflow-hidden rounded-full border border-slate-800/60 bg-slate-950/60">
-                                    <div
-                                        className="h-full bg-gradient-to-r from-[#3BAEAB] to-[#7465A8] transition-all duration-300"
-                                        style={{ width: `${progressPercentage}%` }}
-                                    />
-                                </div>
-                            </div>
-
-                            {renderStepContent()}
-
-                            <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
-                                {currentStep > 0 ? (
-                                    <Button type="button" variant="ghost" onClick={goToPreviousStep} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
-                                        Back
-                                    </Button>
-                                ) : (
-                                    <span />
-                                )}
-                                {currentStep < steps.length - 1 ? (
-                                    <Button type="button" onClick={goToNextStep} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
-                                        Next
-                                    </Button>
-                                ) : (
-                                    <Button type="submit" variant="success" disabled={isSubmitting} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
-                                        {isSubmitting ? "Submitting..." : "Submit Contract"}
-                                    </Button>
-                                )}
-                            </div>
-                        </form>
                     </section>
 
                     <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
-                        <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Portfolio</p>
-                            <h2 className="text-2xl font-bold text-white">My Contracts</h2>
-                            <p className="text-sm text-slate-400">
-                                Manage the contracts you currently have listed on the marketplace.
-                            </p>
-                        </div>
-                        {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
-                        <div className="mt-6 overflow-hidden rounded-xl border border-slate-800/80">
-                            <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
-                                <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
-                                    <tr>
-                                        <th className="px-4 py-3">Title</th>
-                                        <th className="px-4 py-3">Buyer</th>
-                                        <th className="px-4 py-3">Ask Price</th>
-                                        <th className="px-4 py-3">Delivery</th>
-                                        <th className="px-4 py-3">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-800/70">
-                                    {contracts.map((c) => (
-                                        <tr key={c.id} className="bg-slate-950/40">
-                                            <td className="px-4 py-3 font-semibold text-slate-100">{c.title}</td>
-                                            <td className="px-4 py-3">{c.buyerUsername || "-"}</td>
-                                            <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${c.price}</td>
-                                            <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
-                                            <td className="px-4 py-3">
-                                                <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
-                                                    {c.status}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {contracts.length === 0 && (
+                        <div className="space-y-6">
+                            <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Portfolio</p>
+                                <h2 className="text-2xl font-bold text-white">My Contracts</h2>
+                                <p className="text-sm text-slate-400">
+                                    Manage the contracts you currently have listed on the marketplace.
+                                </p>
+                            </div>
+                            {error && <p className="text-sm text-red-400">{error}</p>}
+                            <div className="overflow-hidden rounded-xl border border-slate-800/80">
+                                <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
+                                    <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
                                         <tr>
-                                            <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
-                                                You have not listed any contracts yet.
-                                            </td>
+                                            <th className="px-4 py-3">Title</th>
+                                            <th className="px-4 py-3">Buyer</th>
+                                            <th className="px-4 py-3">Ask Price</th>
+                                            <th className="px-4 py-3">Delivery</th>
+                                            <th className="px-4 py-3">Status</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-800/70">
+                                        {contracts.map((c) => (
+                                            <tr key={c.id} className="bg-slate-950/40">
+                                                <td className="px-4 py-3 font-semibold text-slate-100">{c.title}</td>
+                                                <td className="px-4 py-3">{c.buyerUsername || "-"}</td>
+                                                <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${c.price}</td>
+                                                <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
+                                                        {c.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {contracts.length === 0 && (
+                                            <tr>
+                                                <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                    You have not listed any contracts yet.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </section>
                 </div>
