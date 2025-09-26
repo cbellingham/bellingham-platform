@@ -1,12 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-    CalendarDaysIcon,
-    ChevronDownIcon,
-    CurrencyDollarIcon,
-    DocumentTextIcon,
-    InformationCircleIcon,
-    UserCircleIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Button from "./ui/Button";
 import api from "../utils/api";
 
@@ -91,22 +84,20 @@ const ContractDetailsPanel = ({
             chips.push({
                 key: "status",
                 label: contract.status,
-                icon: InformationCircleIcon,
                 className: STATUS_STYLES[key] || STATUS_STYLES.default,
             });
         }
 
         [
-            { key: "effectiveDate", label: "Effective", icon: CalendarDaysIcon },
-            { key: "deliveryDate", label: "Delivery", icon: CalendarDaysIcon },
-            { key: "purchaseDate", label: "Purchased", icon: CalendarDaysIcon },
-        ].forEach(({ key, label, icon }) => {
+            { key: "effectiveDate", label: "Effective" },
+            { key: "deliveryDate", label: "Delivery" },
+            { key: "purchaseDate", label: "Purchased" },
+        ].forEach(({ key, label }) => {
             const formatted = formatDate(contract[key]);
             if (formatted) {
                 chips.push({
                     key,
                     label: `${label}: ${formatted}`,
-                    icon,
                     className: "border-slate-700 bg-slate-800/60 text-slate-200",
                 });
             }
@@ -121,7 +112,6 @@ const ContractDetailsPanel = ({
         return [
             {
                 title: "Contract Overview",
-                icon: DocumentTextIcon,
                 fields: [
                     { key: "title", label: "Contract Title" },
                     { key: "dataDescription", label: "Data Description" },
@@ -132,7 +122,6 @@ const ContractDetailsPanel = ({
             },
             {
                 title: "Financials",
-                icon: CurrencyDollarIcon,
                 fields: [
                     {
                         key: "price",
@@ -143,7 +132,6 @@ const ContractDetailsPanel = ({
             },
             {
                 title: "Participants",
-                icon: UserCircleIcon,
                 fields: [
                     { key: "seller", label: "Seller Username" },
                     { key: "sellerFullName", label: "Seller Name" },
@@ -158,7 +146,6 @@ const ContractDetailsPanel = ({
             },
             {
                 title: "Corporate Profile",
-                icon: InformationCircleIcon,
                 fields: [
                     { key: "legalBusinessName", label: "Legal Business Name" },
                     { key: "name", label: "Business DBA" },
@@ -173,7 +160,6 @@ const ContractDetailsPanel = ({
             },
             {
                 title: "Primary Contact",
-                icon: UserCircleIcon,
                 fields: [
                     { key: "primaryContactName", label: "Name" },
                     { key: "primaryContactEmail", label: "Email" },
@@ -182,7 +168,6 @@ const ContractDetailsPanel = ({
             },
             {
                 title: "Technical Contact",
-                icon: UserCircleIcon,
                 fields: [
                     { key: "technicalContactName", label: "Name" },
                     { key: "technicalContactEmail", label: "Email" },
@@ -191,7 +176,6 @@ const ContractDetailsPanel = ({
             },
             {
                 title: "Agreement",
-                icon: DocumentTextIcon,
                 fields: [
                     {
                         key: "agreementText",
@@ -270,14 +254,11 @@ const ContractDetailsPanel = ({
             <div
                 className={`${inlineWidth} flex h-full items-center justify-center rounded-2xl border border-dashed border-slate-800/70 bg-slate-900/40 p-6 text-center text-slate-400`}
             >
-                <div className="flex flex-col items-center gap-4">
-                    <DocumentTextIcon className="h-12 w-12 text-slate-600" />
-                    <div className="space-y-2">
-                        <h2 className="text-lg font-semibold text-slate-200">Select a contract</h2>
-                        <p className="max-w-xs text-sm text-slate-400">
-                            Choose a contract from the list to see its key dates, participants, and agreement details here.
-                        </p>
-                    </div>
+                <div className="space-y-2 text-center">
+                    <h2 className="text-lg font-semibold text-slate-200">Select a contract</h2>
+                    <p className="max-w-xs text-sm text-slate-400">
+                        Choose a contract from the list to see its key dates, participants, and agreement details here.
+                    </p>
                 </div>
             </div>
         );
@@ -305,12 +286,11 @@ const ContractDetailsPanel = ({
                     >
                         Download PDF
                     </Button>
-                    {headerChips.map(({ key, label, icon, className }) => (
+                    {headerChips.map(({ key, label, className }) => (
                         <span
                             key={key}
                             className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${className}`}
                         >
-                            {React.createElement(icon, { className: "h-4 w-4" })}
                             {label}
                         </span>
                     ))}
@@ -333,11 +313,8 @@ const ContractDetailsPanel = ({
                                     aria-expanded={isOpen}
                                     aria-controls={contentId}
                                 >
-                                    <span className="flex items-center gap-2">
-                                        {React.createElement(section.icon, { className: "h-5 w-5" })}
-                                        <span className="text-sm font-semibold uppercase tracking-[0.2em]">
-                                            {section.title}
-                                        </span>
+                                    <span className="text-sm font-semibold uppercase tracking-[0.2em]">
+                                        {section.title}
                                     </span>
                                     <ChevronDownIcon
                                         className={`h-4 w-4 flex-shrink-0 transition-transform ${
