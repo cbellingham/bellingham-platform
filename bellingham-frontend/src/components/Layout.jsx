@@ -15,7 +15,7 @@ const Layout = ({ children, onLogout }) => (
         </a>
         <Header onLogout={onLogout} />
         <main id="main-content" tabIndex="-1" className="flex-1">
-            <div className="mx-auto w-full max-w-7xl px-6 py-8">
+            <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-10 lg:py-12">
                 {children}
             </div>
         </main>
