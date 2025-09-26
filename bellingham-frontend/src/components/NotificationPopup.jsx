@@ -72,19 +72,21 @@ const NotificationPopup = () => {
                 {unreadNotifications.map((notification) => (
                     <li key={notification.id} role="listitem" className="pointer-events-auto">
                         <article
-                            className="rounded-lg bg-gray-800 p-4 text-white shadow-xl ring-1 ring-black/10"
+                            className="flex flex-col space-y-4 rounded-lg bg-gray-800 p-5 text-white shadow-xl ring-1 ring-black/10 lg:p-6"
                             role="status"
                             aria-atomic="true"
                         >
-                            <p className="text-sm font-semibold">
-                                {notification.title || "New activity"}
-                            </p>
-                            {notification.message && (
-                                <p className="mt-1 text-sm text-gray-300">
-                                    {notification.message}
+                            <div className="space-y-2">
+                                <p className="text-sm font-semibold">
+                                    {notification.title || "New activity"}
                                 </p>
-                            )}
-                            <div className="mt-3 flex flex-wrap gap-2">
+                                {notification.message && (
+                                    <p className="text-sm text-gray-300">
+                                        {notification.message}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
                                 <Button
                                     variant="success"
                                     className="px-3 py-1 text-sm"
