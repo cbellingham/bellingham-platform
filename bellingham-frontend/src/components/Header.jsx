@@ -1,10 +1,29 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { BellAlertIcon } from "@heroicons/react/24/outline";
 
 import { AuthContext, useNotifications } from "../context";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
+
+const NotificationBellIcon = ({ className = "", ...props }) => (
+    <svg
+        aria-hidden="true"
+        className={className}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        {...props}
+    >
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6.75 9.5a5.25 5.25 0 1 1 10.5 0v4.21l1.27 1.9c.58.86-.04 2.04-1.07 2.04H6.55c-1.03 0-1.65-1.18-1.07-2.04l1.27-1.9z"
+        />
+        <path strokeLinecap="round" d="M9.75 18.75a2.25 2.25 0 0 0 4.5 0" />
+    </svg>
+);
 
 const Header = ({ onLogout }) => {
     const { username } = useContext(AuthContext);
@@ -39,7 +58,7 @@ const Header = ({ onLogout }) => {
                                     : "Notifications"
                             }
                         >
-                            <BellAlertIcon aria-hidden="true" className="h-5 w-5" />
+                            <NotificationBellIcon className="h-5 w-5" />
                             <span className="sr-only">Open notifications</span>
                             {unreadCount > 0 && (
                                 <span className="numeric-text absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#7465A8] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-white shadow-lg">
