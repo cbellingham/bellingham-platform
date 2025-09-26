@@ -2,21 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import Button from "./ui/Button";
 import api from "../utils/api";
 
-const SectionToggleIcon = ({ className = "", ...props }) => (
-    <svg
-        aria-hidden="true"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        {...props}
-    >
-        <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
-    </svg>
-);
-
 const STATUS_STYLES = {
     open: "border-[#00D1FF]/50 bg-[#00D1FF]/10 text-[#00D1FF]",
     purchased: "border-[#7465A8]/50 bg-[#7465A8]/12 text-[#C5BEE4]",
@@ -330,11 +315,6 @@ const ContractDetailsPanel = ({
                                     <span className="text-sm font-semibold uppercase tracking-[0.2em]">
                                         {section.title}
                                     </span>
-                                    <SectionToggleIcon
-                                        className={`h-4 w-4 flex-shrink-0 transition-transform ${
-                                            isOpen ? "rotate-180" : "rotate-0"
-                                        }`}
-                                    />
                                 </button>
                                 <dl
                                     id={contentId}
