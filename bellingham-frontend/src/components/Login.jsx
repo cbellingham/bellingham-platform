@@ -42,7 +42,7 @@ const Login = () => {
     };
 
     const inputBaseClasses =
-        "w-full rounded-lg border bg-slate-900/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 transition-colors focus:outline-none focus:ring-2";
+        "w-full max-w-lg rounded-lg border bg-slate-900/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 transition-colors focus:outline-none focus:ring-2";
     const inputStateClasses = authError
         ? "border-red-500/70 focus:border-red-400 focus:ring-red-500/40"
         : "border-slate-700/80 focus:border-[#00D1FF] focus:ring-[#00D1FF]/40";
@@ -161,7 +161,11 @@ const Login = () => {
                                     </button>
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full rounded-lg py-3 text-base font-semibold shadow-lg shadow-[#00D1FF]/30" variant="primary">
+                            <Button
+                                type="submit"
+                                className="w-full max-w-lg rounded-lg py-3 text-base font-semibold shadow-lg shadow-[#00D1FF]/30"
+                                variant="primary"
+                            >
                                 Sign In
                             </Button>
                             <Button

@@ -6,8 +6,8 @@ import api from "../utils/api";
 import { AuthContext } from '../context';
 
 const inputClasses =
-    "mt-1 w-full rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
-const labelClasses = "block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
+    "mt-1 w-full max-w-lg rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
+const labelClasses = "block w-full max-w-lg text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
 
 const Account = () => {
     const [profile, setProfile] = useState(null);
