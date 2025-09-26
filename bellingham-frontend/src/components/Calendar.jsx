@@ -8,7 +8,7 @@ import { AuthContext } from '../context';
 
 const TYPE_INFO = {
     Bought: { color: "bg-[#00D1FF]", initial: "B" },
-    Ends: { color: "bg-[#FF4D9B]", initial: "E" },
+    Ends: { color: "bg-[#7465A8]", initial: "E" },
 };
 
 const ContractCalendar = () => {

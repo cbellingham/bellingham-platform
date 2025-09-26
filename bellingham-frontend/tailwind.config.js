@@ -10,8 +10,12 @@ export default {
         surface: '#1b263b',
         contrast: '#e0e6ed',
         primary: '#00D1FF',
-        secondary: '#FF4D9B',
-        accent: '#FF4D9B'
+        secondary: '#3BAEAB',
+        accent: '#7465A8',
+        highlight: {
+          teal: '#3BAEAB',
+          purple: '#7465A8'
+        }
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif']

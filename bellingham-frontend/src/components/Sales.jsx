@@ -128,7 +128,7 @@ const Sales = () => {
                                                 className={`group cursor-pointer transition-colors ${
                                                     isSelected
                                                         ? "bg-[#00D1FF]/15"
-                                                        : "bg-slate-950/40 hover:bg-[#FF4D9B]/10"
+                                                        : "bg-slate-950/40 hover:bg-[#7465A8]/12"
                                                 }`}
                                                 onClick={() => setSelectedContract(c)}
                                                 aria-selected={isSelected}
@@ -144,7 +144,7 @@ const Sales = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-3">{c.buyerUsername}</td>
-                                                <td className="px-4 py-3 font-semibold text-[#FF4D9B]">${c.price}</td>
+                                                <td className="px-4 py-3 font-semibold text-[#3BAEAB]">${c.price}</td>
                                                 <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
                                                 <td className="px-4 py-3">
                                                     <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
