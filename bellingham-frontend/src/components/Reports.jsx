@@ -405,11 +405,11 @@ const Reports = () => {
                                 <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
                                     <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
                                         <tr>
-                                            <th className="px-4 py-3">Title</th>
-                                            <th className="px-4 py-3">Seller</th>
-                                            <th className="px-4 py-3">Ask Price</th>
-                                            <th className="px-4 py-3">Delivery</th>
-                                            <th className="px-4 py-3">Actions</th>
+                                            <th className="px-4 py-3 md:px-5 md:py-3.5">Title</th>
+                                            <th className="px-4 py-3 md:px-5 md:py-3.5">Seller</th>
+                                            <th className="px-4 py-3 md:px-5 md:py-3.5">Ask Price</th>
+                                            <th className="px-4 py-3 md:px-5 md:py-3.5">Delivery</th>
+                                            <th className="px-4 py-3 md:px-5 md:py-3.5">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-800/70">
@@ -423,11 +423,11 @@ const Reports = () => {
                                                         className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
                                                         onClick={() => setSelectedContract(contract)}
                                                     >
-                                                        <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
-                                                        <td className="px-4 py-3">{contract.seller}</td>
-                                                        <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${contract.price}</td>
-                                                        <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
-                                                        <td className="px-4 py-3">
+                                                        <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">{contract.title}</td>
+                                                        <td className="px-4 py-3 md:px-5 md:py-3.5">{contract.seller}</td>
+                                                        <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${contract.price}</td>
+                                                        <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{contract.deliveryDate}</td>
+                                                        <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                             <div className="flex flex-wrap gap-2">
                                                                 <Button
                                                                     onClick={(e) => {

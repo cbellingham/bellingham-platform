@@ -11,7 +11,7 @@ const TableSkeleton = ({ columns = 4, rows = 5 }) => {
                     className="animate-pulse bg-slate-950/30"
                 >
                     {Array.from({ length: columns }).map((__, columnIndex) => (
-                        <td key={`skeleton-cell-${rowIndex}-${columnIndex}`} className="px-4 py-3">
+                        <td key={`skeleton-cell-${rowIndex}-${columnIndex}`} className="px-4 py-3 md:px-5 md:py-3.5">
                             <div
                                 className={`h-4 rounded-full bg-slate-800/80 ${widths[columnIndex % widths.length]}`}
                             />

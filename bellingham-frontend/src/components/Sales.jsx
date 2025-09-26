@@ -109,11 +109,11 @@ const Sales = () => {
                             <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
                                 <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
                                     <tr>
-                                        <th className="px-4 py-3">Title</th>
-                                        <th className="px-4 py-3">Buyer</th>
-                                        <th className="px-4 py-3">Price</th>
-                                        <th className="px-4 py-3">Delivery Date</th>
-                                        <th className="px-4 py-3">Status</th>
+                                        <th className="px-4 py-3 md:px-5 md:py-3.5">Title</th>
+                                        <th className="px-4 py-3 md:px-5 md:py-3.5">Buyer</th>
+                                        <th className="px-4 py-3 md:px-5 md:py-3.5">Price</th>
+                                        <th className="px-4 py-3 md:px-5 md:py-3.5">Delivery Date</th>
+                                        <th className="px-4 py-3 md:px-5 md:py-3.5">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-800/70">
@@ -134,7 +134,7 @@ const Sales = () => {
                                                     onClick={() => setSelectedContract(c)}
                                                     aria-selected={isSelected}
                                                 >
-                                                    <td className="px-4 py-3 font-semibold text-slate-100">
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">
                                                         <div className="flex items-center gap-2">
                                                             {isSelected && (
                                                                 <span className="inline-flex items-center rounded-full border border-[#00D1FF]/60 bg-[#00D1FF]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00D1FF]">
@@ -144,10 +144,10 @@ const Sales = () => {
                                                             <span>{c.title}</span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3">{c.buyerUsername}</td>
-                                                    <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${c.price}</td>
-                                                    <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
-                                                    <td className="px-4 py-3">
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5">{c.buyerUsername}</td>
+                                                    <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${c.price}</td>
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{c.deliveryDate}</td>
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                         <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
                                                             {c.status}
                                                         </span>
