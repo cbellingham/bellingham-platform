@@ -298,7 +298,7 @@ const Signup = () => {
                             const describedBy = `${helpId}${showError ? ` ${errorId}` : ""}`;
 
                             return (
-                                <div key={field.name} className="flex flex-col">
+                                <div key={field.name} className="flex flex-col w-full max-w-xl">
                                     <label htmlFor={fieldId} className="font-medium text-sm text-gray-700 mb-1">
                                         {field.label}
                                     </label>
@@ -312,7 +312,7 @@ const Signup = () => {
                                         onBlur={() => handleBlur(field.name)}
                                         aria-describedby={describedBy}
                                         aria-invalid={showError ? "true" : "false"}
-                                        className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D1FF] ${
+                                        className={`w-full max-w-xl p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D1FF] ${
                                             showError ? "border-red-500" : "border-gray-300"
                                         }`}
                                     />
@@ -328,13 +328,13 @@ const Signup = () => {
                             );
                         })}
                     </div>
-                    <Button type="submit" className="w-full mt-6 rounded-lg" variant="primary">
+                    <Button type="submit" className="w-full max-w-xl mt-6 rounded-lg" variant="primary">
                         Register
                     </Button>
                     <Button
                         type="button"
                         variant="link"
-                        className="w-full mt-2"
+                        className="w-full max-w-xl mt-2"
                         onClick={() => navigate("/login")}
                     >
                         Back to Login
