@@ -155,31 +155,31 @@ const Dashboard = () => {
                                 Array.from({ length: 4 }).map((_, index) => (
                                     <div
                                         key={`kpi-skeleton-${index}`}
-                                        className="h-24 animate-pulse rounded-xl border border-slate-800/70 bg-slate-950/40"
+                                        className="min-h-[7.5rem] animate-pulse rounded-xl border border-slate-800/70 bg-slate-950/40"
                                     />
                                 ))
                             ) : (
                                 <>
-                                    <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Open Contracts</p>
                                         <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatNumber(kpis.openContracts)}</p>
                                         <p className="mt-1 text-xs text-slate-500">Currently listed opportunities</p>
                                     </div>
-                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
-                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#3BAEAB]">{formatCurrency(kpis.totalVolume)}</p>
-                                    <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
-                                </div>
-                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
-                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
-                                    <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
-                                </div>
-                                <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
-                                    <p className="numeric-text mt-3 text-3xl font-bold text-[#7465A8]">{formatNumber(kpis.activeSellers)}</p>
-                                    <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
-                                </div>
+                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
+                                        <p className="numeric-text mt-3 text-3xl font-bold text-[#3BAEAB]">{formatCurrency(kpis.totalVolume)}</p>
+                                        <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
+                                    </div>
+                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
+                                        <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
+                                        <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
+                                    </div>
+                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
+                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
+                                        <p className="numeric-text mt-3 text-3xl font-bold text-[#7465A8]">{formatNumber(kpis.activeSellers)}</p>
+                                        <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
+                                    </div>
                                 </>
                             )}
                         </div>
