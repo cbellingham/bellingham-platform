@@ -8,6 +8,11 @@
   --bg-gradient: linear-gradient(160deg, #0d1b2a 0%, #1b263b 100%);
   --text-color: #e0e6ed;
   --focus-ring: rgba(119, 141, 169, 0.65);
+  --section-spacing-xs: clamp(1.5rem, 3vw, 2.25rem);
+  --section-spacing-sm: clamp(2rem, 4vw, 3rem);
+  --section-spacing-md: clamp(2.5rem, 5vw, 3.75rem);
+  --section-spacing-lg: clamp(3rem, 6vw, 4.5rem);
+  --section-spacing-xl: clamp(4rem, 8vw, 6rem);
 }
 
 a {
@@ -101,5 +106,67 @@ button:focus-visible {
     background-color: #1b263b;
     color: #e0e6ed;
     border-color: rgba(119, 141, 169, 0.45);
+  }
+}
+
+@layer utilities {
+  .section-spacing-xs {
+    padding-block: var(--section-spacing-xs);
+  }
+
+  .section-spacing-sm {
+    padding-block: var(--section-spacing-sm);
+  }
+
+  .section-spacing-md {
+    padding-block: var(--section-spacing-md);
+  }
+
+  .section-spacing-lg {
+    padding-block: var(--section-spacing-lg);
+  }
+
+  .section-spacing-xl {
+    padding-block: var(--section-spacing-xl);
+  }
+
+  .section-spacing-top-xs {
+    padding-top: var(--section-spacing-xs);
+  }
+
+  .section-spacing-top-sm {
+    padding-top: var(--section-spacing-sm);
+  }
+
+  .section-spacing-top-md {
+    padding-top: var(--section-spacing-md);
+  }
+
+  .section-spacing-top-lg {
+    padding-top: var(--section-spacing-lg);
+  }
+
+  .section-spacing-top-xl {
+    padding-top: var(--section-spacing-xl);
+  }
+
+  .section-spacing-bottom-xs {
+    padding-bottom: var(--section-spacing-xs);
+  }
+
+  .section-spacing-bottom-sm {
+    padding-bottom: var(--section-spacing-sm);
+  }
+
+  .section-spacing-bottom-md {
+    padding-bottom: var(--section-spacing-md);
+  }
+
+  .section-spacing-bottom-lg {
+    padding-bottom: var(--section-spacing-lg);
+  }
+
+  .section-spacing-bottom-xl {
+    padding-bottom: var(--section-spacing-xl);
   }
 }
