@@ -11,10 +11,10 @@ import Button from "./ui/Button";
 import api from "../utils/api";
 
 const STATUS_STYLES = {
-    open: "border-emerald-400/50 bg-emerald-500/15 text-emerald-100",
-    purchased: "border-sky-400/40 bg-sky-500/15 text-sky-100",
+    open: "border-[#00D1FF]/50 bg-[#00D1FF]/10 text-[#00D1FF]",
+    purchased: "border-[#FF4D9B]/50 bg-[#FF4D9B]/10 text-[#FF4D9B]",
     closed: "border-slate-500/40 bg-slate-600/10 text-slate-200",
-    default: "border-amber-400/40 bg-amber-500/15 text-amber-100",
+    default: "border-[#FF4D9B]/50 bg-[#FF4D9B]/10 text-[#FF4D9B]",
 };
 
 const formatCurrency = (value) => {
@@ -298,7 +298,7 @@ const ContractDetailsPanel = ({
             <div className="mt-4 flex flex-col gap-6 text-sm text-slate-300">
                 <div className="flex flex-wrap gap-2">
                     <Button
-                        className="border border-emerald-400/50 bg-emerald-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100 hover:bg-emerald-500/20"
+                        className="border border-[#FF4D9B]/50 bg-[#FF4D9B]/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#FF4D9B] hover:bg-[#FF4D9B]/20"
                         onClick={handleDownload}
                     >
                         Download PDF

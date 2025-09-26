@@ -33,7 +33,7 @@ const Notifications = () => {
             <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                 <div className="flex flex-col gap-4 border-b border-slate-800 pb-4 md:flex-row md:items-center md:justify-between">
                     <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Inbox</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Inbox</p>
                         <h1 className="text-3xl font-bold text-white">Notifications</h1>
                         <p className="text-sm text-slate-400">
                             Review trade events, approvals, and operational alerts from across the platform.

@@ -36,7 +36,7 @@ const History = () => {
             <div className="flex flex-col gap-6 xl:flex-row">
                 <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                     <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Audit Trail</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Audit Trail</p>
                         <h1 className="text-3xl font-bold text-white">Contract History</h1>
                         <p className="text-sm text-slate-400">
                             A complete ledger of executed contracts across the platform with buyer and seller visibility.
@@ -58,13 +58,13 @@ const History = () => {
                                 {contracts.map((c) => (
                                     <tr
                                         key={c.id}
-                                        className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                        className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
                                         onClick={() => setSelectedContract(c)}
                                     >
                                         <td className="px-4 py-3 font-semibold text-slate-100">{c.title}</td>
                                         <td className="px-4 py-3">{c.seller}</td>
                                         <td className="px-4 py-3">{c.buyerUsername || "-"}</td>
-                                        <td className="px-4 py-3 font-semibold text-emerald-300">${c.price}</td>
+                                        <td className="px-4 py-3 font-semibold text-[#FF4D9B]">${c.price}</td>
                                         <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
                                     </tr>
                                 ))}

@@ -302,7 +302,7 @@ const Reports = () => {
             <div className="flex flex-col gap-6 xl:flex-row">
                 <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                     <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Analytics</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Analytics</p>
                         <h1 className="text-3xl font-bold text-white">Purchased Contracts</h1>
                         <p className="text-sm text-slate-400">
                             Track portfolio allocation, performance, and lifecycle events across your acquired contracts.
@@ -314,7 +314,7 @@ const Reports = () => {
                         <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
                             {isLoading ? (
                                 <div className="flex h-72 items-center justify-center lg:h-96">
-                                    <div className="h-12 w-12 animate-spin rounded-full border-2 border-emerald-400 border-t-transparent" />
+                                    <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#00D1FF] border-t-transparent" />
                                 </div>
                             ) : contracts.length ? (
                                 <div className="flex flex-col gap-6 lg:flex-row">
@@ -412,12 +412,12 @@ const Reports = () => {
                                             {contracts.map((contract) => (
                                                 <tr
                                                     key={contract.id}
-                                                    className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                                    className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
                                                     onClick={() => setSelectedContract(contract)}
                                                 >
                                                     <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
                                                     <td className="px-4 py-3">{contract.seller}</td>
-                                                    <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
+                                                    <td className="px-4 py-3 font-semibold text-[#FF4D9B]">${contract.price}</td>
                                                     <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
                                                     <td className="px-4 py-3">
                                                         <div className="flex flex-wrap gap-2">
@@ -457,7 +457,7 @@ const Reports = () => {
                             </table>
                         </div>
 
-                        <p className="text-lg font-semibold text-emerald-200">
+                        <p className="text-lg font-semibold text-[#00D1FF]">
                             Portfolio Value ${totalValue.toFixed(2)}
                         </p>
                     </div>

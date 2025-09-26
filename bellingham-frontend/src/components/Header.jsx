@@ -24,7 +24,7 @@ const Header = ({ onLogout }) => {
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <Link to="/" className="flex flex-col leading-tight">
-                        <span className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-200/80">
+                        <span className="text-xs font-semibold uppercase tracking-[0.4em] text-[#00D1FF]/80">
                             Bellingham
                         </span>
                         <span className="text-lg font-semibold text-white">Markets Platform</span>
@@ -32,7 +32,7 @@ const Header = ({ onLogout }) => {
                     <div className="flex items-center gap-4">
                         <Link
                             to="/notifications"
-                            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/40 bg-slate-900/80 text-emerald-100 shadow-[0_6px_18px_rgba(16,185,129,0.25)] transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#00D1FF]/40 bg-slate-900/80 text-[#00D1FF] shadow-[0_6px_18px_rgba(0,209,255,0.3)] transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
                             aria-label={
                                 unreadCount > 0
                                     ? `${unreadCount} unread notifications`
@@ -42,7 +42,7 @@ const Header = ({ onLogout }) => {
                             <BellAlertIcon aria-hidden="true" className="h-5 w-5" />
                             <span className="sr-only">Open notifications</span>
                             {unreadCount > 0 && (
-                                <span className="absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-emerald-400 px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-slate-950 shadow-lg">
+                                <span className="absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#FF4D9B] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-slate-950 shadow-lg">
                                     {unreadCount > 99 ? "99+" : unreadCount}
                                 </span>
                             )}
@@ -60,7 +60,7 @@ const Header = ({ onLogout }) => {
                                     <button
                                         type="button"
                                         onClick={onLogout}
-                                        className="rounded-lg border border-emerald-400/50 bg-emerald-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-100 transition-colors hover:bg-emerald-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                                        className="rounded-lg border border-[#FF4D9B]/50 bg-[#FF4D9B]/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#FF4D9B] transition-colors hover:bg-[#FF4D9B]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
                                     >
                                         Log Out
                                     </button>
@@ -80,7 +80,7 @@ const Header = ({ onLogout }) => {
                             onClick={toggleNavigation}
                             aria-expanded={isNavOpen}
                             aria-controls="primary-navigation"
-                            className="inline-flex items-center gap-2 rounded-lg border border-emerald-400/40 bg-slate-900/80 px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-emerald-100 transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                            className="inline-flex items-center gap-2 rounded-lg border border-[#00D1FF]/40 bg-slate-900/80 px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-[#00D1FF] transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
                         >
                             <span>{isNavOpen ? "Close" : "Menu"}</span>
                             <svg

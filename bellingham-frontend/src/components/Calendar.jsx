@@ -7,8 +7,8 @@ import api from "../utils/api";
 import { AuthContext } from '../context';
 
 const TYPE_INFO = {
-    Bought: { color: "bg-emerald-400", initial: "B" },
-    Ends: { color: "bg-amber-400", initial: "E" },
+    Bought: { color: "bg-[#00D1FF]", initial: "B" },
+    Ends: { color: "bg-[#FF4D9B]", initial: "E" },
 };
 
 const ContractCalendar = () => {
@@ -89,7 +89,7 @@ const ContractCalendar = () => {
         <Layout onLogout={handleLogout}>
             <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                 <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Operations</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Operations</p>
                     <h1 className="text-3xl font-bold text-white">Contract Calendar</h1>
                     <p className="text-sm text-slate-400">
                         Visualise purchase and delivery events to plan workloads, handovers, and client communications.

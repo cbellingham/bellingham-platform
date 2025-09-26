@@ -6,7 +6,7 @@ import api from "../utils/api";
 import { AuthContext } from '../context';
 
 const inputClasses =
-    "mt-1 w-full rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none";
+    "mt-1 w-full rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
 const labelClasses = "block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
 
 const Account = () => {
@@ -96,7 +96,7 @@ const Account = () => {
         <Layout onLogout={handleLogout}>
             <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                 <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Profile</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Profile</p>
                     <h1 className="text-3xl font-bold text-white">Account Details</h1>
                     <p className="text-sm text-slate-400">
                         Review and maintain your organisation information used across settlements and compliance processes.

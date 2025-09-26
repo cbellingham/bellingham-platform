@@ -6,11 +6,13 @@ const baseClasses =
   'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60';
 
 const variantClasses = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-500 focus-visible:ring-blue-500',
+  primary:
+    'bg-[#00D1FF] text-slate-900 shadow-[0_10px_30px_rgba(0,209,255,0.35)] hover:bg-[#FF4D9B] hover:text-white focus-visible:ring-[#00D1FF] focus-visible:ring-offset-slate-900',
   success: 'bg-green-600 text-white hover:bg-green-500 focus-visible:ring-green-500',
   danger: 'bg-red-600 text-white hover:bg-red-500 focus-visible:ring-red-500',
   ghost: 'bg-gray-600 text-white hover:bg-gray-700 focus-visible:ring-gray-500',
-  link: 'bg-transparent px-0 py-0 text-blue-600 underline-offset-4 hover:underline focus-visible:ring-blue-500 focus-visible:ring-offset-0 rounded-none',
+  link:
+    'bg-transparent px-0 py-0 text-[#00D1FF] underline-offset-4 hover:text-[#FF4D9B] hover:underline focus-visible:ring-[#00D1FF] focus-visible:ring-offset-0 rounded-none',
 };
 
 const renderIcon = (icon, className) => {

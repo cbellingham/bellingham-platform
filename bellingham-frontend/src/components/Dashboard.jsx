@@ -85,7 +85,7 @@ const Dashboard = () => {
             <div className="flex flex-col gap-6 xl:flex-row">
                 <main className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                     <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Market Overview</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
                         <h2 className="text-3xl font-bold text-white">Open Contracts</h2>
                         <p className="text-sm text-slate-400">
                             Monitor current opportunities and select a contract to inspect the full trade details.
@@ -103,22 +103,22 @@ const Dashboard = () => {
                             <>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Open Contracts</p>
-                                    <p className="mt-3 text-3xl font-bold text-white">{formatNumber(kpis.openContracts)}</p>
+                                    <p className="mt-3 text-3xl font-bold text-[#00D1FF]">{formatNumber(kpis.openContracts)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Currently listed opportunities</p>
                                 </div>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
-                                    <p className="mt-3 text-3xl font-bold text-emerald-300">{formatCurrency(kpis.totalVolume)}</p>
+                                    <p className="mt-3 text-3xl font-bold text-[#FF4D9B]">{formatCurrency(kpis.totalVolume)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
                                 </div>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
-                                    <p className="mt-3 text-3xl font-bold text-white">{formatCurrency(kpis.averageAsk)}</p>
+                                    <p className="mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
                                 </div>
                                 <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
-                                    <p className="mt-3 text-3xl font-bold text-white">{formatNumber(kpis.activeSellers)}</p>
+                                    <p className="mt-3 text-3xl font-bold text-[#FF4D9B]">{formatNumber(kpis.activeSellers)}</p>
                                     <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
                                 </div>
                             </>
@@ -143,16 +143,16 @@ const Dashboard = () => {
                                         {contracts.map((contract) => (
                                             <tr
                                                 key={contract.id}
-                                                className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                                className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
                                                 onClick={() => setSelectedContract(contract)}
                                             >
                                                 <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
                                                 <td className="px-4 py-3">{contract.seller}</td>
-                                                <td className="px-4 py-3 font-semibold text-emerald-300">
+                                                <td className="px-4 py-3 font-semibold text-[#FF4D9B]">
                                                     ${contract.price}
                                                 </td>
                                                 <td className="px-4 py-3">
-                                                    <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                                                    <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
                                                         {contract.status}
                                                     </span>
                                                 </td>

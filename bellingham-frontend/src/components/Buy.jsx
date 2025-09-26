@@ -119,7 +119,7 @@ const Buy = () => {
             <div className="flex flex-col gap-6 xl:flex-row">
                 <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                     <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Trading Desk</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Trading Desk</p>
                         <h1 className="text-3xl font-bold text-white">Available Contracts</h1>
                         <p className="text-sm text-slate-400">
                             Filter by counterparty, price range, or search by keyword to identify the right purchase opportunity.
@@ -145,7 +145,7 @@ const Buy = () => {
                                 placeholder="Title or seller"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none"
                             />
                         </label>
                         <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -155,7 +155,7 @@ const Buy = () => {
                                 placeholder="0"
                                 value={minPrice}
                                 onChange={(e) => setMinPrice(e.target.value)}
-                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none"
                             />
                         </label>
                         <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -165,7 +165,7 @@ const Buy = () => {
                                 placeholder="0"
                                 value={maxPrice}
                                 onChange={(e) => setMaxPrice(e.target.value)}
-                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none"
                             />
                         </label>
                         <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -173,7 +173,7 @@ const Buy = () => {
                             <select
                                 value={sellerFilter}
                                 onChange={(e) => setSellerFilter(e.target.value)}
-                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none"
                             >
                                 <option value="">All Sellers</option>
                                 {sellers.map((s) => (
@@ -204,12 +204,12 @@ const Buy = () => {
                                         {filteredContracts.map((contract) => (
                                             <tr
                                                 key={contract.id}
-                                                className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-emerald-500/10"
+                                                className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
                                                 onClick={() => setSelectedContract(contract)}
                                             >
                                                 <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
                                                 <td className="px-4 py-3">{contract.seller}</td>
-                                                <td className="px-4 py-3 font-semibold text-emerald-300">${contract.price}</td>
+                                                <td className="px-4 py-3 font-semibold text-[#FF4D9B]">${contract.price}</td>
                                                 <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
                                                 <td className="px-4 py-3">
                                                     <Button

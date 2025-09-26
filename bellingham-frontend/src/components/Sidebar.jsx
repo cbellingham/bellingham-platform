@@ -35,7 +35,7 @@ const Sidebar = ({ onLogout }) => {
             <button
                 type="button"
                 onClick={toggleMobile}
-                className="md:hidden fixed top-20 left-4 z-50 inline-flex items-center justify-center rounded-full bg-slate-900 p-3 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 focus:ring-emerald-400"
+                className="md:hidden fixed top-20 left-4 z-50 inline-flex items-center justify-center rounded-full bg-slate-900 p-3 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 focus:ring-[#00D1FF]"
                 aria-label={isMobileOpen ? "Close navigation" : "Open navigation"}
                 aria-expanded={isMobileOpen}
             >
@@ -63,7 +63,7 @@ const Sidebar = ({ onLogout }) => {
                     <button
                         type="button"
                         onClick={closeMobile}
-                        className="inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                        className="inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
                     >
                         <span className="sr-only">Close navigation</span>
                         <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

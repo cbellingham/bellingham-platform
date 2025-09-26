@@ -9,9 +9,9 @@ export default {
         base: '#0d1b2a',
         surface: '#1b263b',
         contrast: '#e0e6ed',
-        primary: '#1d4ed8',
-        secondary: '#3b82f6',
-        accent: '#ef4444'
+        primary: '#00D1FF',
+        secondary: '#FF4D9B',
+        accent: '#FF4D9B'
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif']
