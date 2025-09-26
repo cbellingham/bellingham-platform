@@ -301,21 +301,22 @@ const Reports = () => {
         <Layout onLogout={handleLogout}>
             <div className="flex flex-col gap-6 xl:flex-row">
                 <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
-                    <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Analytics</p>
-                        <h1 className="text-3xl font-bold text-white">Purchased Contracts</h1>
-                        <p className="text-sm text-slate-400">
-                            Track portfolio allocation, performance, and lifecycle events across your acquired contracts.
-                        </p>
-                    </div>
-                    {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+                    <div className="space-y-6">
+                        <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Analytics</p>
+                            <h1 className="text-3xl font-bold text-white">Purchased Contracts</h1>
+                            <p className="text-sm text-slate-400">
+                                Track portfolio allocation, performance, and lifecycle events across your acquired contracts.
+                            </p>
+                        </div>
+                        {error && <p className="text-sm text-red-400">{error}</p>}
 
-                    <div className="mt-6 grid gap-6">
-                        <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
-                            {isLoading ? (
-                                <div className="flex h-72 items-center justify-center lg:h-96">
-                                    <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#00D1FF] border-t-transparent" />
-                                </div>
+                        <div className="grid gap-6">
+                            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
+                                {isLoading ? (
+                                    <div className="flex h-72 items-center justify-center lg:h-96">
+                                        <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#00D1FF] border-t-transparent" />
+                                    </div>
                             ) : contracts.length ? (
                                 <div className="flex flex-col gap-6 lg:flex-row">
                                     <div className="flex w-full flex-col gap-4 lg:flex-1">
@@ -399,73 +400,76 @@ const Reports = () => {
                             )}
                         </div>
 
-                        <div className="overflow-hidden rounded-2xl border border-slate-800/80">
-                            <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
-                                <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
-                                    <tr>
-                                        <th className="px-4 py-3">Title</th>
-                                        <th className="px-4 py-3">Seller</th>
-                                        <th className="px-4 py-3">Ask Price</th>
-                                        <th className="px-4 py-3">Delivery</th>
-                                        <th className="px-4 py-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-800/70">
-                                    {isLoading ? (
-                                        <TableSkeleton columns={5} rows={5} />
-                                    ) : (
-                                        <>
-                                            {contracts.map((contract) => (
-                                                <tr
-                                                    key={contract.id}
-                                                    className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
-                                                    onClick={() => setSelectedContract(contract)}
-                                                >
-                                                    <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
-                                                    <td className="px-4 py-3">{contract.seller}</td>
-                                                    <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${contract.price}</td>
-                                                    <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
-                                                    <td className="px-4 py-3">
-                                                        <div className="flex flex-wrap gap-2">
-                                                            <Button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleListForSale(contract.id);
-                                                                }}
-                                                                className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
-                                                            >
-                                                                List for Sale
-                                                            </Button>
-                                                            <Button
-                                                                variant="danger"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleCloseout(contract.id);
-                                                                }}
-                                                                className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
-                                                            >
-                                                                Closeout
-                                                            </Button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                            {contracts.length === 0 && (
-                                                <tr>
-                                                    <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
-                                                        No purchased contracts available.
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                        <div className="space-y-6">
+                            <div className="overflow-hidden rounded-2xl border border-slate-800/80">
+                                <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
+                                    <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
+                                        <tr>
+                                            <th className="px-4 py-3">Title</th>
+                                            <th className="px-4 py-3">Seller</th>
+                                            <th className="px-4 py-3">Ask Price</th>
+                                            <th className="px-4 py-3">Delivery</th>
+                                            <th className="px-4 py-3">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-800/70">
+                                        {isLoading ? (
+                                            <TableSkeleton columns={5} rows={5} />
+                                        ) : (
+                                            <>
+                                                {contracts.map((contract) => (
+                                                    <tr
+                                                        key={contract.id}
+                                                        className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
+                                                        onClick={() => setSelectedContract(contract)}
+                                                    >
+                                                        <td className="px-4 py-3 font-semibold text-slate-100">{contract.title}</td>
+                                                        <td className="px-4 py-3">{contract.seller}</td>
+                                                        <td className="numeric-text px-4 py-3 font-semibold text-[#3BAEAB]">${contract.price}</td>
+                                                        <td className="px-4 py-3 text-slate-300">{contract.deliveryDate}</td>
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex flex-wrap gap-2">
+                                                                <Button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleListForSale(contract.id);
+                                                                    }}
+                                                                    className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                                                >
+                                                                    List for Sale
+                                                                </Button>
+                                                                <Button
+                                                                    variant="danger"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleCloseout(contract.id);
+                                                                    }}
+                                                                    className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]"
+                                                                >
+                                                                    Closeout
+                                                                </Button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {contracts.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                            No purchased contracts available.
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
 
-                        <p className="text-lg font-semibold text-[#00D1FF]">
-                            Portfolio Value <span className="numeric-text">${totalValue.toFixed(2)}</span>
-                        </p>
+                            <p className="text-lg font-semibold text-[#00D1FF]">
+                                Portfolio Value <span className="numeric-text">${totalValue.toFixed(2)}</span>
+                            </p>
+                        </div>
+                        </div>
                     </div>
                 </section>
                 <div className="xl:w-[360px]">

@@ -88,49 +88,51 @@ const ContractCalendar = () => {
     return (
         <Layout onLogout={handleLogout}>
             <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
-                <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Operations</p>
-                    <h1 className="text-3xl font-bold text-white">Contract Calendar</h1>
-                    <p className="text-sm text-slate-400">
-                        Visualise purchase and delivery events to plan workloads, handovers, and client communications.
-                    </p>
-                </div>
-                <div className="mt-6 grid gap-6 lg:grid-cols-[2fr,1fr]">
-                    <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4">
-                        <Calendar
-                            onChange={setSelectedDate}
-                            value={selectedDate}
-                            tileContent={tileContent}
-                            tileClassName={tileClassName}
-                        />
-                        <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-300">
-                            {Object.entries(TYPE_INFO).map(([type, info]) => (
-                                <div key={type} className="flex items-center gap-2">
-                                    <span className={`h-3 w-3 rounded-full ${info.color}`} aria-hidden="true" />
-                                    <span>{type}</span>
-                                </div>
-                            ))}
-                        </div>
+                <div className="space-y-6">
+                    <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Operations</p>
+                        <h1 className="text-3xl font-bold text-white">Contract Calendar</h1>
+                        <p className="text-sm text-slate-400">
+                            Visualise purchase and delivery events to plan workloads, handovers, and client communications.
+                        </p>
                     </div>
-                    <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4">
-                        <h2 className="text-lg font-semibold text-white">Events on {formattedSelected}</h2>
-                        {events.length === 0 ? (
-                            <p className="mt-3 text-sm text-slate-400">No scheduled milestones for this date.</p>
-                        ) : (
-                            <ul className="mt-3 space-y-2 text-sm">
-                                {events.map((ev, idx) => (
-                                    <li key={`${ev.title}-${idx}`} className="flex items-center gap-2">
-                                        <span
-                                            className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[0.65rem] font-semibold text-slate-900 ${TYPE_INFO[ev.type]?.color ?? "bg-slate-400"}`}
-                                        >
-                                            {TYPE_INFO[ev.type]?.initial ?? "?"}
-                                        </span>
-                                        <span className="text-slate-200">{ev.type}:</span>
-                                        <span className="font-semibold text-white">{ev.title}</span>
-                                    </li>
+                    <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
+                        <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 space-y-4">
+                            <Calendar
+                                onChange={setSelectedDate}
+                                value={selectedDate}
+                                tileContent={tileContent}
+                                tileClassName={tileClassName}
+                            />
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+                                {Object.entries(TYPE_INFO).map(([type, info]) => (
+                                    <div key={type} className="flex items-center gap-2">
+                                        <span className={`h-3 w-3 rounded-full ${info.color}`} aria-hidden="true" />
+                                        <span>{type}</span>
+                                    </div>
                                 ))}
-                            </ul>
-                        )}
+                            </div>
+                        </div>
+                        <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 space-y-3">
+                            <h2 className="text-lg font-semibold text-white">Events on {formattedSelected}</h2>
+                            {events.length === 0 ? (
+                                <p className="text-sm text-slate-400">No scheduled milestones for this date.</p>
+                            ) : (
+                                <ul className="space-y-2 text-sm">
+                                    {events.map((ev, idx) => (
+                                        <li key={`${ev.title}-${idx}`} className="flex items-center gap-2">
+                                            <span
+                                                className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[0.65rem] font-semibold text-slate-900 ${TYPE_INFO[ev.type]?.color ?? "bg-slate-400"}`}
+                                            >
+                                                {TYPE_INFO[ev.type]?.initial ?? "?"}
+                                            </span>
+                                            <span className="text-slate-200">{ev.type}:</span>
+                                            <span className="font-semibold text-white">{ev.title}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
                     </div>
                 </div>
             </section>
