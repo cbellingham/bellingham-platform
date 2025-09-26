@@ -113,7 +113,7 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
         <div className="mt-6 flex flex-wrap justify-end gap-2">
           <Button variant="ghost" className="border border-slate-600/60 bg-slate-800 text-slate-100 hover:bg-slate-700" onClick={handleClear}>Clear</Button>
           <Button variant="danger" className="shadow-lg shadow-red-900/40" onClick={onCancel}>Cancel</Button>
-          <Button variant="success" className="font-semibold shadow-lg shadow-emerald-900/40" onClick={handleSave}>Save</Button>
+          <Button variant="success" className="font-semibold shadow-lg shadow-[#00D1FF]/25" onClick={handleSave}>Save</Button>
         </div>
       </div>
     </div>

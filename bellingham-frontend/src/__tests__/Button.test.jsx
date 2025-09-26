@@ -11,7 +11,7 @@ test('applies variant classes', () => {
       <Button variant="ghost">Ghost</Button>
     </div>
   );
-  expect(screen.getByText('Primary')).toHaveClass('bg-blue-600');
+  expect(screen.getByText('Primary')).toHaveClass('bg-[#00D1FF]');
   expect(screen.getByText('Danger')).toHaveClass('bg-red-600');
   expect(screen.getByText('Ghost')).toHaveClass('bg-gray-600');
 });

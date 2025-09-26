@@ -8,7 +8,7 @@ import AgreementEditorModal from "./AgreementEditorModal";
 import contractTemplate from "../config/contractTemplate";
 
 const inputClasses =
-    "mt-1 w-full rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none";
+    "mt-1 w-full rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
 const labelClasses = "block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
 
 const Sell = () => {
@@ -362,7 +362,7 @@ const Sell = () => {
                 <div className="flex flex-col gap-8">
                     <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                         <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Primary Listing</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Primary Listing</p>
                             <h1 className="text-3xl font-bold text-white">Sell Your Data Contract</h1>
                             <p className="text-sm text-slate-400">
                                 Provide the core commercial terms, delivery requirements, and legal agreement to list a new contract.
@@ -383,7 +383,7 @@ const Sell = () => {
                                 </div>
                                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full border border-slate-800/60 bg-slate-950/60">
                                     <div
-                                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300"
+                                        className="h-full bg-gradient-to-r from-[#00D1FF] to-[#FF4D9B] transition-all duration-300"
                                         style={{ width: `${progressPercentage}%` }}
                                     />
                                 </div>
@@ -414,7 +414,7 @@ const Sell = () => {
 
                     <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                         <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Portfolio</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Portfolio</p>
                             <h2 className="text-2xl font-bold text-white">My Contracts</h2>
                             <p className="text-sm text-slate-400">
                                 Manage the contracts you currently have listed on the marketplace.
@@ -437,10 +437,10 @@ const Sell = () => {
                                         <tr key={c.id} className="bg-slate-950/40">
                                             <td className="px-4 py-3 font-semibold text-slate-100">{c.title}</td>
                                             <td className="px-4 py-3">{c.buyerUsername || "-"}</td>
-                                            <td className="px-4 py-3 font-semibold text-emerald-300">${c.price}</td>
+                                            <td className="px-4 py-3 font-semibold text-[#FF4D9B]">${c.price}</td>
                                             <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
                                             <td className="px-4 py-3">
-                                                <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                                                <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
                                                     {c.status}
                                                 </span>
                                             </td>

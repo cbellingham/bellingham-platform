@@ -68,7 +68,7 @@ const Sales = () => {
             <div className="flex flex-col gap-6 xl:flex-row">
                 <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                     <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">Seller Desk</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Seller Desk</p>
                         <h1 className="text-3xl font-bold text-white">Sold Contracts</h1>
                         <p className="text-sm text-slate-400">
                             Review recently executed sales and revisit the associated contract data for compliance.
@@ -84,7 +84,7 @@ const Sales = () => {
                                 value={searchTerm}
                                 onChange={(event) => setSearchTerm(event.target.value)}
                                 placeholder="Title or buyer"
-                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none"
                             />
                         </label>
                         <label className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -92,7 +92,7 @@ const Sales = () => {
                             <select
                                 value={statusFilter}
                                 onChange={(event) => setStatusFilter(event.target.value)}
-                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-emerald-400 focus:outline-none"
+                                className="rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none"
                             >
                                 <option value="">All Statuses</option>
                                 {statuses.map((status) => (
@@ -127,8 +127,8 @@ const Sales = () => {
                                                 key={c.id}
                                                 className={`group cursor-pointer transition-colors ${
                                                     isSelected
-                                                        ? "bg-emerald-500/15"
-                                                        : "bg-slate-950/40 hover:bg-emerald-500/10"
+                                                        ? "bg-[#00D1FF]/15"
+                                                        : "bg-slate-950/40 hover:bg-[#FF4D9B]/10"
                                                 }`}
                                                 onClick={() => setSelectedContract(c)}
                                                 aria-selected={isSelected}
@@ -136,7 +136,7 @@ const Sales = () => {
                                                 <td className="px-4 py-3 font-semibold text-slate-100">
                                                     <div className="flex items-center gap-2">
                                                         {isSelected && (
-                                                            <span className="inline-flex items-center rounded-full border border-emerald-300/70 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-100">
+                                                            <span className="inline-flex items-center rounded-full border border-[#00D1FF]/60 bg-[#00D1FF]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#00D1FF]">
                                                                 Selected
                                                             </span>
                                                         )}
@@ -144,10 +144,10 @@ const Sales = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-3">{c.buyerUsername}</td>
-                                                <td className="px-4 py-3 font-semibold text-emerald-300">${c.price}</td>
+                                                <td className="px-4 py-3 font-semibold text-[#FF4D9B]">${c.price}</td>
                                                 <td className="px-4 py-3 text-slate-300">{c.deliveryDate}</td>
                                                 <td className="px-4 py-3">
-                                                    <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                                                    <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
                                                         {c.status}
                                                     </span>
                                                 </td>

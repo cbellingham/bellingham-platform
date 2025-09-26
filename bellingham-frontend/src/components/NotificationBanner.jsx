@@ -3,7 +3,7 @@ import Button from './ui/Button';
 
 const styles = {
   info: 'bg-slate-900/80 text-slate-100 border-slate-700/80',
-  success: 'bg-emerald-900/80 text-emerald-100 border-emerald-700/80',
+  success: 'bg-[#00D1FF]/10 text-[#00D1FF] border-[#00D1FF]/40',
   error: 'bg-rose-900/80 text-rose-100 border-rose-700/80',
   warning: 'bg-amber-900/80 text-amber-100 border-amber-700/80',
 };
