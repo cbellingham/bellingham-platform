@@ -62,8 +62,8 @@ const Login = () => {
                         <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-[#00D1FF]/30 blur-3xl" />
                         <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-[#7465A8]/25 blur-3xl" />
                     </div>
-                    <div className="relative grid gap-12 p-10 md:grid-cols-2 lg:p-16">
-                        <div className="flex flex-col justify-between gap-8">
+                    <div className="relative grid gap-8 sm:gap-10 md:gap-12 p-8 sm:p-10 md:p-12 lg:p-16">
+                        <div className="flex flex-col justify-between gap-6 sm:gap-7 md:gap-8">
                             <div>
                                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
                                     Bellingham Data Futures
@@ -72,12 +72,12 @@ const Login = () => {
                                     Welcome back.
                                 </h1>
                             </div>
-                            <div className="space-y-4 text-slate-300">
+                            <div className="space-y-3 sm:space-y-4 md:space-y-5 text-slate-300">
                                 <p className="text-base leading-relaxed">
                                     Sign in to access your energy market dashboards, manage live bids, and
                                     collaborate with your team in real time.
                                 </p>
-                                <ul className="space-y-3 text-sm text-slate-400">
+                                <ul className="space-y-2.5 sm:space-y-3 md:space-y-3.5 text-sm text-slate-400">
                                     <li className="flex items-start gap-3">
                                         <span className="mt-1 inline-flex h-2.5 w-2.5 flex-shrink-0 rounded-full bg-[#00D1FF]" />
                                         <span>Track portfolio performance with high-contrast visualisations.</span>
@@ -105,7 +105,7 @@ const Login = () => {
                         </div>
                         <form
                             onSubmit={handleLogin}
-                            className={`${baseFormContainerClasses} rounded-2xl border border-slate-800/60 bg-slate-950/70 p-8 shadow-lg`}
+                            className={`${baseFormContainerClasses} rounded-2xl border border-slate-800/60 bg-slate-950/70 p-6 sm:p-7 md:p-8 shadow-lg`}
                         >
                             <div>
                                 <h2 className="text-2xl font-semibold text-slate-50">Sign in</h2>

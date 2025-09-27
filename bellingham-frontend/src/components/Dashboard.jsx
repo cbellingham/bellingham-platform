@@ -82,9 +82,9 @@ const Dashboard = () => {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[260px_minmax(0,1fr)_320px] xl:gap-8">
-                <main className="order-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.55)] xl:order-2">
-                    <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:grid-cols-[260px_minmax(0,1fr)_320px] xl:gap-8">
+                <main className="order-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6 md:p-7 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.55)] xl:order-2">
+                    <div className="space-y-5 sm:space-y-6 lg:space-y-7">
                         <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
                             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
                             <h2 className="text-3xl font-bold text-white">Open Contracts</h2>
@@ -141,8 +141,8 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </main>
-                <aside className="order-2 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.45)] xl:order-1">
-                    <div className="space-y-6">
+                <aside className="order-2 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6 md:p-7 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.45)] xl:order-1">
+                    <div className="space-y-5 sm:space-y-6 lg:space-y-7">
                         <div className="border-b border-slate-800 pb-4">
                             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#3BAEAB]/80">Analytics</p>
                             <h3 className="text-2xl font-semibold text-white">Marketplace KPIs</h3>
