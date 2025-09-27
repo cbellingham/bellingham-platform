@@ -316,32 +316,36 @@ const Signup = () => {
                             const describedBy = `${helpId}${showError ? ` ${errorId}` : ""}`;
 
                             return (
-                                <div key={field.name} className="flex flex-col w-full">
-                                    <label htmlFor={fieldId} className="mb-1 text-sm font-medium text-gray-700">
-                                        {field.label}
-                                    </label>
-                                    <input
-                                        id={fieldId}
-                                        name={field.name}
-                                        type={field.type}
-                                        placeholder={field.placeholder}
-                                        value={form[field.name]}
-                                        onChange={(e) => handleChange(field.name, e.target.value)}
-                                        onBlur={() => handleBlur(field.name)}
-                                        aria-describedby={describedBy}
-                                        aria-invalid={showError ? "true" : "false"}
-                                        className={`w-full rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-[#00D1FF] ${
-                                            showError ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                    />
-                                    <p id={helpId} className="mt-1 text-xs text-gray-500">
-                                        {field.helpText}
-                                    </p>
-                                    {showError && (
-                                        <p id={errorId} className="mt-1 text-xs text-red-600" role="alert">
-                                            {errors[field.name]}
+                                <div key={field.name} className="space-y-4">
+                                    <div className="space-y-2">
+                                        <label htmlFor={fieldId} className="text-sm font-medium text-gray-700">
+                                            {field.label}
+                                        </label>
+                                        <input
+                                            id={fieldId}
+                                            name={field.name}
+                                            type={field.type}
+                                            placeholder={field.placeholder}
+                                            value={form[field.name]}
+                                            onChange={(e) => handleChange(field.name, e.target.value)}
+                                            onBlur={() => handleBlur(field.name)}
+                                            aria-describedby={describedBy}
+                                            aria-invalid={showError ? "true" : "false"}
+                                            className={`w-full rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-[#00D1FF] ${
+                                                showError ? "border-red-500" : "border-gray-300"
+                                            }`}
+                                        />
+                                    </div>
+                                    <div className="space-y-1 text-xs">
+                                        <p id={helpId} className="text-gray-500">
+                                            {field.helpText}
                                         </p>
-                                    )}
+                                        {showError && (
+                                            <p id={errorId} className="text-red-600" role="alert">
+                                                {errors[field.name]}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}
