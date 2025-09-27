@@ -6,8 +6,10 @@ import api from "../utils/api";
 import { AuthContext } from '../context';
 
 const inputClasses =
-    "mt-1 w-full max-w-lg rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
+    "w-full max-w-lg rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
 const labelClasses = "block w-full max-w-lg text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
+const fieldGroupClasses = "space-y-4";
+const controlStackClasses = "space-y-2";
 
 const Account = () => {
     const [profile, setProfile] = useState(null);
@@ -106,130 +108,199 @@ const Account = () => {
 
                     {editing ? (
                         <div className="grid gap-4 md:grid-cols-2">
-                            <label className={labelClasses}>
-                                Username
-                                <input value={profile.username} disabled className={`${inputClasses} cursor-not-allowed opacity-60`} />
-                            </label>
-                            <label className={labelClasses}>
-                                Legal Business Name
-                                <input
-                                    className={inputClasses}
-                                    name="legalBusinessName"
-                                    value={formData.legalBusinessName || ""}
-                                    onChange={handleChange}
-                                    placeholder="Legal Business Name"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Name
-                                <input
-                                    className={inputClasses}
-                                    name="name"
-                                    value={formData.name || ""}
-                                    onChange={handleChange}
-                                    placeholder="Name"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Country of Incorporation
-                                <input
-                                    className={inputClasses}
-                                    name="countryOfIncorporation"
-                                    value={formData.countryOfIncorporation || ""}
-                                    onChange={handleChange}
-                                    placeholder="Country of Incorporation"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Tax ID
-                                <input
-                                    className={inputClasses}
-                                    name="taxId"
-                                    value={formData.taxId || ""}
-                                    onChange={handleChange}
-                                    placeholder="Tax ID"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Company Registration Number
-                                <input
-                                    className={inputClasses}
-                                    name="companyRegistrationNumber"
-                                    value={formData.companyRegistrationNumber || ""}
-                                    onChange={handleChange}
-                                    placeholder="Company Registration Number"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Primary Contact Name
-                                <input
-                                    className={inputClasses}
-                                    name="primaryContactName"
-                                    value={formData.primaryContactName || ""}
-                                    onChange={handleChange}
-                                    placeholder="Primary Contact Name"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Primary Contact Email
-                                <input
-                                    className={inputClasses}
-                                    name="primaryContactEmail"
-                                    value={formData.primaryContactEmail || ""}
-                                    onChange={handleChange}
-                                    placeholder="Primary Contact Email"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Primary Contact Phone
-                                <input
-                                    className={inputClasses}
-                                    name="primaryContactPhone"
-                                    value={formData.primaryContactPhone || ""}
-                                    onChange={handleChange}
-                                    placeholder="Primary Contact Phone"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Technical Contact Name
-                                <input
-                                    className={inputClasses}
-                                    name="technicalContactName"
-                                    value={formData.technicalContactName || ""}
-                                    onChange={handleChange}
-                                    placeholder="Technical Contact Name"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Technical Contact Email
-                                <input
-                                    className={inputClasses}
-                                    name="technicalContactEmail"
-                                    value={formData.technicalContactEmail || ""}
-                                    onChange={handleChange}
-                                    placeholder="Technical Contact Email"
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Technical Contact Phone
-                                <input
-                                    className={inputClasses}
-                                    name="technicalContactPhone"
-                                    value={formData.technicalContactPhone || ""}
-                                    onChange={handleChange}
-                                    placeholder="Technical Contact Phone"
-                                />
-                            </label>
-                            <label className={`${labelClasses} md:col-span-2`}>
-                                Company Description
-                                <textarea
-                                    className={`${inputClasses} min-h-[120px]`}
-                                    name="companyDescription"
-                                    value={formData.companyDescription || ""}
-                                    onChange={handleChange}
-                                    placeholder="Company Description"
-                                />
-                            </label>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-username" className={labelClasses}>
+                                        Username
+                                    </label>
+                                    <input
+                                        id="account-username"
+                                        value={profile.username}
+                                        disabled
+                                        className={`${inputClasses} cursor-not-allowed opacity-60`}
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-legalBusinessName" className={labelClasses}>
+                                        Legal Business Name
+                                    </label>
+                                    <input
+                                        id="account-legalBusinessName"
+                                        className={inputClasses}
+                                        name="legalBusinessName"
+                                        value={formData.legalBusinessName || ""}
+                                        onChange={handleChange}
+                                        placeholder="Legal Business Name"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-name" className={labelClasses}>
+                                        Name
+                                    </label>
+                                    <input
+                                        id="account-name"
+                                        className={inputClasses}
+                                        name="name"
+                                        value={formData.name || ""}
+                                        onChange={handleChange}
+                                        placeholder="Name"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-countryOfIncorporation" className={labelClasses}>
+                                        Country of Incorporation
+                                    </label>
+                                    <input
+                                        id="account-countryOfIncorporation"
+                                        className={inputClasses}
+                                        name="countryOfIncorporation"
+                                        value={formData.countryOfIncorporation || ""}
+                                        onChange={handleChange}
+                                        placeholder="Country of Incorporation"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-taxId" className={labelClasses}>
+                                        Tax ID
+                                    </label>
+                                    <input
+                                        id="account-taxId"
+                                        className={inputClasses}
+                                        name="taxId"
+                                        value={formData.taxId || ""}
+                                        onChange={handleChange}
+                                        placeholder="Tax ID"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-companyRegistrationNumber" className={labelClasses}>
+                                        Company Registration Number
+                                    </label>
+                                    <input
+                                        id="account-companyRegistrationNumber"
+                                        className={inputClasses}
+                                        name="companyRegistrationNumber"
+                                        value={formData.companyRegistrationNumber || ""}
+                                        onChange={handleChange}
+                                        placeholder="Company Registration Number"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-primaryContactName" className={labelClasses}>
+                                        Primary Contact Name
+                                    </label>
+                                    <input
+                                        id="account-primaryContactName"
+                                        className={inputClasses}
+                                        name="primaryContactName"
+                                        value={formData.primaryContactName || ""}
+                                        onChange={handleChange}
+                                        placeholder="Primary Contact Name"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-primaryContactEmail" className={labelClasses}>
+                                        Primary Contact Email
+                                    </label>
+                                    <input
+                                        id="account-primaryContactEmail"
+                                        className={inputClasses}
+                                        name="primaryContactEmail"
+                                        value={formData.primaryContactEmail || ""}
+                                        onChange={handleChange}
+                                        placeholder="Primary Contact Email"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-primaryContactPhone" className={labelClasses}>
+                                        Primary Contact Phone
+                                    </label>
+                                    <input
+                                        id="account-primaryContactPhone"
+                                        className={inputClasses}
+                                        name="primaryContactPhone"
+                                        value={formData.primaryContactPhone || ""}
+                                        onChange={handleChange}
+                                        placeholder="Primary Contact Phone"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-technicalContactName" className={labelClasses}>
+                                        Technical Contact Name
+                                    </label>
+                                    <input
+                                        id="account-technicalContactName"
+                                        className={inputClasses}
+                                        name="technicalContactName"
+                                        value={formData.technicalContactName || ""}
+                                        onChange={handleChange}
+                                        placeholder="Technical Contact Name"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-technicalContactEmail" className={labelClasses}>
+                                        Technical Contact Email
+                                    </label>
+                                    <input
+                                        id="account-technicalContactEmail"
+                                        className={inputClasses}
+                                        name="technicalContactEmail"
+                                        value={formData.technicalContactEmail || ""}
+                                        onChange={handleChange}
+                                        placeholder="Technical Contact Email"
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-technicalContactPhone" className={labelClasses}>
+                                        Technical Contact Phone
+                                    </label>
+                                    <input
+                                        id="account-technicalContactPhone"
+                                        className={inputClasses}
+                                        name="technicalContactPhone"
+                                        value={formData.technicalContactPhone || ""}
+                                        onChange={handleChange}
+                                        placeholder="Technical Contact Phone"
+                                    />
+                                </div>
+                            </div>
+                            <div className={`${fieldGroupClasses} md:col-span-2`}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="account-companyDescription" className={labelClasses}>
+                                        Company Description
+                                    </label>
+                                    <textarea
+                                        id="account-companyDescription"
+                                        className={`${inputClasses} min-h-[120px]`}
+                                        name="companyDescription"
+                                        value={formData.companyDescription || ""}
+                                        onChange={handleChange}
+                                        placeholder="Company Description"
+                                    />
+                                </div>
+                            </div>
                             <div className="md:col-span-2 flex flex-wrap items-center gap-3">
                                 <Button variant="success" onClick={handleSave} className="px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
                                     Save
@@ -249,9 +320,12 @@ const Account = () => {
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2">
                             {details.map((detail) => (
-                                <div key={detail.label} className="rounded-xl border border-slate-800/80 bg-slate-950/50 px-4 py-3">
+                                <div
+                                    key={detail.label}
+                                    className="space-y-3 rounded-xl border border-slate-800/80 bg-slate-950/50 px-4 py-3"
+                                >
                                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{detail.label}</p>
-                                    <p className="mt-1 text-sm font-semibold text-slate-200">{detail.value || "-"}</p>
+                                    <p className="text-sm font-semibold text-slate-200">{detail.value || "-"}</p>
                                 </div>
                             ))}
                             <div className="md:col-span-2 flex justify-end">

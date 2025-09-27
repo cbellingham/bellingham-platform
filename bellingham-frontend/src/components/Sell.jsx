@@ -8,8 +8,10 @@ import AgreementEditorModal from "./AgreementEditorModal";
 import contractTemplate from "../config/contractTemplate";
 
 const inputClasses =
-    "mt-1 w-full max-w-lg rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
+    "w-full max-w-lg rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
 const labelClasses = "block w-full max-w-lg text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
+const fieldGroupClasses = "space-y-4";
+const controlStackClasses = "space-y-2";
 
 const Sell = () => {
     const navigate = useNavigate();
@@ -175,172 +177,242 @@ const Sell = () => {
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <label className={labelClasses}>
-                                Effective Date
-                                <input
-                                    type="date"
-                                    name="effectiveDate"
-                                    value={form.effectiveDate}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                    required
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Platform Name
-                                <input
-                                    type="text"
-                                    name="platformName"
-                                    value={form.platformName}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                    required
-                                />
-                            </label>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="effectiveDate" className={labelClasses}>
+                                        Effective Date
+                                    </label>
+                                    <input
+                                        id="effectiveDate"
+                                        type="date"
+                                        name="effectiveDate"
+                                        value={form.effectiveDate}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="platformName" className={labelClasses}>
+                                        Platform Name
+                                    </label>
+                                    <input
+                                        id="platformName"
+                                        type="text"
+                                        name="platformName"
+                                        value={form.platformName}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                        required
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <label className={labelClasses}>
-                                Listing Title
-                                <input
-                                    type="text"
-                                    name="title"
-                                    value={form.title}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                    required
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Asking Price
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    name="price"
-                                    value={form.price}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                    required
-                                />
-                            </label>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="title" className={labelClasses}>
+                                        Listing Title
+                                    </label>
+                                    <input
+                                        id="title"
+                                        type="text"
+                                        name="title"
+                                        value={form.title}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="price" className={labelClasses}>
+                                        Asking Price
+                                    </label>
+                                    <input
+                                        id="price"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        name="price"
+                                        value={form.price}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                        required
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <label className={labelClasses}>
-                                Seller Full Name
-                                <input
-                                    type="text"
-                                    name="sellerFullName"
-                                    value={form.sellerFullName}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                    required
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Seller Entity Type
-                                <input
-                                    type="text"
-                                    name="sellerEntityType"
-                                    value={form.sellerEntityType}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                />
-                            </label>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="sellerFullName" className={labelClasses}>
+                                        Seller Full Name
+                                    </label>
+                                    <input
+                                        id="sellerFullName"
+                                        type="text"
+                                        name="sellerFullName"
+                                        value={form.sellerFullName}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="sellerEntityType" className={labelClasses}>
+                                        Seller Entity Type
+                                    </label>
+                                    <input
+                                        id="sellerEntityType"
+                                        type="text"
+                                        name="sellerEntityType"
+                                        value={form.sellerEntityType}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <label className={labelClasses}>
-                            Seller Address
-                            <textarea
-                                name="sellerAddress"
-                                value={form.sellerAddress}
-                                onChange={handleChange}
-                                className={`${inputClasses} min-h-[100px]`}
-                            />
-                        </label>
+                        <div className={fieldGroupClasses}>
+                            <div className={controlStackClasses}>
+                                <label htmlFor="sellerAddress" className={labelClasses}>
+                                    Seller Address
+                                </label>
+                                <textarea
+                                    id="sellerAddress"
+                                    name="sellerAddress"
+                                    value={form.sellerAddress}
+                                    onChange={handleChange}
+                                    className={`${inputClasses} min-h-[100px]`}
+                                />
+                            </div>
+                        </div>
                     </div>
                 );
             case "buyer":
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <label className={labelClasses}>
-                                Buyer Full Name
-                                <input
-                                    type="text"
-                                    name="buyerFullName"
-                                    value={form.buyerFullName}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Buyer Entity Type
-                                <input
-                                    type="text"
-                                    name="buyerEntityType"
-                                    value={form.buyerEntityType}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                />
-                            </label>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="buyerFullName" className={labelClasses}>
+                                        Buyer Full Name
+                                    </label>
+                                    <input
+                                        id="buyerFullName"
+                                        type="text"
+                                        name="buyerFullName"
+                                        value={form.buyerFullName}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="buyerEntityType" className={labelClasses}>
+                                        Buyer Entity Type
+                                    </label>
+                                    <input
+                                        id="buyerEntityType"
+                                        type="text"
+                                        name="buyerEntityType"
+                                        value={form.buyerEntityType}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <label className={labelClasses}>
-                            Buyer Address
-                            <textarea
-                                name="buyerAddress"
-                                value={form.buyerAddress}
-                                onChange={handleChange}
-                                className={`${inputClasses} min-h-[100px]`}
-                            />
-                        </label>
-                        <label className={labelClasses}>
-                            Data Description
-                            <textarea
-                                name="dataDescription"
-                                value={form.dataDescription}
-                                onChange={handleChange}
-                                className={`${inputClasses} min-h-[120px]`}
-                                placeholder="Outline the dataset content, granularity, and key attributes"
-                            />
-                        </label>
+                        <div className={fieldGroupClasses}>
+                            <div className={controlStackClasses}>
+                                <label htmlFor="buyerAddress" className={labelClasses}>
+                                    Buyer Address
+                                </label>
+                                <textarea
+                                    id="buyerAddress"
+                                    name="buyerAddress"
+                                    value={form.buyerAddress}
+                                    onChange={handleChange}
+                                    className={`${inputClasses} min-h-[100px]`}
+                                />
+                            </div>
+                        </div>
+                        <div className={fieldGroupClasses}>
+                            <div className={controlStackClasses}>
+                                <label htmlFor="dataDescription" className={labelClasses}>
+                                    Data Description
+                                </label>
+                                <textarea
+                                    id="dataDescription"
+                                    name="dataDescription"
+                                    value={form.dataDescription}
+                                    onChange={handleChange}
+                                    className={`${inputClasses} min-h-[120px]`}
+                                    placeholder="Outline the dataset content, granularity, and key attributes"
+                                />
+                            </div>
+                        </div>
                     </div>
                 );
             case "delivery":
                 return (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <label className={labelClasses}>
-                                Delivery Date
-                                <input
-                                    type="date"
-                                    name="deliveryDate"
-                                    value={form.deliveryDate}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                />
-                            </label>
-                            <label className={labelClasses}>
-                                Delivery Format
-                                <input
-                                    type="text"
-                                    name="deliveryFormat"
-                                    value={form.deliveryFormat}
-                                    onChange={handleChange}
-                                    className={inputClasses}
-                                />
-                            </label>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="deliveryDate" className={labelClasses}>
+                                        Delivery Date
+                                    </label>
+                                    <input
+                                        id="deliveryDate"
+                                        type="date"
+                                        name="deliveryDate"
+                                        value={form.deliveryDate}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="deliveryFormat" className={labelClasses}>
+                                        Delivery Format
+                                    </label>
+                                    <input
+                                        id="deliveryFormat"
+                                        type="text"
+                                        name="deliveryFormat"
+                                        value={form.deliveryFormat}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <label className={labelClasses}>
-                            Upload Supporting Terms
-                            <input
-                                type="file"
-                                onChange={handleFileChange}
-                                className={inputClasses}
-                            />
-                        </label>
-                        <div className="space-y-2">
+                        <div className={fieldGroupClasses}>
+                            <div className={controlStackClasses}>
+                                <label htmlFor="supportingTerms" className={labelClasses}>
+                                    Upload Supporting Terms
+                                </label>
+                                <input
+                                    id="supportingTerms"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    className={inputClasses}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-4">
                             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Agreement Draft</p>
-                            <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 text-sm text-slate-200">
-                                <p className="mb-3 text-slate-300">
+                            <div className="space-y-4 rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 text-sm text-slate-200">
+                                <p className="text-slate-300">
                                     Review or update the legal agreement that will govern this contract. Buyers will receive this
                                     text as part of the execution workflow.
                                 </p>
