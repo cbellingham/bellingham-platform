@@ -55,6 +55,12 @@ describe('Buy component', () => {
       }
       return Promise.resolve({ data: [] });
     });
+    api.post.mockResolvedValue({
+      data: {
+        id: 1,
+        title: 'Contract A',
+      },
+    });
   });
 
   afterEach(() => {
@@ -70,5 +76,24 @@ describe('Buy component', () => {
     fireEvent.click(buyButton);
 
     expect(await screen.findByTestId('signature-canvas')).toBeInTheDocument();
+  });
+
+  test('sends captured signature when confirming purchase', async () => {
+    renderWithProviders(<Buy />);
+
+    await waitFor(() => expect(api.get).toHaveBeenCalledWith('/api/contracts/available'));
+
+    const buyButton = screen.getAllByRole('button', { name: 'Buy' })[0];
+    fireEvent.click(buyButton);
+
+    const saveButton = await screen.findByRole('button', { name: 'Save' });
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(api.post).toHaveBeenCalledWith(
+        '/api/contracts/1/buy',
+        { signature: 'data:image/png;base64,mock-signature' },
+      );
+    });
   });
 });
