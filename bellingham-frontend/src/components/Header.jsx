@@ -40,7 +40,7 @@ const Header = ({ onLogout }) => {
 
     return (
         <header className="relative z-20 border-b border-slate-800/70 bg-slate-950/95 shadow-[0_16px_40px_rgba(8,20,45,0.65)]">
-            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-6">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-4 lg:px-10">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <Link to="/" className="flex flex-col leading-tight">
                         <span className="text-xs font-semibold uppercase tracking-[0.4em] text-[#00D1FF]/80">
