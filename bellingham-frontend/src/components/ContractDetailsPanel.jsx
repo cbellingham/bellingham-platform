@@ -277,66 +277,68 @@ const ContractDetailsPanel = ({
                     Close
                 </Button>
             </div>
-            <div className="mt-4 flex flex-col gap-6 text-sm text-slate-300">
-                <div className="flex flex-wrap gap-2">
-                    <Button
-                        className="border border-[#7465A8]/50 bg-[#7465A8]/12 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#C5BEE4] hover:bg-[#7465A8]/20"
-                        onClick={handleDownload}
-                    >
-                        Download PDF
-                    </Button>
-                    {headerChips.map(({ key, label, className }) => (
-                        <span
-                            key={key}
-                            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${className}`}
+            <div className="mt-4 space-y-5 text-sm text-slate-300">
+                <div className="space-y-5">
+                    <div className="flex flex-wrap gap-2">
+                        <Button
+                            className="border border-[#7465A8]/50 bg-[#7465A8]/12 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#C5BEE4] hover:bg-[#7465A8]/20"
+                            onClick={handleDownload}
                         >
-                            {label}
-                        </span>
-                    ))}
-                </div>
-
-                <div className="space-y-4">
-                    {sections.map((section, index) => {
-                        const isOpen = openSections[section.title];
-                        const contentId = `contract-section-${index}`;
-
-                        return (
-                            <section
-                                key={section.title}
-                                className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-4 shadow-inner"
+                            Download PDF
+                        </Button>
+                        {headerChips.map(({ key, label, className }) => (
+                            <span
+                                key={key}
+                                className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${className}`}
                             >
-                                <button
-                                    type="button"
-                                    className="flex w-full items-center justify-between gap-4 text-left text-slate-200"
-                                    onClick={() => toggleSection(section.title)}
-                                    aria-expanded={isOpen}
-                                    aria-controls={contentId}
+                                {label}
+                            </span>
+                        ))}
+                    </div>
+
+                    <div className="space-y-5">
+                        {sections.map((section, index) => {
+                            const isOpen = openSections[section.title];
+                            const contentId = `contract-section-${index}`;
+
+                            return (
+                                <section
+                                    key={section.title}
+                                    className="space-y-5 rounded-2xl border border-slate-800/70 bg-slate-950/40 p-4 shadow-inner"
                                 >
-                                    <span className="text-sm font-semibold uppercase tracking-[0.2em]">
-                                        {section.title}
-                                    </span>
-                                </button>
-                                <dl
-                                    id={contentId}
-                                    className={`${
-                                        isOpen ? "mt-4 grid" : "mt-0 hidden"
-                                    } grid-cols-1 gap-4 sm:grid-cols-2`}
-                                >
-                                    {section.fields.map(({ key, label, value }) => (
-                                        <div
-                                            key={key}
-                                            className="flex flex-col gap-1 rounded-xl border border-slate-800 bg-slate-950/30 p-4"
-                                        >
-                                            <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                                                {label}
-                                            </dt>
-                                            <dd className="font-semibold text-slate-100">{value}</dd>
-                                        </div>
-                                    ))}
-                                </dl>
-                            </section>
-                        );
-                    })}
+                                    <button
+                                        type="button"
+                                        className="flex w-full items-center justify-between gap-4 text-left text-slate-200"
+                                        onClick={() => toggleSection(section.title)}
+                                        aria-expanded={isOpen}
+                                        aria-controls={contentId}
+                                    >
+                                        <span className="text-sm font-semibold uppercase tracking-[0.2em]">
+                                            {section.title}
+                                        </span>
+                                    </button>
+                                    <div
+                                        id={contentId}
+                                        className={`${isOpen ? "mt-4 space-y-5" : "mt-0 hidden"}`}
+                                    >
+                                        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                            {section.fields.map(({ key, label, value }) => (
+                                                <div
+                                                    key={key}
+                                                    className="flex flex-col gap-1 rounded-xl border border-slate-800 bg-slate-950/30 p-4"
+                                                >
+                                                    <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                                                        {label}
+                                                    </dt>
+                                                    <dd className="font-semibold text-slate-100">{value}</dd>
+                                                </div>
+                                            ))}
+                                        </dl>
+                                    </div>
+                                </section>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
         </div>
