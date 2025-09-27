@@ -52,10 +52,14 @@ const Buy = () => {
         fetchContracts();
     }, [fetchContracts]);
 
-    const handleBuy = async (contractId) => {
+    const handleBuy = async (contractId, signatureData = null) => {
         setNotification(null);
         try {
-            const response = await api.post(`/api/contracts/${contractId}/buy`, {});
+            const payload = signatureData ? { signature: signatureData } : undefined;
+            const response = await api.post(
+                `/api/contracts/${contractId}/buy`,
+                payload,
+            );
             const purchased = response?.data;
             setNotification({
                 type: "success",
@@ -80,12 +84,12 @@ const Buy = () => {
         setPendingContractId(contractId);
     };
 
-    const handleSignatureConfirm = async () => {
+    const handleSignatureConfirm = async (signatureData) => {
         if (!pendingContractId) {
             return;
         }
 
-        await handleBuy(pendingContractId);
+        await handleBuy(pendingContractId, signatureData);
         setPendingContractId(null);
     };
 
