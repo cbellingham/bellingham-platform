@@ -299,9 +299,9 @@ const Reports = () => {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="flex flex-col gap-6 xl:flex-row">
-                <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
-                    <div className="space-y-6">
+            <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:flex-row xl:gap-8">
+                <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6 md:p-7 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+                    <div className="space-y-5 sm:space-y-6 lg:space-y-7">
                         <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
                             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Analytics</p>
                             <h1 className="text-3xl font-bold text-white">Purchased Contracts</h1>
@@ -311,19 +311,19 @@ const Reports = () => {
                         </div>
                         {error && <p className="text-sm text-red-400">{error}</p>}
 
-                        <div className="grid gap-6">
-                            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
+                        <div className="grid gap-4 sm:gap-5 md:gap-6 lg:gap-7">
+                            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5 sm:p-6 md:p-7">
                                 {isLoading ? (
                                     <div className="flex h-72 items-center justify-center lg:h-96">
                                         <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#00D1FF] border-t-transparent" />
                                     </div>
                             ) : contracts.length ? (
-                                <div className="flex flex-col gap-6 lg:flex-row">
-                                    <div className="flex w-full flex-col gap-4 lg:flex-1">
+                                <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:flex-row lg:gap-7">
+                                    <div className="flex w-full flex-col gap-3 sm:gap-4 md:gap-5 lg:flex-1">
                                         <div className="h-72 w-full lg:h-96">
                                             <Pie data={pieData} options={pieOptions} />
                                         </div>
-                                        <div className="grid gap-3 rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 text-sm text-slate-200 sm:grid-cols-2">
+                                        <div className="grid gap-2.5 sm:gap-3 md:gap-4 lg:gap-5 rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 text-sm text-slate-200 sm:grid-cols-2">
                                             {contracts.map((contract, index) => {
                                                 const baseColor = ACCESSIBLE_PALETTE[index % ACCESSIBLE_PALETTE.length];
                                                 const pattern = PATTERN_DEFINITIONS[index % PATTERN_DEFINITIONS.length];
@@ -357,7 +357,7 @@ const Reports = () => {
                                             })}
                                         </div>
                                     </div>
-                                    <div className="flex w-full flex-1 flex-col gap-4 text-sm text-slate-200">
+                                    <div className="flex w-full flex-1 flex-col gap-3 sm:gap-4 md:gap-5 text-sm text-slate-200">
                                         {contracts.map((contract, index) => {
                                             const price = Number(contract.price || 0);
                                             const allocation = totalValue ? ((price / totalValue) * 100).toFixed(1) : "0.0";

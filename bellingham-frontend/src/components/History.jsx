@@ -33,9 +33,9 @@ const History = () => {
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="flex flex-col gap-6 xl:flex-row">
-                <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
-                    <div className="space-y-6">
+            <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:flex-row xl:gap-8">
+                <section className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6 md:p-7 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+                    <div className="space-y-5 sm:space-y-6 lg:space-y-7">
                         <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
                             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Audit Trail</p>
                             <h1 className="text-3xl font-bold text-white">Contract History</h1>
