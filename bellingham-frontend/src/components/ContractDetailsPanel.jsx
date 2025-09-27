@@ -51,8 +51,8 @@ const ContractDetailsPanel = ({
     }, [contract]);
 
     const panelClasses = inline
-        ? `${inlineWidth} rounded-2xl border border-slate-800 bg-slate-900/70 p-6 text-slate-100 shadow-[0_20px_45px_rgba(2,12,32,0.55)] transition-transform duration-300 backdrop-blur`
-        : `fixed top-0 right-0 z-20 h-full w-full transform bg-slate-900/95 p-6 text-slate-100 shadow-lg transition-transform duration-300 sm:w-1/3`;
+        ? `${inlineWidth} rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-6 text-slate-100 shadow-[0_20px_45px_rgba(2,12,32,0.55)] transition-transform duration-300 backdrop-blur sm:px-6 lg:px-8`
+        : `fixed top-0 right-0 z-20 h-full w-full transform bg-slate-900/95 px-4 py-6 text-slate-100 shadow-lg transition-transform duration-300 sm:w-1/3 sm:px-6 lg:px-8`;
 
     const handleDownload = async () => {
         if (!contract) return;
@@ -251,7 +251,7 @@ const ContractDetailsPanel = ({
     if (!contract && inline) {
         return (
             <div
-                className={`${inlineWidth} flex h-full items-center justify-center rounded-2xl border border-dashed border-slate-800/70 bg-slate-900/40 p-6 text-center text-slate-400`}
+                className={`${inlineWidth} flex h-full items-center justify-center rounded-2xl border border-dashed border-slate-800/70 bg-slate-900/40 px-4 py-6 text-center text-slate-400 sm:px-6 lg:px-8`}
             >
                 <div className="space-y-2 text-center">
                     <h2 className="text-lg font-semibold text-slate-200">Select a contract</h2>
