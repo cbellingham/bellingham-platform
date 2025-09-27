@@ -48,7 +48,7 @@ const Header = ({ onLogout }) => {
                         </span>
                         <span className="text-lg font-semibold text-white">Markets Platform</span>
                     </Link>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 lg:gap-6">
                         <Link
                             to="/notifications"
                             className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#00D1FF]/40 bg-slate-900/80 text-[#00D1FF] shadow-[0_6px_18px_rgba(0,209,255,0.3)] transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
@@ -119,7 +119,7 @@ const Header = ({ onLogout }) => {
                         id="primary-navigation"
                         className={`${
                             isNavOpen ? "flex" : "hidden"
-                        } flex-col items-stretch gap-2 pt-3 lg:flex lg:flex-row lg:flex-wrap lg:items-center lg:gap-2 lg:pt-0`}
+                        } flex-col items-stretch gap-4 pt-3 lg:flex lg:flex-row lg:flex-wrap lg:items-center lg:gap-6 lg:pt-0`}
                     >
                         {navItems.map((item) => (
                             <NavMenuItem key={item.path} item={item} layout="header" onNavigate={handleNavigate} />
