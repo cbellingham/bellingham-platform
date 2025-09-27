@@ -6,6 +6,7 @@ import api from "../utils/api";
 import { AuthContext } from '../context';
 import AgreementEditorModal from "./AgreementEditorModal";
 import contractTemplate from "../config/contractTemplate";
+import DataSampleAnalyzer from "./DataSampleAnalyzer";
 
 const inputClasses =
     "w-full max-w-lg rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
@@ -44,6 +45,9 @@ const Sell = () => {
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isAgreementModalOpen, setAgreementModalOpen] = useState(false);
+    const [analysisReport, setAnalysisReport] = useState(null);
+    const [analysisError, setAnalysisError] = useState("");
+    const [isAnalyzingSample, setIsAnalyzingSample] = useState(false);
 
     const loadContracts = useCallback(async () => {
         try {
@@ -64,9 +68,82 @@ const Sell = () => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleFileChange = (e) => {
-        setSnippet(e.target.files[0]);
-    };
+    const applyReportToDescription = useCallback((report) => {
+        if (!report) {
+            return;
+        }
+
+        setForm((prev) => {
+            if (prev.dataDescription) {
+                return prev;
+            }
+
+            const highlightedColumns = (report.columns || [])
+                .filter((column) => column?.name)
+                .slice(0, 4)
+                .map((column) => column.name);
+
+            const summaryParts = [report.summary];
+            if (highlightedColumns.length > 0) {
+                summaryParts.push(`Key fields: ${highlightedColumns.join(", ")}.`);
+            }
+
+            if (report.contractRecommendations?.length) {
+                summaryParts.push(report.contractRecommendations[0]);
+            }
+
+            const generatedDescription = summaryParts
+                .filter(Boolean)
+                .join(" ")
+                .trim();
+
+            if (!generatedDescription) {
+                return prev;
+            }
+
+            return { ...prev, dataDescription: generatedDescription };
+        });
+    }, []);
+
+    const analyzeSample = useCallback(async (file) => {
+        if (!file) {
+            return;
+        }
+
+        setIsAnalyzingSample(true);
+        setAnalysisError("");
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const response = await api.post(`/api/data/analyze`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            const report = response?.data;
+            setAnalysisReport(report);
+            applyReportToDescription(report);
+            if (report?.summary) {
+                setMessage(`📊 ${report.summary}`);
+            }
+        } catch (err) {
+            console.error(err);
+            const status = err.response?.status;
+            const message = err.response?.data?.message || err.message || "Unable to analyse the sample.";
+            setAnalysisError(
+                status ? `Unable to analyse the sample (${status}): ${message}` : `Unable to analyse the sample: ${message}`
+            );
+        } finally {
+            setIsAnalyzingSample(false);
+        }
+    }, [applyReportToDescription]);
+
+    const handleSampleSelect = useCallback((file) => {
+        setSnippet(file || null);
+        if (!file) {
+            setAnalysisReport(null);
+            setAnalysisError("");
+        }
+    }, []);
 
     const goToNextStep = () => {
         setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -148,6 +225,8 @@ const Sell = () => {
                 agreementText: contractTemplate,
             });
             setSnippet(null);
+            setAnalysisReport(null);
+            setAnalysisError("");
             setCurrentStep(0);
         } catch (err) {
             console.error(err);
@@ -292,6 +371,24 @@ const Sell = () => {
                                     className={`${inputClasses} min-h-[100px]`}
                                 />
                             </div>
+                        </div>
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+                                Analyse Your Data Sample
+                            </h3>
+                            <p className="text-sm text-slate-400">
+                                Upload a representative slice of your dataset to automatically extract the fields buyers care about
+                                and pre-fill your contract description.
+                            </p>
+                            <DataSampleAnalyzer
+                                selectedFile={snippet}
+                                onSelectFile={handleSampleSelect}
+                                onRemoveFile={() => handleSampleSelect(null)}
+                                onAnalyze={analyzeSample}
+                                isAnalyzing={isAnalyzingSample}
+                                analysisError={analysisError}
+                                report={analysisReport}
+                            />
                         </div>
                     </div>
                 );
