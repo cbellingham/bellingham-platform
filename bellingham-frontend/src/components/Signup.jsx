@@ -24,6 +24,7 @@ const Signup = () => {
     });
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const [errorDetails, setErrorDetails] = useState([]);
     const [touched, setTouched] = useState({});
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
@@ -241,11 +242,19 @@ const Signup = () => {
     const handleSignup = async (e) => {
         e.preventDefault();
         setError("");
+        setErrorDetails([]);
         setMessage("");
         const currentErrors = validateForm(form);
         setErrors(currentErrors);
         const hasErrors = Object.values(currentErrors).some((value) => value);
         if (hasErrors) {
+            const detailedErrors = fieldConfig
+                .filter((field) => currentErrors[field.name])
+                .map(
+                    (field) => `${field.label}: ${currentErrors[field.name]}`
+                );
+            setError("Please fix the highlighted errors before continuing.");
+            setErrorDetails(detailedErrors);
             const allTouched = fieldConfig.reduce((acc, field) => ({ ...acc, [field.name]: true }), {});
             setTouched(allTouched);
             return;
@@ -275,6 +284,7 @@ const Signup = () => {
         } catch (err) {
             console.error(err);
             setError("Registration failed.");
+            setErrorDetails([]);
         }
     };
 
@@ -310,8 +320,15 @@ const Signup = () => {
                                 </div>
                             )}
                             {error && (
-                                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-                                    {error}
+                                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+                                    <p>{error}</p>
+                                    {errorDetails.length > 0 && (
+                                        <ul className="list-disc list-inside space-y-1 text-sm">
+                                            {errorDetails.map((detail, index) => (
+                                                <li key={`${detail}-${index}`}>{detail}</li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </div>
                             )}
                         </div>
