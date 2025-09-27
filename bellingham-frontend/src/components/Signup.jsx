@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Button from "./ui/Button";
 import api from "../utils/api";
+import { baseFormContainerClasses } from "../utils/formLayout";
 
 const Signup = () => {
     const [form, setForm] = useState({
@@ -268,6 +269,8 @@ const Signup = () => {
         }
     };
 
+    const formContainerClasses = `${baseFormContainerClasses} rounded-2xl bg-white p-8 shadow-lg`;
+
     return (
         <div
             className="flex flex-col min-h-screen text-contrast font-sans"
@@ -285,10 +288,25 @@ const Signup = () => {
                 >
                     Back
                 </Button>
-                <form onSubmit={handleSignup} className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-3xl" noValidate>
-                    <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-                    {message && <div className="text-green-600 mb-2">{message}</div>}
-                    {error && <div className="text-red-600 mb-2">{error}</div>}
+                <form onSubmit={handleSignup} className={formContainerClasses} noValidate>
+                    <div className="space-y-2 text-center">
+                        <h2 className="text-2xl font-bold">Sign Up</h2>
+                        <p className="text-sm text-gray-600">Create your organisation account.</p>
+                    </div>
+                    {(message || error) && (
+                        <div className="space-y-2">
+                            {message && (
+                                <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
+                                    {message}
+                                </div>
+                            )}
+                            {error && (
+                                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                                    {error}
+                                </div>
+                            )}
+                        </div>
+                    )}
                     <div className="grid gap-6">
                         {fieldConfig.map((field) => {
                             const fieldId = `signup-${field.name}`;
@@ -298,8 +316,8 @@ const Signup = () => {
                             const describedBy = `${helpId}${showError ? ` ${errorId}` : ""}`;
 
                             return (
-                                <div key={field.name} className="flex flex-col w-full max-w-xl">
-                                    <label htmlFor={fieldId} className="font-medium text-sm text-gray-700 mb-1">
+                                <div key={field.name} className="flex flex-col w-full">
+                                    <label htmlFor={fieldId} className="mb-1 text-sm font-medium text-gray-700">
                                         {field.label}
                                     </label>
                                     <input
@@ -312,15 +330,15 @@ const Signup = () => {
                                         onBlur={() => handleBlur(field.name)}
                                         aria-describedby={describedBy}
                                         aria-invalid={showError ? "true" : "false"}
-                                        className={`w-full max-w-xl p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00D1FF] ${
+                                        className={`w-full rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-[#00D1FF] ${
                                             showError ? "border-red-500" : "border-gray-300"
                                         }`}
                                     />
-                                    <p id={helpId} className="text-xs text-gray-500 mt-1">
+                                    <p id={helpId} className="mt-1 text-xs text-gray-500">
                                         {field.helpText}
                                     </p>
                                     {showError && (
-                                        <p id={errorId} className="text-xs text-red-600 mt-1" role="alert">
+                                        <p id={errorId} className="mt-1 text-xs text-red-600" role="alert">
                                             {errors[field.name]}
                                         </p>
                                     )}
@@ -328,17 +346,19 @@ const Signup = () => {
                             );
                         })}
                     </div>
-                    <Button type="submit" className="w-full max-w-xl mt-6 rounded-lg" variant="primary">
-                        Register
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="link"
-                        className="w-full max-w-xl mt-2"
-                        onClick={() => navigate("/login")}
-                    >
-                        Back to Login
-                    </Button>
+                    <div className="space-y-3">
+                        <Button type="submit" className="w-full rounded-lg" variant="primary">
+                            Register
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="link"
+                            className="w-full"
+                            onClick={() => navigate("/login")}
+                        >
+                            Back to Login
+                        </Button>
+                    </div>
                 </form>
             </div>
         </div>
