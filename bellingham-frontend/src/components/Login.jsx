@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import api from "../utils/api";
 import { AuthContext } from "../context";
+import { baseFormContainerClasses } from "../utils/formLayout";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -42,7 +43,7 @@ const Login = () => {
     };
 
     const inputBaseClasses =
-        "w-full max-w-lg rounded-lg border bg-slate-900/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 transition-colors focus:outline-none focus:ring-2";
+        "w-full rounded-lg border bg-slate-900/70 px-4 py-3 text-slate-100 placeholder:text-slate-500 transition-colors focus:outline-none focus:ring-2";
     const inputStateClasses = authError
         ? "border-red-500/70 focus:border-red-400 focus:ring-red-500/40"
         : "border-slate-700/80 focus:border-[#00D1FF] focus:ring-[#00D1FF]/40";
@@ -104,7 +105,7 @@ const Login = () => {
                         </div>
                         <form
                             onSubmit={handleLogin}
-                            className="flex flex-col gap-6 rounded-2xl border border-slate-800/60 bg-slate-950/70 p-8 shadow-lg"
+                            className={`${baseFormContainerClasses} rounded-2xl border border-slate-800/60 bg-slate-950/70 p-8 shadow-lg`}
                         >
                             <div>
                                 <h2 className="text-2xl font-semibold text-slate-50">Sign in</h2>
@@ -161,21 +162,23 @@ const Login = () => {
                                     </button>
                                 </div>
                             </div>
-                            <Button
-                                type="submit"
-                                className="w-full max-w-lg rounded-lg py-3 text-base font-semibold shadow-lg shadow-[#00D1FF]/30"
-                                variant="primary"
-                            >
-                                Sign In
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="link"
-                                className="text-center text-sm text-[#00D1FF] hover:text-[#3BAEAB]"
-                                onClick={() => navigate("/signup")}
-                            >
-                                Create Account
-                            </Button>
+                            <div className="space-y-4">
+                                <Button
+                                    type="submit"
+                                    className="w-full rounded-lg py-3 text-base font-semibold shadow-lg shadow-[#00D1FF]/30"
+                                    variant="primary"
+                                >
+                                    Sign In
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="link"
+                                    className="w-full text-center text-sm text-[#00D1FF] hover:text-[#3BAEAB]"
+                                    onClick={() => navigate("/signup")}
+                                >
+                                    Create Account
+                                </Button>
+                            </div>
                         </form>
                     </div>
                 </div>
