@@ -47,12 +47,18 @@ const Signup = () => {
                 type: "password",
                 label: "Password",
                 placeholder: "Password",
-                helpText: "Use 8+ characters with a mix of letters and numbers.",
+                helpText:
+                    "Use 12+ characters including upper and lower case letters, a number, and a special character.",
                 validate: (value) => {
                     if (!value) return "Password is required.";
-                    if (value.length < 8) return "Password must be at least 8 characters.";
-                    if (!/[A-Za-z]/.test(value) || !/\d/.test(value))
-                        return "Password must include both letters and numbers.";
+                    if (value.length < 12) return "Password must be at least 12 characters.";
+                    if (!/[A-Z]/.test(value))
+                        return "Password must include at least one uppercase letter.";
+                    if (!/[a-z]/.test(value))
+                        return "Password must include at least one lowercase letter.";
+                    if (!/\d/.test(value)) return "Password must include at least one number.";
+                    if (!/[^A-Za-z0-9]/.test(value))
+                        return "Password must include at least one special character.";
                     return "";
                 },
             },
@@ -94,11 +100,11 @@ const Signup = () => {
                 type: "text",
                 label: "UK or US Tax ID Code",
                 placeholder: "UK or US Tax ID Code",
-                helpText: "Provide a valid tax identification number (e.g., EIN or UTR).",
+                helpText: "Provide a valid tax identification number (8-20 characters, letters, numbers, or hyphens).",
                 validate: (value) => {
                     if (!value.trim()) return "Tax ID is required.";
-                    if (!/[A-Za-z0-9-]{6,}/.test(value.trim()))
-                        return "Enter a valid tax identification number.";
+                    if (!/^[A-Za-z0-9-]{8,20}$/.test(value.trim()))
+                        return "Tax ID must be 8-20 letters, numbers, or hyphens.";
                     return "";
                 },
             },
@@ -107,9 +113,12 @@ const Signup = () => {
                 type: "text",
                 label: "Company Registration Number",
                 placeholder: "Company Registration Number",
-                helpText: "Include any leading zeros from the official registration.",
+                helpText:
+                    "Include any leading zeros from the official registration (5-20 letters, numbers, or hyphens).",
                 validate: (value) => {
                     if (!value.trim()) return "Company registration number is required.";
+                    if (!/^[A-Za-z0-9-]{5,20}$/.test(value.trim()))
+                        return "Company registration number must be 5-20 letters, numbers, or hyphens.";
                     return "";
                 },
             },
@@ -142,11 +151,11 @@ const Signup = () => {
                 type: "tel",
                 label: "Primary Contact Phone",
                 placeholder: "Primary Contact Phone",
-                helpText: "Include country code, e.g., +1 555 123 4567.",
+                helpText: "Include country code, e.g., +1 555 123 4567 (7-20 digits, spaces, ., (), or hyphens).",
                 validate: (value) => {
                     if (!value.trim()) return "Primary contact phone is required.";
-                    if (!/^\+?[0-9 ()-]{7,}$/.test(value.trim()))
-                        return "Enter a valid phone number.";
+                    if (!/^\+?[0-9 .()-]{7,20}$/.test(value.trim()))
+                        return "Primary contact phone must be 7-20 digits and may include spaces, periods, parentheses, or hyphens.";
                     return "";
                 },
             },
@@ -179,11 +188,11 @@ const Signup = () => {
                 type: "tel",
                 label: "Technical Contact Phone",
                 placeholder: "Technical Contact Phone",
-                helpText: "Best number for urgent technical notifications.",
+                helpText: "Best number for urgent technical notifications (7-20 digits, spaces, ., (), or hyphens).",
                 validate: (value) => {
                     if (!value.trim()) return "Technical contact phone is required.";
-                    if (!/^\+?[0-9 ()-]{7,}$/.test(value.trim()))
-                        return "Enter a valid phone number.";
+                    if (!/^\+?[0-9 .()-]{7,20}$/.test(value.trim()))
+                        return "Technical contact phone must be 7-20 digits and may include spaces, periods, parentheses, or hyphens.";
                     return "";
                 },
             },
