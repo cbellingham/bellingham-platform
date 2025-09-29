@@ -22,9 +22,6 @@ const Sell = () => {
         sellerFullName: "",
         sellerEntityType: "",
         sellerAddress: "",
-        buyerFullName: "",
-        buyerEntityType: "",
-        buyerAddress: "",
         deliveryDate: "",
         deliveryFormat: "",
         platformName: "",
@@ -35,11 +32,11 @@ const Sell = () => {
     });
     const steps = [
         { id: "listing", title: "Listing & Seller" },
-        { id: "buyer", title: "Buyer Information" },
         { id: "delivery", title: "Delivery & Terms" },
     ];
     const [currentStep, setCurrentStep] = useState(0);
     const [snippet, setSnippet] = useState(null);
+    const [supportingTermsFile, setSupportingTermsFile] = useState(null);
     const [message, setMessage] = useState("");
     const [contracts, setContracts] = useState([]);
     const [error, setError] = useState("");
@@ -145,6 +142,18 @@ const Sell = () => {
         }
     }, []);
 
+    const handleSupportingTermsChange = useCallback((event) => {
+        const file = event.target.files?.[0] || null;
+        setSupportingTermsFile(file);
+        if (event.target) {
+            event.target.value = "";
+        }
+    }, []);
+
+    const handleRemoveSupportingTerms = useCallback(() => {
+        setSupportingTermsFile(null);
+    }, []);
+
     const goToNextStep = () => {
         setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
     };
@@ -186,12 +195,9 @@ const Sell = () => {
             sellerFullName: form.sellerFullName,
             sellerEntityType: form.sellerEntityType,
             sellerAddress: form.sellerAddress,
-            buyerFullName: form.buyerFullName,
-            buyerEntityType: form.buyerEntityType,
-            buyerAddress: form.buyerAddress,
         };
-        if (snippet) {
-            data.termsFileName = snippet.name;
+        if (supportingTermsFile) {
+            data.termsFileName = supportingTermsFile.name;
         }
         setMessage("");
         setIsSubmitting(true);
@@ -213,9 +219,6 @@ const Sell = () => {
                 sellerFullName: "",
                 sellerEntityType: "",
                 sellerAddress: "",
-                buyerFullName: "",
-                buyerEntityType: "",
-                buyerAddress: "",
                 deliveryDate: "",
                 deliveryFormat: "",
                 platformName: "",
@@ -225,6 +228,7 @@ const Sell = () => {
                 agreementText: contractTemplate,
             });
             setSnippet(null);
+            setSupportingTermsFile(null);
             setAnalysisReport(null);
             setAnalysisError("");
             setCurrentStep(0);
@@ -390,57 +394,6 @@ const Sell = () => {
                                 report={analysisReport}
                             />
                         </div>
-                    </div>
-                );
-            case "buyer":
-                return (
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className={fieldGroupClasses}>
-                                <div className={controlStackClasses}>
-                                    <label htmlFor="buyerFullName" className={labelClasses}>
-                                        Buyer Full Name
-                                    </label>
-                                    <input
-                                        id="buyerFullName"
-                                        type="text"
-                                        name="buyerFullName"
-                                        value={form.buyerFullName}
-                                        onChange={handleChange}
-                                        className={inputClasses}
-                                    />
-                                </div>
-                            </div>
-                            <div className={fieldGroupClasses}>
-                                <div className={controlStackClasses}>
-                                    <label htmlFor="buyerEntityType" className={labelClasses}>
-                                        Buyer Entity Type
-                                    </label>
-                                    <input
-                                        id="buyerEntityType"
-                                        type="text"
-                                        name="buyerEntityType"
-                                        value={form.buyerEntityType}
-                                        onChange={handleChange}
-                                        className={inputClasses}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className={fieldGroupClasses}>
-                            <div className={controlStackClasses}>
-                                <label htmlFor="buyerAddress" className={labelClasses}>
-                                    Buyer Address
-                                </label>
-                                <textarea
-                                    id="buyerAddress"
-                                    name="buyerAddress"
-                                    value={form.buyerAddress}
-                                    onChange={handleChange}
-                                    className={`${inputClasses} min-h-[100px]`}
-                                />
-                            </div>
-                        </div>
                         <div className={fieldGroupClasses}>
                             <div className={controlStackClasses}>
                                 <label htmlFor="dataDescription" className={labelClasses}>
@@ -501,9 +454,22 @@ const Sell = () => {
                                 <input
                                     id="supportingTerms"
                                     type="file"
-                                    onChange={handleFileChange}
+                                    onChange={handleSupportingTermsChange}
                                     className={inputClasses}
                                 />
+                                <p className="text-xs text-slate-500">
+                                    Optional: include an attachment with any additional legal terms or schedules.
+                                </p>
+                                {supportingTermsFile && (
+                                    <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-800/60 bg-slate-950/60 px-3 py-2 text-xs text-slate-200">
+                                        <span className="truncate font-medium" title={supportingTermsFile.name}>
+                                            {supportingTermsFile.name}
+                                        </span>
+                                        <Button type="button" variant="ghost" onClick={handleRemoveSupportingTerms} className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]">
+                                            Remove
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="space-y-4">
