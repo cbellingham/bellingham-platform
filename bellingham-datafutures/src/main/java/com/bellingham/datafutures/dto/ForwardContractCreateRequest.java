@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 public class ForwardContractCreateRequest {
 
@@ -46,6 +47,12 @@ public class ForwardContractCreateRequest {
     private String buyerAddress;
 
     private String sellerSignature;
+
+    private PreTradePolicyDto preTradePolicy;
+
+    private Set<String> requiredClearanceRoles;
+
+    private Set<DataCategoryApprovalDto> dataCategoryApprovals;
 
     public String getTitle() {
         return title;
@@ -173,5 +180,29 @@ public class ForwardContractCreateRequest {
 
     public void setSellerSignature(String sellerSignature) {
         this.sellerSignature = sellerSignature;
+    }
+
+    public PreTradePolicyDto getPreTradePolicy() {
+        return preTradePolicy;
+    }
+
+    public void setPreTradePolicy(PreTradePolicyDto preTradePolicy) {
+        this.preTradePolicy = preTradePolicy;
+    }
+
+    public Set<String> getRequiredClearanceRoles() {
+        return requiredClearanceRoles;
+    }
+
+    public void setRequiredClearanceRoles(Set<String> requiredClearanceRoles) {
+        this.requiredClearanceRoles = requiredClearanceRoles;
+    }
+
+    public Set<DataCategoryApprovalDto> getDataCategoryApprovals() {
+        return dataCategoryApprovals;
+    }
+
+    public void setDataCategoryApprovals(Set<DataCategoryApprovalDto> dataCategoryApprovals) {
+        this.dataCategoryApprovals = dataCategoryApprovals;
     }
 }

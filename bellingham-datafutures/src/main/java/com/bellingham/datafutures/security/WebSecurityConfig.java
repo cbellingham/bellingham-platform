@@ -19,6 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final String ROLE_COMPLIANCE_OFFICER = "ROLE_COMPLIANCE_OFFICER";
+    private static final String ROLE_TRADER = "ROLE_TRADER";
+    private static final String ROLE_USER = "ROLE_USER";
+
     private final JwtFilter jwtFilter;
     private final CustomUserDetailsService userDetailsService;
 
@@ -56,6 +61,16 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/authenticate", "/api/register", "/api/register-default", "/api/contracts/available", "/api/logout").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/contracts/*/pre-trade-policy")
+                        .hasAnyAuthority(ROLE_COMPLIANCE_OFFICER, ROLE_ADMIN)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/contracts/**")
+                        .hasAnyAuthority(ROLE_USER, ROLE_TRADER, ROLE_COMPLIANCE_OFFICER, ROLE_ADMIN)
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/contracts/**")
+                        .hasAnyAuthority(ROLE_USER, ROLE_TRADER, ROLE_COMPLIANCE_OFFICER, ROLE_ADMIN)
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/contracts/**")
+                        .hasAnyAuthority(ROLE_USER, ROLE_TRADER, ROLE_COMPLIANCE_OFFICER, ROLE_ADMIN)
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/contracts/**")
+                        .hasAnyAuthority(ROLE_USER, ROLE_TRADER, ROLE_COMPLIANCE_OFFICER, ROLE_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

@@ -3,6 +3,9 @@ package com.bellingham.datafutures.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(indexes = {
@@ -37,6 +40,32 @@ public class ForwardContract {
     private String buyerUsername;
     private String creatorUsername;
     private LocalDate purchaseDate;
+
+    @Embedded
+    private PreTradePolicy preTradePolicy = new PreTradePolicy();
+
+    @Enumerated(EnumType.STRING)
+    private AttestationStatus kycStatus = AttestationStatus.PENDING;
+
+    private String kycAttestedBy;
+
+    private LocalDateTime kycAttestedAt;
+
+    @Enumerated(EnumType.STRING)
+    private AttestationStatus amlStatus = AttestationStatus.PENDING;
+
+    private String amlAttestedBy;
+
+    private LocalDateTime amlAttestedAt;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "forward_contract_data_category_approvals", joinColumns = @JoinColumn(name = "contract_id"))
+    private Set<DataCategoryApproval> dataCategoryApprovals = new HashSet<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "forward_contract_required_roles", joinColumns = @JoinColumn(name = "contract_id"))
+    @Column(name = "role_name")
+    private Set<String> requiredClearanceRoles = new HashSet<>();
 
     private String legalBusinessName;
     private String name;
@@ -225,6 +254,95 @@ public class ForwardContract {
 
     public void setPurchaseDate(LocalDate purchaseDate) {
         this.purchaseDate = purchaseDate;
+    }
+
+    public PreTradePolicy getPreTradePolicy() {
+        return preTradePolicy;
+    }
+
+    public void setPreTradePolicy(PreTradePolicy preTradePolicy) {
+        this.preTradePolicy = preTradePolicy;
+    }
+
+    public AttestationStatus getKycStatus() {
+        return kycStatus;
+    }
+
+    public void setKycStatus(AttestationStatus kycStatus) {
+        this.kycStatus = kycStatus;
+    }
+
+    public String getKycAttestedBy() {
+        return kycAttestedBy;
+    }
+
+    public void setKycAttestedBy(String kycAttestedBy) {
+        this.kycAttestedBy = kycAttestedBy;
+    }
+
+    public LocalDateTime getKycAttestedAt() {
+        return kycAttestedAt;
+    }
+
+    public void setKycAttestedAt(LocalDateTime kycAttestedAt) {
+        this.kycAttestedAt = kycAttestedAt;
+    }
+
+    public AttestationStatus getAmlStatus() {
+        return amlStatus;
+    }
+
+    public void setAmlStatus(AttestationStatus amlStatus) {
+        this.amlStatus = amlStatus;
+    }
+
+    public String getAmlAttestedBy() {
+        return amlAttestedBy;
+    }
+
+    public void setAmlAttestedBy(String amlAttestedBy) {
+        this.amlAttestedBy = amlAttestedBy;
+    }
+
+    public LocalDateTime getAmlAttestedAt() {
+        return amlAttestedAt;
+    }
+
+    public void setAmlAttestedAt(LocalDateTime amlAttestedAt) {
+        this.amlAttestedAt = amlAttestedAt;
+    }
+
+    public Set<DataCategoryApproval> getDataCategoryApprovals() {
+        return dataCategoryApprovals;
+    }
+
+    public void setDataCategoryApprovals(Set<DataCategoryApproval> dataCategoryApprovals) {
+        this.dataCategoryApprovals = dataCategoryApprovals;
+    }
+
+    public Set<String> getRequiredClearanceRoles() {
+        return requiredClearanceRoles;
+    }
+
+    public void setRequiredClearanceRoles(Set<String> requiredClearanceRoles) {
+        this.requiredClearanceRoles = requiredClearanceRoles;
+    }
+
+    public boolean canProgress(Set<String> authorities) {
+        boolean roleAuthorized = requiredClearanceRoles == null || requiredClearanceRoles.isEmpty()
+                || (authorities != null && authorities.stream().anyMatch(requiredClearanceRoles::contains));
+
+        if (!roleAuthorized) {
+            return false;
+        }
+
+        boolean kycApproved = !preTradePolicy.isRequireKyc() || AttestationStatus.APPROVED.equals(kycStatus);
+        boolean amlApproved = !preTradePolicy.isRequireAml() || AttestationStatus.APPROVED.equals(amlStatus);
+        boolean dataApproved = !preTradePolicy.isRequireDataCategoryApproval()
+                || (!dataCategoryApprovals.isEmpty()
+                && dataCategoryApprovals.stream().allMatch(DataCategoryApproval::isApproved));
+
+        return kycApproved && amlApproved && dataApproved;
     }
 
     public String getLegalBusinessName() {
