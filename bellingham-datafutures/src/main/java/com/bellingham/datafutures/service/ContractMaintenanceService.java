@@ -10,16 +10,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContractMaintenanceService {
 
     private final ForwardContractRepository repository;
+    private final MarketDataService marketDataService;
 
-    public ContractMaintenanceService(ForwardContractRepository repository) {
+    public ContractMaintenanceService(ForwardContractRepository repository,
+                                      MarketDataService marketDataService) {
         this.repository = repository;
+        this.marketDataService = marketDataService;
     }
 
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void updateExpiredContracts() {
         LocalDate today = LocalDate.now();
-        repository.updateStatusForExpiredContracts(today, "Available", "Void");
-        repository.updateStatusForExpiredContracts(today, "Purchased", "Delivered");
+        int availableUpdated = repository.updateStatusForExpiredContracts(today, "Available", "Void");
+        int purchasedUpdated = repository.updateStatusForExpiredContracts(today, "Purchased", "Delivered");
+
+        if (availableUpdated > 0 || purchasedUpdated > 0) {
+            marketDataService.publishSnapshot();
+        }
     }
 }
