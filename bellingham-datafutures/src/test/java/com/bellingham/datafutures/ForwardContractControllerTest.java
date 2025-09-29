@@ -8,6 +8,10 @@ import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.service.NotificationService;
 import com.bellingham.datafutures.service.PdfService;
+import com.bellingham.datafutures.service.MarketDataService;
+import com.bellingham.datafutures.service.MarketDataStreamService;
+import com.bellingham.datafutures.service.SavedSearchService;
+import com.bellingham.datafutures.security.JwtFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -53,6 +57,14 @@ class ForwardContractControllerTest {
     private ContractActivityRepository activityRepository;
     @MockBean
     private NotificationService notificationService;
+    @MockBean
+    private MarketDataService marketDataService;
+    @MockBean
+    private MarketDataStreamService marketDataStreamService;
+    @MockBean
+    private SavedSearchService savedSearchService;
+    @MockBean
+    private JwtFilter jwtFilter;
 
     @Test
     void getAvailableContractsReturnsPage() throws Exception {
