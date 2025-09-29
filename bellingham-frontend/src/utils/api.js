@@ -1,9 +1,22 @@
 import axios from 'axios';
 
+const rawBaseURL = import.meta.env.VITE_API_BASE_URL;
+const resolvedBaseURL = typeof rawBaseURL === 'string' && rawBaseURL.trim().length > 0
+  ? rawBaseURL.trim()
+  : '/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: resolvedBaseURL,
   withCredentials: true,
 });
+
+export const setAuthToken = (token) => {
+  if (token) {
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common.Authorization;
+  }
+};
 
 const parseRetryCount = (value, fallback) => {
   if (typeof value === 'number') {
