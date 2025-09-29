@@ -91,6 +91,11 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
     onConfirm(data);
   };
 
+  const handleConfirmWithoutSignature = () => {
+    setError('');
+    onConfirm(null);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
       <div className="w-full max-w-xl rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
@@ -113,6 +118,13 @@ const SignatureModal = ({ onConfirm, onCancel }) => {
         <div className="mt-6 flex flex-wrap justify-end gap-2">
           <Button variant="ghost" className="border border-slate-600/60 bg-slate-800 text-slate-100 hover:bg-slate-700" onClick={handleClear}>Clear</Button>
           <Button variant="danger" className="shadow-lg shadow-red-900/40" onClick={onCancel}>Cancel</Button>
+          <Button
+            variant="primary"
+            className="font-semibold shadow-lg shadow-[#00D1FF]/25"
+            onClick={handleConfirmWithoutSignature}
+          >
+            Continue without signature
+          </Button>
           <Button variant="success" className="font-semibold shadow-lg shadow-[#00D1FF]/25" onClick={handleSave}>Save</Button>
         </div>
       </div>

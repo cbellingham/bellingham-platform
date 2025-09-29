@@ -43,6 +43,9 @@ test('invokes handlers for actions', () => {
   expect(isEmptySpy).toHaveBeenCalled();
   expect(onConfirm).toHaveBeenCalledWith('mock-data-url');
 
+  fireEvent.click(screen.getByText('Continue without signature'));
+  expect(onConfirm).toHaveBeenCalledWith(null);
+
   fireEvent.click(screen.getByText('Cancel'));
   expect(onCancel).toHaveBeenCalled();
 
