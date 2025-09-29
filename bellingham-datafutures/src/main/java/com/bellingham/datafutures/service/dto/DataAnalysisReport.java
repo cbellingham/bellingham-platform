@@ -15,6 +15,8 @@ public record DataAnalysisReport(
         List<String> qualityAlerts,
         List<String> contractRecommendations,
         List<Map<String, String>> sampleRows,
+        List<BenchmarkInsight> benchmarkInsights,
+        List<FairValueBand> fairValueBands,
         String summary
 ) {
 
@@ -25,6 +27,8 @@ public record DataAnalysisReport(
         sampleRows = sampleRows == null ? List.of() : sampleRows.stream()
                 .map(row -> Collections.unmodifiableMap(row == null ? Map.of() : row))
                 .toList();
+        benchmarkInsights = benchmarkInsights == null ? List.of() : List.copyOf(benchmarkInsights);
+        fairValueBands = fairValueBands == null ? List.of() : List.copyOf(fairValueBands);
     }
 
     public static DataAnalysisReport empty(String fileName, long size, String format) {
@@ -37,6 +41,8 @@ public record DataAnalysisReport(
                 List.of(),
                 List.of("No records were detected in the uploaded sample."),
                 List.of("Provide a sample that includes representative columns so the platform can recommend contract fields."),
+                List.of(),
+                List.of(),
                 List.of(),
                 "No structured data detected in the provided sample."
         );
@@ -58,6 +64,35 @@ public record DataAnalysisReport(
             name = Objects.requireNonNullElse(name, "");
             inferredType = Objects.requireNonNullElse(inferredType, "unknown");
             exampleValue = Objects.requireNonNullElse(exampleValue, "");
+        }
+    }
+
+    public record BenchmarkInsight(
+            String cluster,
+            String description,
+            List<String> supportingColumns,
+            List<String> recommendedActions,
+            List<String> anomalies
+    ) {
+        public BenchmarkInsight {
+            cluster = Objects.requireNonNullElse(cluster, "");
+            description = Objects.requireNonNullElse(description, "");
+            supportingColumns = supportingColumns == null ? List.of() : List.copyOf(supportingColumns);
+            recommendedActions = recommendedActions == null ? List.of() : List.copyOf(recommendedActions);
+            anomalies = anomalies == null ? List.of() : List.copyOf(anomalies);
+        }
+    }
+
+    public record FairValueBand(
+            String column,
+            Double lowEstimate,
+            Double midEstimate,
+            Double highEstimate,
+            String guidance
+    ) {
+        public FairValueBand {
+            column = Objects.requireNonNullElse(column, "");
+            guidance = Objects.requireNonNullElse(guidance, "");
         }
     }
 }
