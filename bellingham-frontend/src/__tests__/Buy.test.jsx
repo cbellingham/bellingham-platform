@@ -96,4 +96,23 @@ describe('Buy component', () => {
       );
     });
   });
+
+  test('allows confirming purchase without providing a signature', async () => {
+    renderWithProviders(<Buy />);
+
+    await waitFor(() => expect(api.get).toHaveBeenCalledWith('/api/contracts/available'));
+
+    const buyButton = screen.getAllByRole('button', { name: 'Buy' })[0];
+    fireEvent.click(buyButton);
+
+    const continueButton = await screen.findByRole('button', { name: 'Continue without signature' });
+    fireEvent.click(continueButton);
+
+    await waitFor(() => {
+      expect(api.post).toHaveBeenCalledWith(
+        '/api/contracts/1/buy',
+        undefined,
+      );
+    });
+  });
 });
