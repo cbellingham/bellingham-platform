@@ -212,10 +212,17 @@ public class AuthController {
 
     private ResponseCookie buildSessionCookie(String value, Duration maxAge, boolean secureTransport) {
         boolean secureAttribute = jwtProperties.getCookie().isSecure() && secureTransport;
+        String configuredSameSite = jwtProperties.getCookie().getSameSite();
+        String sameSiteAttribute = configuredSameSite;
+
+        if (!secureAttribute && configuredSameSite != null && configuredSameSite.equalsIgnoreCase("None")) {
+            sameSiteAttribute = "Lax";
+        }
+
         return ResponseCookie.from(jwtProperties.getCookie().getName(), value)
                 .httpOnly(true)
                 .secure(secureAttribute)
-                .sameSite(jwtProperties.getCookie().getSameSite())
+                .sameSite(sameSiteAttribute)
                 .path(jwtProperties.getCookie().getPath())
                 .maxAge(maxAge)
                 .build();
