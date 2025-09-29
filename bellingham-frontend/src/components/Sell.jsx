@@ -11,7 +11,7 @@ import DataSampleAnalyzer from "./DataSampleAnalyzer";
 const inputClasses =
     "w-full max-w-lg rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none";
 const labelClasses = "block w-full max-w-lg text-xs font-semibold uppercase tracking-[0.18em] text-slate-400";
-const fieldGroupClasses = "space-y-4";
+const fieldGroupClasses = "space-y-4 md:max-w-lg md:place-self-start";
 const controlStackClasses = "space-y-2";
 
 const Sell = () => {
