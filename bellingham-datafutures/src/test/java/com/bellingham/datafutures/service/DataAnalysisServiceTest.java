@@ -32,6 +32,9 @@ class DataAnalysisServiceTest {
         assertThat(report.summary()).contains("CSV");
         assertThat(report.contractRecommendations())
                 .anyMatch(rec -> rec.toLowerCase().contains("pricing") || rec.toLowerCase().contains("valuation"));
+        assertThat(report.benchmarkInsights()).isNotEmpty();
+        assertThat(report.fairValueBands())
+                .anyMatch(band -> band.column().equals("price") && band.midEstimate() != null);
     }
 
     @Test

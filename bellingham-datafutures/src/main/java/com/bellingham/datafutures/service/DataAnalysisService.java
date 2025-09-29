@@ -1,7 +1,9 @@
 package com.bellingham.datafutures.service;
 
 import com.bellingham.datafutures.service.dto.DataAnalysisReport;
+import com.bellingham.datafutures.service.dto.DataAnalysisReport.BenchmarkInsight;
 import com.bellingham.datafutures.service.dto.DataAnalysisReport.ColumnProfile;
+import com.bellingham.datafutures.service.dto.DataAnalysisReport.FairValueBand;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Set;
 
 @Service
@@ -230,6 +233,9 @@ public class DataAnalysisService {
                 .map(row -> Collections.unmodifiableMap(new LinkedHashMap<>(row)))
                 .toList();
 
+        List<BenchmarkInsight> benchmarkInsights = generateBenchmarkInsights(accumulators, rowCount);
+        List<FairValueBand> fairValueBands = generateFairValueBands(accumulators, rowCount);
+
         return new DataAnalysisReport(
                 originalFilename,
                 size,
@@ -240,6 +246,8 @@ public class DataAnalysisService {
                 List.copyOf(qualityAlerts),
                 List.copyOf(new LinkedHashSet<>(recommendations)),
                 immutableSamples,
+                benchmarkInsights,
+                fairValueBands,
                 summary
         );
     }
@@ -316,6 +324,263 @@ public class DataAnalysisService {
         return trimmed;
     }
 
+    private List<BenchmarkInsight> generateBenchmarkInsights(List<ColumnAccumulator> accumulators, long rowCount) {
+        if (accumulators == null || accumulators.isEmpty() || rowCount == 0) {
+            return List.of();
+        }
+
+        List<ColumnAccumulator> priceColumns = accumulators.stream()
+                .filter(this::isLikelyPriceColumn)
+                .filter(acc -> acc.numericCount > 0)
+                .toList();
+        List<ColumnAccumulator> deliveryColumns = accumulators.stream()
+                .filter(this::isLikelyDeliveryColumn)
+                .toList();
+        List<ColumnAccumulator> volumeColumns = accumulators.stream()
+                .filter(this::isLikelyVolumeColumn)
+                .toList();
+        List<ColumnAccumulator> buyerColumns = accumulators.stream()
+                .filter(this::isLikelyBuyerColumn)
+                .toList();
+        List<ColumnAccumulator> geographyColumns = accumulators.stream()
+                .filter(this::isLikelyGeographyColumn)
+                .toList();
+
+        List<BenchmarkInsight> insights = new ArrayList<>();
+
+        if (!priceColumns.isEmpty()) {
+            List<String> supportingColumns = toUniqueColumnNames(priceColumns, volumeColumns, deliveryColumns);
+            List<String> actions = new ArrayList<>();
+            actions.add("Bundle pricing with delivery and quantity terms so marketplace buyers can compare peer listings.");
+            if (rowCount < 50) {
+                actions.add("Upload at least 50 representative rows to tighten the benchmark cluster before publishing.");
+            }
+            if (priceColumns.stream().anyMatch(acc -> acc.numericCount < rowCount * 0.6)) {
+                actions.add("Fill in missing pricing values to avoid noisy guidance and failed auto-valuation checks.");
+            }
+
+            List<String> anomalies = collectPriceAnomalies(priceColumns, rowCount, !deliveryColumns.isEmpty(), !volumeColumns.isEmpty());
+
+            insights.add(new BenchmarkInsight(
+                    "Transactional fulfillment cluster",
+                    "Pricing columns align with comparable delivery and quantity patterns observed in live marketplace contracts.",
+                    supportingColumns,
+                    actions,
+                    anomalies
+            ));
+        }
+
+        if (!buyerColumns.isEmpty() || !geographyColumns.isEmpty()) {
+            List<String> supportingColumns = toUniqueColumnNames(buyerColumns, geographyColumns);
+            List<String> actions = new ArrayList<>();
+            actions.add("Highlight the strongest customer or market segments to differentiate your contract summary.");
+            if (buyerColumns.stream().anyMatch(acc -> acc.distinctValues.size() > 50)) {
+                actions.add("Group long-tail buyer attributes into broader cohorts so recommendation models stay stable.");
+            }
+
+            List<String> anomalies = new ArrayList<>();
+            for (ColumnAccumulator column : buyerColumns) {
+                double fillRate = rowCount == 0 ? 0 : (double) column.nonNullCount / (double) rowCount;
+                if (fillRate < 0.6) {
+                    anomalies.add(String.format(Locale.ROOT,
+                            "%s is sparsely populated, reducing confidence in demand-segmentation scoring.",
+                            column.name));
+                }
+            }
+
+            insights.add(new BenchmarkInsight(
+                    "Audience segmentation cluster",
+                    "Categorical buyer and geography fields mirror clusters used to power demand forecasts and targeting guidance.",
+                    supportingColumns,
+                    actions,
+                    anomalies
+            ));
+        }
+
+        if (insights.isEmpty()) {
+            insights.add(new BenchmarkInsight(
+                    "Exploratory contract cluster",
+                    "The sample lacks strong signals for existing benchmarks. Add pricing, delivery or audience markers to unlock guidance.",
+                    List.of(),
+                    List.of("Tag core commercial metrics so the platform can align the offer with historical performance."),
+                    List.of()
+            ));
+        }
+
+        return List.copyOf(insights);
+    }
+
+    private List<FairValueBand> generateFairValueBands(List<ColumnAccumulator> accumulators, long rowCount) {
+        if (accumulators == null || accumulators.isEmpty()) {
+            return List.of();
+        }
+
+        boolean hasDeliveryColumns = accumulators.stream().anyMatch(this::isLikelyDeliveryColumn);
+        List<FairValueBand> bands = new ArrayList<>();
+
+        for (ColumnAccumulator accumulator : accumulators) {
+            if (!isLikelyPriceColumn(accumulator) || accumulator.numericCount == 0) {
+                continue;
+            }
+
+            OptionalDouble avgOpt = accumulator.numericAverage();
+            if (avgOpt.isEmpty()) {
+                continue;
+            }
+
+            double mean = avgOpt.getAsDouble();
+            OptionalDouble stdOpt = accumulator.numericStandardDeviation();
+            double std = stdOpt.orElse(Math.abs(mean) * 0.1);
+            if (!Double.isFinite(std) || std == 0d) {
+                std = Math.abs(mean) * 0.05;
+            }
+
+            double low = mean - std;
+            double high = mean + std;
+            if (accumulator.numericMin != null) {
+                low = Math.max(low, accumulator.numericMin);
+            }
+            if (accumulator.numericMax != null) {
+                high = Math.min(high, accumulator.numericMax);
+            }
+            if (low > high) {
+                double mid = mean;
+                low = Math.min(low, mid);
+                high = Math.max(high, mid);
+            }
+
+            double mid = mean;
+            bands.add(new FairValueBand(
+                    accumulator.name,
+                    roundToTwo(low),
+                    roundToTwo(mid),
+                    roundToTwo(high),
+                    buildFairValueGuidance(accumulator, rowCount, stdOpt.isPresent(), hasDeliveryColumns)
+            ));
+        }
+
+        return bands.isEmpty() ? List.of() : List.copyOf(bands);
+    }
+
+    private List<String> toUniqueColumnNames(List<ColumnAccumulator>... accumulatorGroups) {
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        for (List<ColumnAccumulator> group : accumulatorGroups) {
+            for (ColumnAccumulator accumulator : group) {
+                names.add(accumulator.name);
+            }
+        }
+        return List.copyOf(names);
+    }
+
+    private List<String> collectPriceAnomalies(List<ColumnAccumulator> priceColumns, long rowCount,
+                                               boolean hasDeliveryColumns, boolean hasVolumeColumns) {
+        List<String> anomalies = new ArrayList<>();
+        for (ColumnAccumulator column : priceColumns) {
+            OptionalDouble avgOpt = column.numericAverage();
+            OptionalDouble stdOpt = column.numericStandardDeviation();
+            double contextWeight = (hasDeliveryColumns ? 0.2 : 0) + (hasVolumeColumns ? 0.2 : 0);
+
+            if (avgOpt.isPresent() && stdOpt.isPresent()) {
+                double mean = avgOpt.getAsDouble();
+                double std = stdOpt.getAsDouble();
+                if (std > 0 && mean != 0) {
+                    double coefficient = Math.abs(std / mean);
+                    if (coefficient > 0.45 - contextWeight) {
+                        String context = hasDeliveryColumns ? "delivery windows" : hasVolumeColumns ? "volume tiers" : "peer listings";
+                        anomalies.add(String.format(Locale.ROOT,
+                                "%s shows volatile pricing against %s; normalise your units or provide context notes.",
+                                column.name,
+                                context));
+                    }
+                }
+
+                if (column.numericMin != null && column.numericMax != null && std > 0) {
+                    double zLow = Math.abs((column.numericMin - mean) / std);
+                    double zHigh = Math.abs((column.numericMax - mean) / std);
+                    if (zLow > 2.5) {
+                        anomalies.add(String.format(Locale.ROOT,
+                                "Minimum %s value (%.2f) is an outlier versus benchmark contracts.",
+                                column.name,
+                                column.numericMin));
+                    }
+                    if (zHigh > 2.5) {
+                        anomalies.add(String.format(Locale.ROOT,
+                                "Maximum %s value (%.2f) is an outlier versus benchmark contracts.",
+                                column.name,
+                                column.numericMax));
+                    }
+                }
+            }
+
+            if (rowCount > 0 && column.numericCount < rowCount * 0.6) {
+                anomalies.add(String.format(Locale.ROOT,
+                        "%s is missing in %.0f%% of rows; fill pricing gaps before activating valuation bots.",
+                        column.name,
+                        (1 - ((double) column.numericCount / (double) rowCount)) * 100));
+            }
+        }
+        return List.copyOf(new LinkedHashSet<>(anomalies));
+    }
+
+    private String buildFairValueGuidance(ColumnAccumulator priceColumn, long rowCount, boolean hasStdDev,
+                                          boolean hasDeliveryColumns) {
+        StringBuilder guidance = new StringBuilder();
+        if (hasStdDev) {
+            guidance.append("Band derived from the observed price distribution.");
+        } else {
+            guidance.append("Band interpolated from limited variance; add more samples for greater confidence.");
+        }
+
+        if (rowCount < 25) {
+            guidance.append(" Add 25+ rows to stabilise marketplace pricing guidance.");
+        }
+
+        if (priceColumn.numericCount < rowCount) {
+            guidance.append(String.format(Locale.ROOT,
+                    " %.0f%% of records lacked numeric values in %s.",
+                    (1 - ((double) priceColumn.numericCount / Math.max(1, rowCount))) * 100,
+                    priceColumn.name));
+        }
+
+        if (hasDeliveryColumns) {
+            guidance.append(" Align delivery commitments with the median price before publishing.");
+        }
+
+        return guidance.toString().trim();
+    }
+
+    private boolean isLikelyPriceColumn(ColumnAccumulator accumulator) {
+        String lower = accumulator.name.toLowerCase(Locale.ROOT);
+        return accumulator.containsAny(lower, "price", "cost", "amount", "value", "rate", "fee", "tariff", "premium");
+    }
+
+    private boolean isLikelyVolumeColumn(ColumnAccumulator accumulator) {
+        String lower = accumulator.name.toLowerCase(Locale.ROOT);
+        return accumulator.containsAny(lower, "quantity", "volume", "units", "impression", "usage", "capacity", "load");
+    }
+
+    private boolean isLikelyDeliveryColumn(ColumnAccumulator accumulator) {
+        String lower = accumulator.name.toLowerCase(Locale.ROOT);
+        return accumulator.containsAny(lower, "delivery", "term", "duration", "lead", "window", "sla", "schedule", "date");
+    }
+
+    private boolean isLikelyBuyerColumn(ColumnAccumulator accumulator) {
+        String lower = accumulator.name.toLowerCase(Locale.ROOT);
+        return accumulator.containsAny(lower, "buyer", "customer", "segment", "industry", "persona", "account");
+    }
+
+    private boolean isLikelyGeographyColumn(ColumnAccumulator accumulator) {
+        String lower = accumulator.name.toLowerCase(Locale.ROOT);
+        return accumulator.containsAny(lower, "region", "market", "country", "state", "city", "geo");
+    }
+
+    private Double roundToTwo(double value) {
+        if (!Double.isFinite(value)) {
+            return null;
+        }
+        return Math.round(value * 100.0) / 100.0;
+    }
+
     private static final class ColumnAccumulator {
         private final String name;
         private long nonNullCount;
@@ -324,6 +589,7 @@ public class DataAnalysisService {
         private long booleanCount;
         private long dateCount;
         private double numericSum;
+        private double numericSumSquares;
         private Double numericMin;
         private Double numericMax;
         private final Set<String> distinctValues = new LinkedHashSet<>();
@@ -361,6 +627,7 @@ public class DataAnalysisService {
             if (numericValue != null) {
                 numericCount++;
                 numericSum += numericValue;
+                numericSumSquares += numericValue * numericValue;
                 numericMin = numericMin == null ? numericValue : Math.min(numericMin, numericValue);
                 numericMax = numericMax == null ? numericValue : Math.max(numericMax, numericValue);
                 updateRecommendations("numeric");
@@ -516,6 +783,25 @@ public class DataAnalysisService {
                 }
             }
             return false;
+        }
+
+        private OptionalDouble numericAverage() {
+            if (numericCount == 0) {
+                return OptionalDouble.empty();
+            }
+            return OptionalDouble.of(numericSum / (double) numericCount);
+        }
+
+        private OptionalDouble numericStandardDeviation() {
+            if (numericCount <= 1) {
+                return OptionalDouble.empty();
+            }
+            double mean = numericSum / (double) numericCount;
+            double variance = (numericSumSquares / (double) numericCount) - (mean * mean);
+            if (variance < 0) {
+                variance = 0;
+            }
+            return OptionalDouble.of(Math.sqrt(variance));
         }
     }
 }
