@@ -1,6 +1,7 @@
 package com.bellingham.datafutures.controller;
 
 import com.bellingham.datafutures.dto.ForwardContractCreateRequest;
+import com.bellingham.datafutures.dto.market.MarketSnapshot;
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.model.ContractActivity;
 import com.bellingham.datafutures.model.SignatureRequest;
@@ -8,18 +9,22 @@ import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.service.MarketDataService;
+import com.bellingham.datafutures.service.MarketDataStreamService;
 import com.bellingham.datafutures.service.NotificationService;
 import java.time.LocalDateTime;
 import com.bellingham.datafutures.service.PdfService;
 import java.time.LocalDate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 @RestController
@@ -40,6 +45,12 @@ public class ForwardContractController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private MarketDataService marketDataService;
+
+    @Autowired
+    private MarketDataStreamService marketDataStreamService;
 
     private void logActivity(ForwardContract contract, String username, String action) {
         ContractActivity activity = new ContractActivity();
@@ -96,6 +107,7 @@ public class ForwardContractController {
 
         ForwardContract saved = repository.save(contract);
         logActivity(saved, username, "Created contract");
+        marketDataService.publishSnapshot();
         return saved;
     }
 
@@ -141,6 +153,18 @@ public class ForwardContractController {
                                               @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return repository.findByStatus("Available", pageable);
+    }
+
+    @GetMapping("/market")
+    public MarketSnapshot getMarketSnapshot() {
+        return marketDataService.getSnapshot();
+    }
+
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter streamMarket() {
+        SseEmitter emitter = marketDataStreamService.subscribe();
+        marketDataService.sendSnapshot(emitter);
+        return emitter;
     }
 
     @GetMapping("/purchased")
@@ -199,6 +223,7 @@ public class ForwardContractController {
 
                     ForwardContract saved = repository.save(existing);
                     logActivity(saved, username, "Updated contract");
+                    marketDataService.publishSnapshot();
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -211,6 +236,7 @@ public class ForwardContractController {
                     String username = SecurityContextHolder.getContext().getAuthentication().getName();
                     repository.deleteById(id);
                     logActivity(contract, username, "Deleted contract");
+                    marketDataService.publishSnapshot();
                     return ResponseEntity.noContent().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -243,6 +269,7 @@ public class ForwardContractController {
                         notificationService.notifyUser(sellerUsername, msg, contract.getId());
                     }
 
+                    marketDataService.publishSnapshot();
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -272,6 +299,7 @@ public class ForwardContractController {
                     }
                     ForwardContract saved = repository.save(contract);
                     logActivity(saved, username, "Listed for sale");
+                    marketDataService.publishSnapshot();
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
@@ -291,6 +319,7 @@ public class ForwardContractController {
                         contract.setPurchaseDate(null);
                         ForwardContract saved = repository.save(contract);
                         logActivity(saved, username, "Closed contract");
+                        marketDataService.publishSnapshot();
                         return ResponseEntity.ok(saved);
                     }
                     return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)

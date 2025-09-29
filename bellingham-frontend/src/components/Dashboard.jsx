@@ -1,84 +1,374 @@
 // src/components/Dashboard.jsx
 
-import React, { useEffect, useState, useContext, useMemo } from "react";
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import api from "../utils/api";
-import { AuthContext } from '../context';
+import { AuthContext } from "../context";
 import TableSkeleton from "./ui/TableSkeleton";
+import useMarketStream from "../hooks/useMarketStream";
+
+const KPI_KEYS = [
+    "openContracts",
+    "marketDepth",
+    "totalVolume",
+    "averageAsk",
+    "activeSellers",
+    "spread",
+    "bestAsk",
+    "executionsLastHour",
+];
+
+const createEmptyKpis = () =>
+    KPI_KEYS.reduce((acc, key) => {
+        acc[key] = 0;
+        return acc;
+    }, {});
+
+const parseNumeric = (value) => {
+    if (value === null || value === undefined || value === "") {
+        return null;
+    }
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : null;
+};
+
+const normalizeContracts = (contracts = []) =>
+    [...contracts]
+        .map((contract) => {
+            const numericPrice = parseNumeric(contract?.price);
+            return {
+                ...contract,
+                numericPrice,
+            };
+        })
+        .sort((a, b) => {
+            const left = a.numericPrice;
+            const right = b.numericPrice;
+            if (left === null && right === null) return 0;
+            if (left === null) return 1;
+            if (right === null) return -1;
+            return left - right;
+        });
+
+const computeKpisFromContracts = (contracts = []) => {
+    const kpis = createEmptyKpis();
+    if (!contracts.length) {
+        return kpis;
+    }
+
+    kpis.openContracts = contracts.length;
+    kpis.marketDepth = contracts.length;
+
+    const prices = contracts
+        .map((contract) => contract.numericPrice)
+        .filter((price) => price !== null);
+
+    if (prices.length) {
+        const totalVolume = prices.reduce((sum, price) => sum + price, 0);
+        kpis.totalVolume = totalVolume;
+        kpis.averageAsk = totalVolume / prices.length;
+        const best = Math.min(...prices);
+        const tail = Math.max(...prices);
+        kpis.bestAsk = best;
+        kpis.spread = tail - best;
+    }
+
+    const sellers = new Set(
+        contracts
+            .map((contract) => contract?.seller?.trim())
+            .filter((seller) => seller)
+    );
+    kpis.activeSellers = sellers.size;
+
+    return kpis;
+};
+
+const normalizeKpis = (kpis, contracts = []) => {
+    if (!kpis || !Object.keys(kpis).length) {
+        return computeKpisFromContracts(contracts);
+    }
+
+    const normalized = createEmptyKpis();
+    KPI_KEYS.forEach((key) => {
+        const numeric = parseNumeric(kpis[key]);
+        if (numeric === null) {
+            if (key === "openContracts" || key === "marketDepth") {
+                normalized[key] = contracts.length;
+            }
+            return;
+        }
+        normalized[key] = numeric;
+    });
+
+    const bestAskValue = parseNumeric(kpis.bestAsk);
+    if (bestAskValue === null && contracts.length) {
+        const best = contracts
+            .map((contract) => contract.numericPrice)
+            .filter((price) => price !== null)
+            .reduce((acc, price) => (acc === null ? price : Math.min(acc, price)), null);
+        if (best !== null) {
+            normalized.bestAsk = best;
+        }
+    }
+
+    const spreadValue = parseNumeric(kpis.spread);
+    if (spreadValue === null && contracts.length > 1) {
+        const pricedContracts = contracts
+            .map((contract) => contract.numericPrice)
+            .filter((price) => price !== null);
+        if (pricedContracts.length > 1) {
+            const best = Math.min(...pricedContracts);
+            const tail = Math.max(...pricedContracts);
+            normalized.spread = tail - best;
+        }
+    }
+
+    return normalized;
+};
+
+const normalizeDelta = (delta) => {
+    const normalized = createEmptyKpis();
+    if (!delta || !Object.keys(delta).length) {
+        return normalized;
+    }
+
+    KPI_KEYS.forEach((key) => {
+        const numeric = parseNumeric(delta[key]);
+        if (numeric !== null) {
+            normalized[key] = numeric;
+        }
+    });
+
+    return normalized;
+};
+
+const formatCurrencyValue = (value, { maximumFractionDigits = 0 } = {}) => {
+    const numeric = parseNumeric(value);
+    if (numeric === null) {
+        return "—";
+    }
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits,
+    }).format(numeric);
+};
+
+const formatNumberValue = (value, { maximumFractionDigits = 0 } = {}) => {
+    const numeric = parseNumeric(value);
+    if (numeric === null) {
+        return "—";
+    }
+    return new Intl.NumberFormat("en-US", {
+        maximumFractionDigits,
+    }).format(numeric);
+};
+
+const renderDelta = (value, { currency = false, fractionDigits = 0 } = {}) => {
+    const numeric = parseNumeric(value);
+    if (numeric === null || numeric === 0) {
+        return <span className="text-xs text-slate-500">No change</span>;
+    }
+
+    const absValue = Math.abs(numeric);
+    const formatted = currency
+        ? formatCurrencyValue(absValue, { maximumFractionDigits: fractionDigits })
+        : formatNumberValue(absValue, { maximumFractionDigits: fractionDigits });
+    const className = numeric > 0 ? "text-emerald-400" : "text-rose-400";
+    const prefix = numeric > 0 ? "+" : "−";
+    return <span className={`text-xs font-semibold ${className}`}>{`${prefix}${formatted}`}</span>;
+};
+
+const describeBestAsk = (bestAsk) => {
+    const numeric = parseNumeric(bestAsk);
+    if (numeric === null) {
+        return "Order book is currently empty";
+    }
+    return `Top of book ask at ${formatCurrencyValue(numeric)}`;
+};
+
+const formatDeliveryDate = (value) => {
+    if (!value) {
+        return "—";
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return String(value);
+    }
+    return date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+};
 
 const Dashboard = () => {
     const [contracts, setContracts] = useState([]);
+    const contractsRef = useRef([]);
     const [selectedContract, setSelectedContract] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [kpis, setKpis] = useState(() => createEmptyKpis());
+    const [kpiDeltas, setKpiDeltas] = useState(() => createEmptyKpis());
+    const previousKpisRef = useRef(createEmptyKpis());
     const navigate = useNavigate();
 
     const { isAuthenticated, logout } = useContext(AuthContext);
 
+    const applySnapshot = useCallback((snapshot, { baseline = false } = {}) => {
+        if (!snapshot) {
+            return;
+        }
+
+        const normalizedContracts = normalizeContracts(snapshot.contracts);
+        const previousById = new Map(
+            (contractsRef.current || []).map((contract) => [contract.id, contract])
+        );
+
+        const mergedContracts = normalizedContracts.map((contract) => {
+            const previous = previousById.get(contract.id);
+            return previous ? { ...previous, ...contract } : contract;
+        });
+
+        contractsRef.current = mergedContracts;
+        setContracts(mergedContracts);
+
+        setSelectedContract((current) => {
+            if (!current) {
+                return current;
+            }
+            return mergedContracts.find((contract) => contract.id === current.id) || null;
+        });
+
+        const nextKpis = normalizeKpis(snapshot.kpis, mergedContracts);
+        setKpis(nextKpis);
+
+        if (baseline) {
+            setKpiDeltas(createEmptyKpis());
+            previousKpisRef.current = nextKpis;
+        } else {
+            if (snapshot.delta && Object.keys(snapshot.delta).length > 0) {
+                setKpiDeltas(normalizeDelta(snapshot.delta));
+            } else {
+                const previous = previousKpisRef.current || createEmptyKpis();
+                const computed = createEmptyKpis();
+                KPI_KEYS.forEach((key) => {
+                    computed[key] = nextKpis[key] - (previous[key] ?? 0);
+                });
+                setKpiDeltas(computed);
+            }
+            previousKpisRef.current = nextKpis;
+        }
+
+        setIsLoading(false);
+    }, []);
+
     useEffect(() => {
         const fetchContracts = async () => {
+            if (!isAuthenticated) {
+                navigate("/login");
+                return;
+            }
+
+            setIsLoading(true);
             try {
-                if (!isAuthenticated) {
-                    navigate("/login");
-                    return;
-                }
-                setIsLoading(true);
-                const res = await api.get(`/api/contracts/available`);
-                setContracts(res.data.content);
+                const res = await api.get(`/api/contracts/market`);
+                applySnapshot(res.data, { baseline: true });
             } catch (err) {
                 console.error("Error fetching contracts", err);
+                setIsLoading(false);
                 logout();
                 navigate("/login");
-            } finally {
-                setIsLoading(false);
             }
         };
 
         fetchContracts();
-    }, [isAuthenticated, logout, navigate]);
+    }, [applySnapshot, isAuthenticated, logout, navigate]);
+
+    useMarketStream({
+        enabled: isAuthenticated,
+        onSnapshot: applySnapshot,
+    });
 
     const handleLogout = () => {
         logout();
         navigate("/login");
     };
 
-    const kpis = useMemo(() => {
-        if (!contracts.length) {
-            return {
-                openContracts: 0,
-                totalVolume: 0,
-                averageAsk: 0,
-                activeSellers: 0,
-            };
-        }
+    const kpiCards = useMemo(
+        () => [
+            {
+                key: "marketDepth",
+                title: "Market Depth",
+                value: formatNumberValue(kpis.marketDepth),
+                delta: renderDelta(kpiDeltas.marketDepth),
+                description: describeBestAsk(kpis.bestAsk),
+                accent: "text-[#00D1FF]",
+            },
+            {
+                key: "totalVolume",
+                title: "Total Ask Volume",
+                value: formatCurrencyValue(kpis.totalVolume),
+                delta: renderDelta(kpiDeltas.totalVolume, { currency: true }),
+                description: "Aggregate notional value across open listings",
+                accent: "text-[#3BAEAB]",
+            },
+            {
+                key: "averageAsk",
+                title: "Average Ask",
+                value: formatCurrencyValue(kpis.averageAsk),
+                delta: renderDelta(kpiDeltas.averageAsk, { currency: true }),
+                description: "Mean price across available contracts",
+                accent: "text-[#00D1FF]",
+            },
+            {
+                key: "activeSellers",
+                title: "Active Sellers",
+                value: formatNumberValue(kpis.activeSellers),
+                delta: renderDelta(kpiDeltas.activeSellers),
+                description: `${formatNumberValue(kpis.openContracts)} live listings`,
+                accent: "text-[#7465A8]",
+            },
+            {
+                key: "spread",
+                title: "Spread",
+                value: formatCurrencyValue(kpis.spread),
+                delta: renderDelta(kpiDeltas.spread, { currency: true }),
+                description: "Range between best and tail asks",
+                accent: "text-[#3BAEAB]",
+            },
+            {
+                key: "executionsLastHour",
+                title: "Execution Velocity",
+                value: formatNumberValue(kpis.executionsLastHour),
+                delta: renderDelta(kpiDeltas.executionsLastHour),
+                description: "Contracts settled in the past hour",
+                accent: "text-[#00D1FF]",
+            },
+        ],
+        [kpis, kpiDeltas]
+    );
 
-        const totalVolume = contracts.reduce((sum, contract) => {
-            const price = Number(contract?.price ?? 0);
-            return Number.isFinite(price) ? sum + price : sum;
-        }, 0);
-        const averageAsk = totalVolume / contracts.length;
-        const activeSellers = new Set(contracts.map((contract) => contract.seller)).size;
-
-        return {
-            openContracts: contracts.length,
-            totalVolume,
-            averageAsk,
-            activeSellers,
-        };
-    }, [contracts]);
-
-    const formatCurrency = (value) =>
-        new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-            maximumFractionDigits: 0,
-        }).format(value ?? 0);
-
-    const formatNumber = (value) =>
-        new Intl.NumberFormat("en-US", {
-            maximumFractionDigits: 0,
-        }).format(value ?? 0);
+    const formatContractPrice = useCallback(
+        (contract) => {
+            if (!contract) {
+                return "—";
+            }
+            if (contract.numericPrice === null) {
+                return contract.price ?? "—";
+            }
+            return formatCurrencyValue(contract.numericPrice);
+        },
+        []
+    );
 
     return (
         <Layout onLogout={handleLogout}>
@@ -114,17 +404,21 @@ const Dashboard = () => {
                                                     className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
                                                     onClick={() => setSelectedContract(contract)}
                                                 >
-                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">{contract.title}</td>
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">
+                                                        {contract.title}
+                                                    </td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">{contract.seller}</td>
                                                     <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">
-                                                        ${contract.price}
+                                                        {formatContractPrice(contract)}
                                                     </td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                         <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
                                                             {contract.status}
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{contract.deliveryDate}</td>
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">
+                                                        {formatDeliveryDate(contract.deliveryDate)}
+                                                    </td>
                                                 </tr>
                                             ))}
                                             {contracts.length === 0 && (
@@ -152,35 +446,28 @@ const Dashboard = () => {
                         </div>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
                             {isLoading ? (
-                                Array.from({ length: 4 }).map((_, index) => (
+                                Array.from({ length: 6 }).map((_, index) => (
                                     <div
                                         key={`kpi-skeleton-${index}`}
                                         className="min-h-[7.5rem] animate-pulse rounded-xl border border-slate-800/70 bg-slate-950/40"
                                     />
                                 ))
                             ) : (
-                                <>
-                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Open Contracts</p>
-                                        <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatNumber(kpis.openContracts)}</p>
-                                        <p className="mt-1 text-xs text-slate-500">Currently listed opportunities</p>
+                                kpiCards.map(({ key, title, value, delta, description, accent }) => (
+                                    <div
+                                        key={key}
+                                        className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner"
+                                    >
+                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                                            {title}
+                                        </p>
+                                        <div className="mt-3 flex items-end justify-between gap-2">
+                                            <p className={`numeric-text text-3xl font-bold ${accent}`}>{value}</p>
+                                            {delta}
+                                        </div>
+                                        <p className="mt-1 text-xs text-slate-500">{description}</p>
                                     </div>
-                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Total Ask Volume</p>
-                                        <p className="numeric-text mt-3 text-3xl font-bold text-[#3BAEAB]">{formatCurrency(kpis.totalVolume)}</p>
-                                        <p className="mt-1 text-xs text-slate-500">Aggregate notional value</p>
-                                    </div>
-                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Average Ask</p>
-                                        <p className="numeric-text mt-3 text-3xl font-bold text-[#00D1FF]">{formatCurrency(kpis.averageAsk)}</p>
-                                        <p className="mt-1 text-xs text-slate-500">Mean price across open listings</p>
-                                    </div>
-                                    <div className="flex min-h-[7.5rem] flex-col justify-between rounded-xl border border-slate-800/80 bg-slate-950/50 p-4 shadow-inner">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Active Sellers</p>
-                                        <p className="numeric-text mt-3 text-3xl font-bold text-[#7465A8]">{formatNumber(kpis.activeSellers)}</p>
-                                        <p className="mt-1 text-xs text-slate-500">Distinct market participants</p>
-                                    </div>
-                                </>
+                                ))
                             )}
                         </div>
                     </div>
