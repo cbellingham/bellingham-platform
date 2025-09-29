@@ -235,11 +235,21 @@ const Sell = () => {
         } catch (err) {
             console.error(err);
             const status = err.response?.status;
-            const message = err.response?.data?.message || err.message || "Submission failed.";
+            const defaultMessage = err.response?.data?.message || err.message || "Submission failed.";
+
+            let friendlyMessage = defaultMessage;
+            if (status === 401) {
+                friendlyMessage =
+                    "Your session has expired. Please sign in again to list your data contract.";
+            } else if (status === 403) {
+                friendlyMessage =
+                    "We couldn't verify your access. Make sure you're signed in—data samples are optional.";
+            }
+
             setMessage(
                 status
-                    ? `❌ Submission failed (${status}): ${message}`
-                    : `❌ Submission failed: ${message}`
+                    ? `❌ Submission failed (${status}): ${friendlyMessage}`
+                    : `❌ Submission failed: ${friendlyMessage}`
             );
         } finally {
             setIsSubmitting(false);
