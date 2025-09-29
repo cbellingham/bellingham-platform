@@ -1,6 +1,6 @@
 // src/components/Buy.jsx
 
-import React, { useCallback, useEffect, useState, useContext } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import api from "../utils/api";
 import { AuthContext } from '../context';
 import ContractDetailsPanel from "./ContractDetailsPanel";
@@ -23,6 +23,11 @@ const Buy = () => {
     const [sellerFilter, setSellerFilter] = useState("");
     const [pendingContractId, setPendingContractId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [pinnedFilters, setPinnedFilters] = useState([]);
+    const [pinnedError, setPinnedError] = useState("");
+    const [newPinnedName, setNewPinnedName] = useState("");
+    const [isSavingPinnedFilter, setIsSavingPinnedFilter] = useState(false);
+    const [isLoadingPinnedFilters, setIsLoadingPinnedFilters] = useState(true);
 
     const { logout } = useContext(AuthContext);
 
@@ -51,6 +56,26 @@ const Buy = () => {
     useEffect(() => {
         fetchContracts();
     }, [fetchContracts]);
+
+    const fetchPinnedFilters = useCallback(async () => {
+        try {
+            setIsLoadingPinnedFilters(true);
+            const response = await api.get(`/api/saved-searches`);
+            setPinnedFilters(response?.data ?? []);
+            setPinnedError("");
+        } catch (err) {
+            console.error(err);
+            const status = err.response?.status;
+            const message = err.response?.data?.message || err.message || "Failed to load saved filters.";
+            setPinnedError(status ? `Unable to load saved filters (${status}): ${message}` : message);
+        } finally {
+            setIsLoadingPinnedFilters(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchPinnedFilters();
+    }, [fetchPinnedFilters]);
 
     const handleBuy = async (contractId, signatureData = null) => {
         setNotification(null);
@@ -105,6 +130,90 @@ const Buy = () => {
     const sellers = Array.from(
         new Set(contracts.map((c) => c.seller).filter(Boolean))
     );
+
+    const saveCurrentFilters = async (event) => {
+        event?.preventDefault();
+        const trimmedName = newPinnedName.trim();
+
+        if (!trimmedName) {
+            setPinnedError("Please provide a name for your saved filter.");
+            return;
+        }
+
+        setPinnedError("");
+        setIsSavingPinnedFilter(true);
+
+        try {
+            const payload = {
+                name: trimmedName,
+                searchTerm: search.trim() || null,
+                minPrice: minPrice !== "" ? minPrice : null,
+                maxPrice: maxPrice !== "" ? maxPrice : null,
+                seller: sellerFilter || null,
+            };
+            await api.post(`/api/saved-searches`, payload);
+            setNewPinnedName("");
+            await fetchPinnedFilters();
+        } catch (err) {
+            console.error(err);
+            const status = err.response?.status;
+            const message = err.response?.data?.message || err.message || "Failed to save filters.";
+            setPinnedError(status ? `Unable to save filter (${status}): ${message}` : message);
+        } finally {
+            setIsSavingPinnedFilter(false);
+        }
+    };
+
+    const applyPinnedFilter = (saved) => {
+        setSearch(saved.searchTerm ?? "");
+        setMinPrice(saved.minPrice != null ? saved.minPrice.toString() : "");
+        setMaxPrice(saved.maxPrice != null ? saved.maxPrice.toString() : "");
+        setSellerFilter(saved.seller ?? "");
+    };
+
+    const removePinnedFilter = async (id) => {
+        try {
+            await api.delete(`/api/saved-searches/${id}`);
+            await fetchPinnedFilters();
+        } catch (err) {
+            console.error(err);
+            const status = err.response?.status;
+            const message = err.response?.data?.message || err.message || "Failed to remove filter.";
+            setPinnedError(status ? `Unable to remove filter (${status}): ${message}` : message);
+        }
+    };
+
+    const formatPinnedSummary = useCallback((saved) => {
+        const parts = [];
+        if (saved.searchTerm) {
+            parts.push(`Search: “${saved.searchTerm}”`);
+        }
+        if (saved.minPrice != null || saved.maxPrice != null) {
+            const minLabel = saved.minPrice != null ? `$${saved.minPrice}` : "Any";
+            const maxLabel = saved.maxPrice != null ? `$${saved.maxPrice}` : "Any";
+            parts.push(`Price: ${minLabel} - ${maxLabel}`);
+        }
+        if (saved.seller) {
+            parts.push(`Seller: ${saved.seller}`);
+        }
+        return parts.length > 0 ? parts.join(" • ") : "No additional filters.";
+    }, []);
+
+    const activePinnedId = useMemo(() => {
+        return pinnedFilters.find((saved) => {
+            const normalizedSearch = (search || "").trim();
+            const savedSearch = saved.searchTerm ?? "";
+            const savedMin = saved.minPrice != null ? saved.minPrice.toString() : "";
+            const savedMax = saved.maxPrice != null ? saved.maxPrice.toString() : "";
+            const savedSeller = saved.seller ?? "";
+            return (
+                savedSearch === normalizedSearch &&
+                savedMin === minPrice &&
+                savedMax === maxPrice &&
+                savedSeller === sellerFilter
+            );
+        })?.id;
+    }, [pinnedFilters, search, minPrice, maxPrice, sellerFilter]);
 
     const filteredContracts = contracts.filter((contract) => {
         const term = search.toLowerCase();
@@ -186,6 +295,82 @@ const Buy = () => {
                                     ))}
                                 </select>
                             </label>
+                        </div>
+
+                        <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <h3 className="text-sm font-semibold text-slate-100">Pinned filters</h3>
+                                    <p className="text-xs text-slate-400">Save strategies to quickly reapply them.</p>
+                                </div>
+                                <form onSubmit={saveCurrentFilters} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                    <input
+                                        type="text"
+                                        value={newPinnedName}
+                                        onChange={(e) => setNewPinnedName(e.target.value)}
+                                        placeholder="Name this filter"
+                                        className="w-full rounded-lg border border-slate-800/60 bg-slate-950/80 px-3 py-2 text-sm text-slate-200 focus:border-[#00D1FF] focus:outline-none sm:w-48"
+                                    />
+                                    <Button
+                                        type="submit"
+                                        variant="primary"
+                                        isLoading={isSavingPinnedFilter}
+                                        className="text-xs font-semibold uppercase tracking-[0.18em]"
+                                    >
+                                        Save current filters
+                                    </Button>
+                                </form>
+                            </div>
+                            <div className="mt-4 flex flex-col gap-3">
+                                {isLoadingPinnedFilters ? (
+                                    <p className="text-xs text-slate-400">Loading pinned filters…</p>
+                                ) : pinnedFilters.length > 0 ? (
+                                    pinnedFilters.map((saved) => {
+                                        const isActive = activePinnedId === saved.id;
+                                        return (
+                                            <div
+                                                key={saved.id}
+                                                className={`flex flex-col gap-2 rounded-lg border px-4 py-3 transition-colors sm:flex-row sm:items-center sm:justify-between ${
+                                                    isActive
+                                                        ? "border-[#00D1FF]/50 bg-[#00D1FF]/10"
+                                                        : "border-slate-800/60 bg-slate-950/70 hover:border-[#00D1FF]/40"
+                                                }`}
+                                            >
+                                                <button
+                                                    type="button"
+                                                    onClick={() => applyPinnedFilter(saved)}
+                                                    className="flex-1 text-left"
+                                                >
+                                                    <span className="block text-sm font-semibold text-slate-100">{saved.name}</span>
+                                                    <span className="mt-1 block text-xs text-slate-400">{formatPinnedSummary(saved)}</span>
+                                                </button>
+                                                <div className="flex items-center gap-2">
+                                                    {isActive && (
+                                                        <span className="rounded-full bg-[#00D1FF]/20 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-[#00D1FF]">
+                                                            Active
+                                                        </span>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            removePinnedFilter(saved.id);
+                                                        }}
+                                                        className="rounded-md border border-transparent px-2 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 transition hover:border-rose-500/40 hover:text-rose-300"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <p className="text-xs text-slate-400">Save a filter configuration to pin it here.</p>
+                                )}
+                                {pinnedError && (
+                                    <p className="text-xs text-rose-400">{pinnedError}</p>
+                                )}
+                            </div>
                         </div>
 
                         <div className="overflow-hidden rounded-xl border border-slate-800/80">

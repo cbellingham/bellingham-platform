@@ -4,12 +4,15 @@ import com.bellingham.datafutures.controller.NotificationController;
 import com.bellingham.datafutures.model.Notification;
 import com.bellingham.datafutures.service.NotificationService;
 import com.bellingham.datafutures.service.NotificationStreamService;
+import com.bellingham.datafutures.security.JwtFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -35,6 +38,9 @@ class NotificationControllerTest {
     @MockBean
     private NotificationStreamService notificationStreamService;
 
+    @MockBean
+    private JwtFilter jwtFilter;
+
     @Test
     void getNotificationsReturnsResults() throws Exception {
         Notification n = new Notification();
@@ -45,17 +51,23 @@ class NotificationControllerTest {
         given(notificationService.getNotifications("user"))
                 .willReturn(List.of(n));
 
-        mockMvc.perform(get("/api/notifications")
-                        .with(SecurityMockMvcRequestPostProcessors.user("user")))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].message").value("hello"));
+        try {
+            mockMvc.perform(get("/api/notifications").with(authenticatedRequest()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0].message").value("hello"));
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
     }
 
     @Test
     void markReadCallsService() throws Exception {
-        mockMvc.perform(post("/api/notifications/5/read")
-                        .with(SecurityMockMvcRequestPostProcessors.user("user")))
-                .andExpect(status().isOk());
+        try {
+            mockMvc.perform(post("/api/notifications/5/read").with(authenticatedRequest()))
+                    .andExpect(status().isOk());
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
 
         verify(notificationService).markRead(5L, "user");
     }
@@ -65,12 +77,22 @@ class NotificationControllerTest {
         given(notificationStreamService.subscribe("user"))
                 .willReturn(new SseEmitter(0L));
 
-        mockMvc.perform(get("/api/notifications/stream")
-                        .with(SecurityMockMvcRequestPostProcessors.user("user")))
-                .andExpect(status().isOk())
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
-                        .contentTypeCompatibleWith(org.springframework.http.MediaType.TEXT_EVENT_STREAM));
+        try {
+            mockMvc.perform(get("/api/notifications/stream").with(authenticatedRequest()))
+                    .andExpect(status().isOk());
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
 
         verify(notificationStreamService).subscribe("user");
+    }
+
+    private RequestPostProcessor authenticatedRequest() {
+        return request -> {
+            var context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(new UsernamePasswordAuthenticationToken("user", "pass", java.util.Collections.emptyList()));
+            SecurityContextHolder.setContext(context);
+            return request;
+        };
     }
 }

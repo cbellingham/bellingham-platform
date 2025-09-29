@@ -12,6 +12,7 @@ import com.bellingham.datafutures.model.User;
 import com.bellingham.datafutures.service.MarketDataService;
 import com.bellingham.datafutures.service.MarketDataStreamService;
 import com.bellingham.datafutures.service.NotificationService;
+import com.bellingham.datafutures.service.SavedSearchService;
 import java.time.LocalDateTime;
 import com.bellingham.datafutures.service.PdfService;
 import java.time.LocalDate;
@@ -51,6 +52,9 @@ public class ForwardContractController {
 
     @Autowired
     private MarketDataStreamService marketDataStreamService;
+
+    @Autowired
+    private SavedSearchService savedSearchService;
 
     private void logActivity(ForwardContract contract, String username, String action) {
         ContractActivity activity = new ContractActivity();
@@ -108,6 +112,7 @@ public class ForwardContractController {
         ForwardContract saved = repository.save(contract);
         logActivity(saved, username, "Created contract");
         marketDataService.publishSnapshot();
+        savedSearchService.notifyWatchers(saved);
         return saved;
     }
 
@@ -300,6 +305,7 @@ public class ForwardContractController {
                     ForwardContract saved = repository.save(contract);
                     logActivity(saved, username, "Listed for sale");
                     marketDataService.publishSnapshot();
+                    savedSearchService.notifyWatchers(saved);
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
