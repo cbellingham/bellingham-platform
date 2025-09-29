@@ -36,7 +36,7 @@ public class DefaultAdminSetup {
                 User user = new User();
                 user.setUsername(ADMIN_USERNAME);
                 user.setPassword(encoder.encode(bootstrapPassword));
-                user.setRole("ROLE_USER");
+                user.setRole("ROLE_ADMIN");
                 users.save(user);
                 logger.info("Bootstrap admin user created");
             });

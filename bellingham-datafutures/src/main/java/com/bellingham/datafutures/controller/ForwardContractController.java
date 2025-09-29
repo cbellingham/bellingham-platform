@@ -1,10 +1,15 @@
 package com.bellingham.datafutures.controller;
 
+import com.bellingham.datafutures.dto.DataCategoryApprovalDto;
 import com.bellingham.datafutures.dto.ForwardContractCreateRequest;
 import com.bellingham.datafutures.dto.market.MarketSnapshot;
+import com.bellingham.datafutures.dto.PreTradePolicyDto;
+import com.bellingham.datafutures.dto.PreTradePolicyUpdateRequest;
 import com.bellingham.datafutures.model.ForwardContract;
 import com.bellingham.datafutures.model.ContractActivity;
 import com.bellingham.datafutures.model.SignatureRequest;
+import com.bellingham.datafutures.model.DataCategoryApproval;
+import com.bellingham.datafutures.model.PreTradePolicy;
 import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
@@ -26,6 +31,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -134,7 +146,64 @@ public class ForwardContractController {
         contract.setBuyerEntityType(request.getBuyerEntityType());
         contract.setBuyerAddress(request.getBuyerAddress());
         contract.setSellerSignature(request.getSellerSignature());
+        applyPreTradeConfiguration(contract, request.getPreTradePolicy(), request.getRequiredClearanceRoles(),
+                request.getDataCategoryApprovals());
         return contract;
+    }
+
+    private void applyPreTradeConfiguration(ForwardContract contract,
+                                            PreTradePolicyDto policyDto,
+                                            Set<String> requiredRoles,
+                                            Set<DataCategoryApprovalDto> approvals) {
+        if (policyDto != null) {
+            PreTradePolicy policy = contract.getPreTradePolicy();
+            if (policy == null) {
+                policy = new PreTradePolicy();
+                contract.setPreTradePolicy(policy);
+            }
+            if (policyDto.getPolicyName() != null) {
+                policy.setPolicyName(policyDto.getPolicyName());
+            }
+            if (policyDto.getPolicyVersion() != null) {
+                policy.setPolicyVersion(policyDto.getPolicyVersion());
+            }
+            if (policyDto.getRequireKyc() != null) {
+                policy.setRequireKyc(policyDto.getRequireKyc());
+            }
+            if (policyDto.getRequireAml() != null) {
+                policy.setRequireAml(policyDto.getRequireAml());
+            }
+            if (policyDto.getRequireDataCategoryApproval() != null) {
+                policy.setRequireDataCategoryApproval(policyDto.getRequireDataCategoryApproval());
+            }
+            if (policyDto.getNotes() != null) {
+                policy.setNotes(policyDto.getNotes());
+            }
+        }
+
+        if (requiredRoles != null) {
+            contract.setRequiredClearanceRoles(new HashSet<>(requiredRoles));
+        }
+
+        if (approvals != null) {
+            contract.setDataCategoryApprovals(mapApprovals(approvals));
+        }
+    }
+
+    private Set<DataCategoryApproval> mapApprovals(Set<DataCategoryApprovalDto> approvals) {
+        return approvals.stream()
+                .filter(dto -> dto.getCategory() != null && !dto.getCategory().isBlank())
+                .map(dto -> {
+                    DataCategoryApproval approval = new DataCategoryApproval();
+                    approval.setCategory(dto.getCategory());
+                    if (dto.getStatus() != null) {
+                        approval.setStatus(dto.getStatus());
+                    }
+                    approval.setAttestedBy(dto.getAttestedBy());
+                    approval.setAttestedAt(dto.getAttestedAt());
+                    approval.setNotes(dto.getNotes());
+                    return approval;
+                }).collect(Collectors.toCollection(HashSet::new));
     }
 
     private void fillSellerDetails(ForwardContract contract, User user) {
@@ -255,6 +324,15 @@ public class ForwardContractController {
                     if (!"Available".equalsIgnoreCase(contract.getStatus())) {
                         return ResponseEntity.badRequest().<ForwardContract>build();
                     }
+                    Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext()
+                            .getAuthentication().getAuthorities();
+                    Set<String> authorityNames = authorities.stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toSet());
+                    if (!contract.canProgress(authorityNames)) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                                .<ForwardContract>build();
+                    }
                     contract.setStatus("Purchased");
                     String username = org.springframework.security.core.context.SecurityContextHolder
                             .getContext().getAuthentication().getName();
@@ -275,6 +353,65 @@ public class ForwardContractController {
                     }
 
                     marketDataService.publishSnapshot();
+                    return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().<ForwardContract>build());
+    }
+
+    @PatchMapping("/{id}/pre-trade-policy")
+    public ResponseEntity<ForwardContract> updatePreTradePolicy(@PathVariable Long id,
+                                                                @RequestBody PreTradePolicyUpdateRequest request) {
+        return repository.findById(id)
+                .map(contract -> {
+                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext()
+                            .getAuthentication().getAuthorities();
+                    Set<String> authorityNames = authorities.stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toSet());
+                    boolean isCreator = username.equals(contract.getCreatorUsername());
+                    boolean hasComplianceRole = authorityNames.contains("ROLE_ADMIN")
+                            || authorityNames.contains("ROLE_COMPLIANCE_OFFICER");
+
+                    if (!isCreator && !hasComplianceRole) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                                .<ForwardContract>build();
+                    }
+
+                    if (request.getPolicy() != null) {
+                        applyPreTradeConfiguration(contract, request.getPolicy(), null, null);
+                    }
+
+                    if (request.getRequiredRoles() != null) {
+                        contract.setRequiredClearanceRoles(new HashSet<>(request.getRequiredRoles()));
+                    }
+
+                    if (request.getDataCategoryApprovals() != null) {
+                        contract.setDataCategoryApprovals(mapApprovals(request.getDataCategoryApprovals()));
+                    }
+
+                    if (request.getKycStatus() != null) {
+                        contract.setKycStatus(request.getKycStatus());
+                    }
+                    if (request.getKycAttestedBy() != null) {
+                        contract.setKycAttestedBy(request.getKycAttestedBy());
+                    }
+                    if (request.getKycAttestedAt() != null) {
+                        contract.setKycAttestedAt(request.getKycAttestedAt());
+                    }
+
+                    if (request.getAmlStatus() != null) {
+                        contract.setAmlStatus(request.getAmlStatus());
+                    }
+                    if (request.getAmlAttestedBy() != null) {
+                        contract.setAmlAttestedBy(request.getAmlAttestedBy());
+                    }
+                    if (request.getAmlAttestedAt() != null) {
+                        contract.setAmlAttestedAt(request.getAmlAttestedAt());
+                    }
+
+                    ForwardContract saved = repository.save(contract);
+                    logActivity(saved, username, "Updated pre-trade policy");
                     return ResponseEntity.ok(saved);
                 })
                 .orElse(ResponseEntity.notFound().<ForwardContract>build());
