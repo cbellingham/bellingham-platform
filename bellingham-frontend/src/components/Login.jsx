@@ -24,9 +24,9 @@ const Login = () => {
 
         try {
             const res = await api.post(`/api/authenticate`, { username, password });
-            const { username: responseUsername, expiresAt } = res.data || {};
-            if (responseUsername && expiresAt) {
-                login({ username: responseUsername, expiresAt });
+            const { username: responseUsername, expiresAt, token } = res.data || {};
+            if (responseUsername && expiresAt && token) {
+                login({ username: responseUsername, expiresAt, token });
                 navigate("/");
             } else {
                 setError("Login failed: Invalid session response.");

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AuthContext from './AuthContext';
-import api from '../utils/api';
+import api, { setAuthToken } from '../utils/api';
 
 const STORAGE_KEYS = {
   username: 'auth.username',
   expiresAt: 'auth.expiresAt',
+  token: 'auth.token',
 };
 
 const getStoredItem = (key) => {
@@ -29,6 +30,7 @@ const parseStoredDate = (value) => {
 const AuthProvider = ({ children }) => {
   const storedUsername = getStoredItem(STORAGE_KEYS.username);
   const storedExpiry = parseStoredDate(getStoredItem(STORAGE_KEYS.expiresAt));
+  const storedToken = getStoredItem(STORAGE_KEYS.token);
   const hasValidStoredSession = Boolean(
     storedUsername && storedExpiry && storedExpiry.getTime() > Date.now(),
   );
@@ -36,9 +38,10 @@ const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(hasValidStoredSession);
   const [username, setUsername] = useState(hasValidStoredSession ? storedUsername : null);
   const [expiresAt, setExpiresAt] = useState(hasValidStoredSession ? storedExpiry : null);
+  const [token, setToken] = useState(storedToken);
   const logoutTimerRef = useRef();
 
-  const persistSession = useCallback((nextUsername, expiryDate) => {
+  const persistSession = useCallback((nextUsername, expiryDate, nextToken) => {
     if (typeof window === 'undefined') {
       return;
     }
@@ -46,14 +49,21 @@ const AuthProvider = ({ children }) => {
     if (nextUsername && expiryDate) {
       window.localStorage.setItem(STORAGE_KEYS.username, nextUsername);
       window.localStorage.setItem(STORAGE_KEYS.expiresAt, expiryDate.toISOString());
+      if (nextToken) {
+        window.localStorage.setItem(STORAGE_KEYS.token, nextToken);
+      } else {
+        window.localStorage.removeItem(STORAGE_KEYS.token);
+      }
     } else {
       window.localStorage.removeItem(STORAGE_KEYS.username);
       window.localStorage.removeItem(STORAGE_KEYS.expiresAt);
+      window.localStorage.removeItem(STORAGE_KEYS.token);
     }
   }, []);
 
-  const applySession = useCallback((nextUsername, expiryIso, persist = true) => {
+  const applySession = useCallback((nextUsername, expiryIso, persist = true, nextToken = undefined) => {
     const expiryDate = expiryIso ? parseStoredDate(expiryIso) : null;
+    const tokenToUse = nextToken === undefined ? token : nextToken;
     const isValid = Boolean(
       nextUsername && expiryDate && expiryDate.getTime() > Date.now(),
     );
@@ -62,21 +72,23 @@ const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setUsername(nextUsername);
       setExpiresAt(expiryDate);
+      setToken(tokenToUse ?? null);
       if (persist) {
-        persistSession(nextUsername, expiryDate);
+        persistSession(nextUsername, expiryDate, tokenToUse ?? null);
       }
     } else {
       setIsAuthenticated(false);
       setUsername(null);
       setExpiresAt(null);
+      setToken(null);
       if (persist) {
-        persistSession(null, null);
+        persistSession(null, null, null);
       }
     }
-  }, [persistSession]);
+  }, [persistSession, token]);
 
-  const login = useCallback(({ username: nextUsername, expiresAt: expiryIso }) => {
-    applySession(nextUsername ?? null, expiryIso ?? null);
+  const login = useCallback(({ username: nextUsername, expiresAt: expiryIso, token: sessionToken }) => {
+    applySession(nextUsername ?? null, expiryIso ?? null, true, sessionToken ?? null);
   }, [applySession]);
 
   const logout = useCallback(async () => {
@@ -87,6 +99,10 @@ const AuthProvider = ({ children }) => {
       console.error('Failed to clear session cookie', error);
     }
   }, [applySession]);
+
+  useEffect(() => {
+    setAuthToken(token);
+  }, [token]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -167,9 +183,10 @@ const AuthProvider = ({ children }) => {
     isAuthenticated,
     username,
     expiresAt,
+    token,
     login,
     logout,
-  }), [isAuthenticated, username, expiresAt, login, logout]);
+  }), [isAuthenticated, username, expiresAt, token, login, logout]);
 
   return (
     <AuthContext.Provider value={value}>

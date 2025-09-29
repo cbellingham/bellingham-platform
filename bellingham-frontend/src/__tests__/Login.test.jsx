@@ -10,7 +10,9 @@ import { AuthProvider } from '../context';
 vi.mock('../utils/api', () => ({
   default: {
     post: vi.fn(),
+    get: vi.fn(() => Promise.resolve({ data: {} })),
   },
+  setAuthToken: vi.fn(),
 }));
 
 afterEach(() => {

@@ -69,6 +69,7 @@ public class AuthController {
             Map<String, Object> response = new HashMap<>();
             response.put("username", creds.getUsername());
             response.put("expiresAt", expiresAt.toString());
+            response.put("token", token);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
