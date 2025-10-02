@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { AuthContext, useNotifications } from "../context";
@@ -26,9 +26,19 @@ const NotificationBellIcon = ({ className = "", ...props }) => (
 );
 
 const Header = ({ onLogout }) => {
-    const { username } = useContext(AuthContext);
+    const { username, permissions = [], role } = useContext(AuthContext);
     const { unreadCount } = useNotifications();
     const [isNavOpen, setIsNavOpen] = useState(false);
+
+    const filteredNavItems = useMemo(() => navItems.filter((item) => {
+        if (item.requiresRole && item.requiresRole !== role) {
+            return false;
+        }
+        if (item.requiresPermission && !permissions.includes(item.requiresPermission)) {
+            return false;
+        }
+        return true;
+    }), [permissions, role]);
 
     const toggleNavigation = () => {
         setIsNavOpen((prev) => !prev);
@@ -121,7 +131,7 @@ const Header = ({ onLogout }) => {
                             isNavOpen ? "flex" : "hidden"
                         } flex-col items-stretch gap-4 pt-3 lg:flex lg:flex-row lg:flex-wrap lg:items-center lg:gap-6 lg:pt-0`}
                     >
-                        {navItems.map((item) => (
+                        {filteredNavItems.map((item) => (
                             <NavMenuItem key={item.path} item={item} layout="header" onNavigate={handleNavigate} />
                         ))}
                     </nav>

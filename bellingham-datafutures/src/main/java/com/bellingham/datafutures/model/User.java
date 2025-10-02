@@ -1,5 +1,8 @@
 package com.bellingham.datafutures.model;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +16,12 @@ public class User {
     private String username;
     private String password;
     private String role = "ROLE_USER";
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "permission")
+    private Set<UserPermission> permissions = EnumSet.noneOf(UserPermission.class);
 
     private String legalBusinessName;
     private String name;
@@ -59,6 +68,27 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Set<UserPermission> getPermissions() {
+        if (permissions == null) {
+            permissions = EnumSet.noneOf(UserPermission.class);
+        }
+        return permissions;
+    }
+
+    public void setPermissions(Set<UserPermission> permissions) {
+        if (permissions == null) {
+            this.permissions = EnumSet.noneOf(UserPermission.class);
+        } else if (permissions.isEmpty()) {
+            this.permissions = EnumSet.noneOf(UserPermission.class);
+        } else {
+            this.permissions = EnumSet.copyOf(permissions);
+        }
+    }
+
+    public boolean hasPermission(UserPermission permission) {
+        return getPermissions().contains(permission);
     }
 
     public String getLegalBusinessName() {

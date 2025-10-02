@@ -2,6 +2,7 @@ package com.bellingham.datafutures.controller;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import com.bellingham.datafutures.controller.dto.LoginRequest;
 import com.bellingham.datafutures.controller.dto.RegisterRequest;
 import com.bellingham.datafutures.model.User;
 import com.bellingham.datafutures.repository.UserRepository;
+import com.bellingham.datafutures.model.UserPermission;
 import com.bellingham.datafutures.security.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
@@ -113,6 +115,7 @@ public class AuthController {
         user.setUsername(username);
         user.setPassword(encoder.encode(request.getPassword()));
         user.setRole("ROLE_USER");
+        user.setPermissions(EnumSet.of(UserPermission.BUY, UserPermission.SELL));
 
         user.setLegalBusinessName(request.getLegalBusinessName());
         user.setName(request.getName());
@@ -154,6 +157,8 @@ public class AuthController {
         map.put("technicalContactEmail", user.getTechnicalContactEmail());
         map.put("technicalContactPhone", user.getTechnicalContactPhone());
         map.put("companyDescription", user.getCompanyDescription());
+        map.put("role", user.getRole());
+        map.put("permissions", user.getPermissions());
         return map;
     }
 
@@ -208,6 +213,8 @@ public class AuthController {
         map.put("technicalContactEmail", user.getTechnicalContactEmail());
         map.put("technicalContactPhone", user.getTechnicalContactPhone());
         map.put("companyDescription", user.getCompanyDescription());
+        map.put("role", user.getRole());
+        map.put("permissions", user.getPermissions());
         return map;
     }
 

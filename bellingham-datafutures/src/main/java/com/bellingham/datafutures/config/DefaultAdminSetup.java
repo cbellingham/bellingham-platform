@@ -9,7 +9,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
+import java.util.EnumSet;
+
 import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.model.UserPermission;
 import com.bellingham.datafutures.repository.UserRepository;
 
 @Configuration
@@ -27,16 +30,18 @@ public class DefaultAdminSetup {
             users.findByUsername(ADMIN_USERNAME).ifPresentOrElse(user -> {
                 if (!encoder.matches(bootstrapPassword, user.getPassword())) {
                     user.setPassword(encoder.encode(bootstrapPassword));
-                    users.save(user);
-                    logger.info("Admin password synchronized with bootstrap configuration");
-                } else {
-                    logger.info("Admin password already matches bootstrap configuration");
                 }
+                if (user.getPermissions().isEmpty()) {
+                    user.setPermissions(EnumSet.allOf(UserPermission.class));
+                }
+                users.save(user);
+                logger.info("Admin account synchronized with bootstrap configuration");
             }, () -> {
                 User user = new User();
                 user.setUsername(ADMIN_USERNAME);
                 user.setPassword(encoder.encode(bootstrapPassword));
                 user.setRole("ROLE_ADMIN");
+                user.setPermissions(EnumSet.allOf(UserPermission.class));
                 users.save(user);
                 logger.info("Bootstrap admin user created");
             });

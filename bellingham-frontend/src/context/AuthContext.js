@@ -7,6 +7,11 @@ const AuthContext = createContext({
   token: null,
   login: () => {},
   logout: async () => {},
+  profile: null,
+  permissions: [],
+  role: null,
+  refreshProfile: async () => {},
+  isProfileLoading: false,
 });
 
 export default AuthContext;
