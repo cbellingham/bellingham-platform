@@ -39,6 +39,8 @@ const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState(hasValidStoredSession ? storedUsername : null);
   const [expiresAt, setExpiresAt] = useState(hasValidStoredSession ? storedExpiry : null);
   const [token, setToken] = useState(storedToken);
+  const [profile, setProfile] = useState(null);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
   const logoutTimerRef = useRef();
 
   const persistSession = useCallback((nextUsername, expiryDate, nextToken) => {
@@ -81,6 +83,7 @@ const AuthProvider = ({ children }) => {
       setUsername(null);
       setExpiresAt(null);
       setToken(null);
+      setProfile(null);
       if (persist) {
         persistSession(null, null, null);
       }
@@ -93,12 +96,31 @@ const AuthProvider = ({ children }) => {
 
   const logout = useCallback(async () => {
     applySession(null, null);
+    setProfile(null);
     try {
       await api.post('/api/logout');
     } catch (error) {
       console.error('Failed to clear session cookie', error);
     }
   }, [applySession]);
+
+  const refreshProfile = useCallback(async () => {
+    if (!isAuthenticated) {
+      setProfile(null);
+      return;
+    }
+    setIsProfileLoading(true);
+    try {
+      const res = await api.get('/api/profile');
+      setProfile(res.data ?? null);
+    } catch (error) {
+      if (error?.response?.status === 401) {
+        applySession(null, null);
+      }
+    } finally {
+      setIsProfileLoading(false);
+    }
+  }, [applySession, isAuthenticated]);
 
   useEffect(() => {
     setAuthToken(token);
@@ -179,6 +201,14 @@ const AuthProvider = ({ children }) => {
     };
   }, [logout]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshProfile();
+    } else {
+      setProfile(null);
+    }
+  }, [isAuthenticated, refreshProfile]);
+
   const value = useMemo(() => ({
     isAuthenticated,
     username,
@@ -186,7 +216,12 @@ const AuthProvider = ({ children }) => {
     token,
     login,
     logout,
-  }), [isAuthenticated, username, expiresAt, token, login, logout]);
+    profile,
+    permissions: profile?.permissions ?? [],
+    role: profile?.role ?? null,
+    refreshProfile,
+    isProfileLoading,
+  }), [isAuthenticated, username, expiresAt, token, login, logout, profile, refreshProfile, isProfileLoading]);
 
   return (
     <AuthContext.Provider value={value}>

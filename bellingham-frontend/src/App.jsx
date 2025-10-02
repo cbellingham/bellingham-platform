@@ -13,10 +13,38 @@ import Settings from "./components/Settings";
 import History from "./components/History";
 import Logo from "./components/Logo";
 import Notifications from "./components/Notifications";
+import AdminUserAccess from "./components/AdminUserAccess";
+import Layout from "./components/Layout";
 import { AuthContext } from './context';
 
 const App = () => {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, permissions, role, profile, isProfileLoading } = useContext(AuthContext);
+
+    const renderGuarded = (Component, options = {}) => {
+        if (!isAuthenticated) {
+            return <Navigate to="/login" />;
+        }
+
+        if (!profile && isProfileLoading) {
+            return (
+                <Layout>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 text-sm text-slate-300 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
+                        Checking your access…
+                    </div>
+                </Layout>
+            );
+        }
+
+        if (options.requiresRole && role !== options.requiresRole) {
+            return <Navigate to="/" />;
+        }
+
+        if (options.requiresPermission && !permissions.includes(options.requiresPermission)) {
+            return <Navigate to="/" />;
+        }
+
+        return <Component />;
+    };
 
     return (
         <>
@@ -29,11 +57,11 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route
                 path="/buy"
-                element={isAuthenticated ? <Buy /> : <Navigate to="/login" />}
+                element={renderGuarded(Buy, { requiresPermission: "BUY" })}
             />
             <Route
                 path="/sell"
-                element={isAuthenticated ? <Sell /> : <Navigate to="/login" />}
+                element={renderGuarded(Sell, { requiresPermission: "SELL" })}
             />
             <Route
                 path="/reports"
@@ -62,6 +90,10 @@ const App = () => {
             <Route
                 path="/notifications"
                 element={isAuthenticated ? <Notifications /> : <Navigate to="/login" />}
+            />
+            <Route
+                path="/admin/users"
+                element={renderGuarded(AdminUserAccess, { requiresRole: "ROLE_ADMIN" })}
             />
         </Routes>
         <Logo />

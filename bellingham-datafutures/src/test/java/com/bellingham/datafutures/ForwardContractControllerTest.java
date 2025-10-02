@@ -12,6 +12,8 @@ import com.bellingham.datafutures.service.MarketDataService;
 import com.bellingham.datafutures.service.MarketDataStreamService;
 import com.bellingham.datafutures.service.SavedSearchService;
 import com.bellingham.datafutures.security.JwtFilter;
+import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.model.UserPermission;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,6 +27,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.math.BigDecimal;
@@ -94,7 +97,8 @@ class ForwardContractControllerTest {
 
         SecurityContextHolder.getContext()
                 .setAuthentication(new UsernamePasswordAuthenticationToken("seller", "pass"));
-        given(userRepository.findByUsername("seller")).willReturn(Optional.empty());
+        given(userRepository.findByUsername("seller"))
+                .willReturn(Optional.of(userWithPermissions("seller", UserPermission.SELL)));
         given(repository.save(any())).willAnswer(invocation -> {
             ForwardContract saved = invocation.getArgument(0);
             saved.setId(99L);
@@ -134,6 +138,8 @@ class ForwardContractControllerTest {
         given(repository.findById(1L)).willReturn(java.util.Optional.of(contract));
         given(repository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("user", "pass"));
+        given(userRepository.findByUsername("user"))
+                .willReturn(Optional.of(userWithPermissions("user", UserPermission.BUY)));
 
         mockMvc.perform(post("/api/contracts/1/buy")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -155,6 +161,8 @@ class ForwardContractControllerTest {
         given(repository.findById(2L)).willReturn(java.util.Optional.of(contract));
         given(repository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("buyer", "pass"));
+        given(userRepository.findByUsername("buyer"))
+                .willReturn(Optional.of(userWithPermissions("buyer", UserPermission.BUY)));
 
         mockMvc.perform(post("/api/contracts/2/buy")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -163,5 +171,44 @@ class ForwardContractControllerTest {
         org.junit.jupiter.api.Assertions.assertNull(contract.getBuyerSignature());
         org.mockito.Mockito.verify(notificationService)
                 .notifyUser("seller2", "Your contract Second Contract was purchased", 2L);
+    }
+
+    @Test
+    void createContractWithoutSellPermissionIsForbidden() throws Exception {
+        ForwardContractCreateRequest request = new ForwardContractCreateRequest();
+        request.setTitle("Contract");
+        request.setPrice(BigDecimal.valueOf(150));
+        request.setDeliveryDate(LocalDate.now().plusDays(5));
+        request.setDeliveryFormat("Digital");
+        request.setPlatformName("Platform");
+        request.setDataDescription("Description");
+        request.setEffectiveDate(LocalDate.now());
+        request.setAgreementText("Agreement");
+        request.setTermsFileName("terms.pdf");
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken("seller", "pass"));
+        given(userRepository.findByUsername("seller"))
+                .willReturn(Optional.of(userWithPermissions("seller")));
+
+        mockMvc.perform(post("/api/contracts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isForbidden());
+
+        org.mockito.Mockito.verify(repository, org.mockito.Mockito.never()).save(any());
+    }
+
+    private User userWithPermissions(String username, UserPermission... permissions) {
+        User user = new User();
+        user.setUsername(username);
+        EnumSet<UserPermission> set = EnumSet.noneOf(UserPermission.class);
+        if (permissions != null) {
+            for (UserPermission permission : permissions) {
+                set.add(permission);
+            }
+        }
+        user.setPermissions(set);
+        return user;
     }
 }

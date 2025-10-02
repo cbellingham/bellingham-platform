@@ -71,6 +71,7 @@ public class WebSecurityConfig {
                         .hasAnyAuthority(ROLE_USER, ROLE_TRADER, ROLE_COMPLIANCE_OFFICER, ROLE_ADMIN)
                         .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/contracts/**")
                         .hasAnyAuthority(ROLE_USER, ROLE_TRADER, ROLE_COMPLIANCE_OFFICER, ROLE_ADMIN)
+                        .requestMatchers("/api/admin/**").hasAuthority(ROLE_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

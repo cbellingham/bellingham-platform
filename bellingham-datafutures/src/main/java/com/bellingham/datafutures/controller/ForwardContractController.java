@@ -14,6 +14,7 @@ import com.bellingham.datafutures.repository.ContractActivityRepository;
 import com.bellingham.datafutures.repository.ForwardContractRepository;
 import com.bellingham.datafutures.repository.UserRepository;
 import com.bellingham.datafutures.model.User;
+import com.bellingham.datafutures.model.UserPermission;
 import com.bellingham.datafutures.service.MarketDataService;
 import com.bellingham.datafutures.service.MarketDataStreamService;
 import com.bellingham.datafutures.service.NotificationService;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -118,8 +120,15 @@ public class ForwardContractController {
         contract.setStatus("Available");
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User creator = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN,
+                        "User profile not found"));
+        if (!creator.hasPermission(UserPermission.SELL)) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN,
+                    "User does not have permission to sell");
+        }
         contract.setCreatorUsername(username);
-        userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
+        fillSellerDetails(contract, creator);
 
         ForwardContract saved = repository.save(contract);
         logActivity(saved, username, "Created contract");
@@ -324,6 +333,15 @@ public class ForwardContractController {
                     if (!"Available".equalsIgnoreCase(contract.getStatus())) {
                         return ResponseEntity.badRequest().<ForwardContract>build();
                     }
+                    String username = org.springframework.security.core.context.SecurityContextHolder
+                            .getContext().getAuthentication().getName();
+                    User buyer = userRepository.findByUsername(username)
+                            .orElseThrow(() -> new ResponseStatusException(
+                                    org.springframework.http.HttpStatus.FORBIDDEN, "User profile not found"));
+                    if (!buyer.hasPermission(UserPermission.BUY)) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                                .<ForwardContract>build();
+                    }
                     Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext()
                             .getAuthentication().getAuthorities();
                     Set<String> authorityNames = authorities.stream()
@@ -334,8 +352,6 @@ public class ForwardContractController {
                                 .<ForwardContract>build();
                     }
                     contract.setStatus("Purchased");
-                    String username = org.springframework.security.core.context.SecurityContextHolder
-                            .getContext().getAuthentication().getName();
                     contract.setBuyerUsername(username);
                     contract.setPurchaseDate(LocalDate.now());
                     if (signature != null) {
@@ -423,11 +439,18 @@ public class ForwardContractController {
         return repository.findById(id)
                 .map(contract -> {
                     String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    User seller = userRepository.findByUsername(username)
+                            .orElseThrow(() -> new ResponseStatusException(
+                                    org.springframework.http.HttpStatus.FORBIDDEN, "User profile not found"));
+                    if (!seller.hasPermission(UserPermission.SELL)) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                                .<ForwardContract>build();
+                    }
                     if (!username.equals(contract.getCreatorUsername())) {
                         return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
                                 .<ForwardContract>build();
                     }
-                    userRepository.findByUsername(username).ifPresent(user -> fillSellerDetails(contract, user));
+                    fillSellerDetails(contract, seller);
                     contract.setStatus("Available");
                     contract.setBuyerUsername(null);
                     contract.setPurchaseDate(null);
