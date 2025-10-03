@@ -25,7 +25,7 @@ const NotificationBellIcon = ({ className = "", ...props }) => (
     </svg>
 );
 
-const Header = ({ onLogout }) => {
+const Header = ({ onLogout, showNavigation = true }) => {
     const { username, permissions = [], role } = useContext(AuthContext);
     const { unreadCount } = useNotifications();
     const [isNavOpen, setIsNavOpen] = useState(false);
@@ -39,6 +39,8 @@ const Header = ({ onLogout }) => {
         }
         return true;
     }), [permissions, role]);
+
+    const shouldRenderNavigation = showNavigation && filteredNavItems.length > 0;
 
     const toggleNavigation = () => {
         setIsNavOpen((prev) => !prev);
@@ -99,43 +101,45 @@ const Header = ({ onLogout }) => {
                     </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-inner shadow-black/20">
-                    <div className="flex items-center justify-between gap-4 lg:hidden">
-                        <span className="text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-slate-400">
-                            Navigation
-                        </span>
-                        <button
-                            type="button"
-                            onClick={toggleNavigation}
-                            aria-expanded={isNavOpen}
-                            aria-controls="primary-navigation"
-                            className="inline-flex items-center gap-2 rounded-lg border border-[#00D1FF]/40 bg-slate-900/80 px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-[#00D1FF] transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
-                        >
-                            <span>{isNavOpen ? "Close" : "Menu"}</span>
-                            <svg
-                                aria-hidden="true"
-                                className={`h-4 w-4 transition-transform ${isNavOpen ? "rotate-180" : ""}`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
+                {shouldRenderNavigation && (
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-inner shadow-black/20">
+                        <div className="flex items-center justify-between gap-4 lg:hidden">
+                            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-slate-400">
+                                Navigation
+                            </span>
+                            <button
+                                type="button"
+                                onClick={toggleNavigation}
+                                aria-expanded={isNavOpen}
+                                aria-controls="primary-navigation"
+                                className="inline-flex items-center gap-2 rounded-lg border border-[#00D1FF]/40 bg-slate-900/80 px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-[#00D1FF] transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                            </svg>
-                        </button>
+                                <span>{isNavOpen ? "Close" : "Menu"}</span>
+                                <svg
+                                    aria-hidden="true"
+                                    className={`h-4 w-4 transition-transform ${isNavOpen ? "rotate-180" : ""}`}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </button>
+                        </div>
+                        <nav
+                            id="primary-navigation"
+                            className={`${
+                                isNavOpen ? "flex" : "hidden"
+                            } flex-col items-stretch gap-4 pt-3 lg:flex lg:flex-row lg:flex-wrap lg:items-center lg:gap-6 lg:pt-0`}
+                        >
+                            {filteredNavItems.map((item) => (
+                                <NavMenuItem key={item.path} item={item} layout="header" onNavigate={handleNavigate} />
+                            ))}
+                        </nav>
                     </div>
-                    <nav
-                        id="primary-navigation"
-                        className={`${
-                            isNavOpen ? "flex" : "hidden"
-                        } flex-col items-stretch gap-4 pt-3 lg:flex lg:flex-row lg:flex-wrap lg:items-center lg:gap-6 lg:pt-0`}
-                    >
-                        {filteredNavItems.map((item) => (
-                            <NavMenuItem key={item.path} item={item} layout="header" onNavigate={handleNavigate} />
-                        ))}
-                    </nav>
-                </div>
+                )}
             </div>
         </header>
     );

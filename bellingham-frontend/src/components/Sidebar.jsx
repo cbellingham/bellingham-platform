@@ -1,17 +1,29 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
+import { AuthContext } from "../context";
 
 const Sidebar = ({ onLogout }) => {
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const { permissions = [], role } = useContext(AuthContext);
+
+    const filteredNavItems = useMemo(() => navItems.filter((item) => {
+        if (item.requiresRole && item.requiresRole !== role) {
+            return false;
+        }
+        if (item.requiresPermission && !permissions.includes(item.requiresPermission)) {
+            return false;
+        }
+        return true;
+    }), [permissions, role]);
 
     const groupedNavItems = useMemo(() => {
         const sections = new Map();
 
-        navItems.forEach((item) => {
+        filteredNavItems.forEach((item) => {
             const section = item.section || "General";
             if (!sections.has(section)) {
                 sections.set(section, []);
@@ -20,7 +32,7 @@ const Sidebar = ({ onLogout }) => {
         });
 
         return sections;
-    }, []);
+    }, [filteredNavItems]);
 
     const toggleMobile = () => setIsMobileOpen((prev) => !prev);
     const closeMobile = () => setIsMobileOpen(false);
