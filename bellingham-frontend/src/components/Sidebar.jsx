@@ -5,7 +5,7 @@ import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
 import { AuthContext } from "../context";
 
-const Sidebar = ({ onLogout }) => {
+const Sidebar = ({ onLogout, sidebarWidth }) => {
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const { permissions = [], role } = useContext(AuthContext);
@@ -43,11 +43,14 @@ const Sidebar = ({ onLogout }) => {
     };
 
     return (
-        <div className="relative flex-shrink-0 md:w-64">
+        <div
+            className="relative z-40 flex-shrink-0"
+            style={{ "--sidebar-width": sidebarWidth }}
+        >
             <button
                 type="button"
                 onClick={toggleMobile}
-                className="md:hidden fixed top-20 left-4 z-50 inline-flex items-center justify-center rounded-full bg-slate-900 p-3 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 focus:ring-[#00D1FF]"
+                className="fixed left-4 top-6 z-50 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-800/60 bg-slate-950/90 text-white shadow-[0_18px_45px_rgba(8,20,45,0.55)] backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 lg:hidden"
                 aria-label={isMobileOpen ? "Close navigation" : "Open navigation"}
                 aria-expanded={isMobileOpen}
             >
@@ -56,58 +59,78 @@ const Sidebar = ({ onLogout }) => {
                     {isMobileOpen ? (
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                     ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.5 6.75h15M4.5 12h15M4.5 17.25h15" />
                     )}
                 </svg>
             </button>
 
             {isMobileOpen && (
-                <div className="fixed inset-0 z-40 bg-black/50 md:hidden" role="presentation" onClick={closeMobile} />
+                <div className="fixed inset-0 z-40 bg-slate-900/70 backdrop-blur-sm lg:hidden" role="presentation" onClick={closeMobile} />
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col justify-between border-r border-slate-800 bg-slate-950/95 p-6 shadow-xl shadow-black/20 backdrop-blur transition-transform duration-300 ease-in-out md:static md:z-auto md:translate-x-0 md:transform-none md:w-64 ${
+                className={`fixed inset-y-0 left-0 z-50 flex h-full transform flex-col overflow-hidden border-r border-slate-800/60 bg-slate-950/95 px-6 pb-8 pt-10 text-slate-100 shadow-[0_45px_120px_rgba(8,20,45,0.55)] backdrop-blur-xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:translate-x-0 lg:rounded-3xl lg:border lg:border-slate-800/60 lg:bg-slate-950/60 lg:px-7 lg:py-10 lg:shadow-[0_35px_110px_rgba(8,20,45,0.45)] ${
                     isMobileOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
+                style={{ width: "var(--sidebar-width)", flexBasis: "var(--sidebar-width)" }}
             >
-                <div className="flex items-center justify-between pb-4 md:hidden">
-                    <h2 className="text-base font-semibold text-white">Navigation</h2>
+                <div className="flex items-center justify-between gap-3">
+                    <button
+                        type="button"
+                        onClick={() => handleNavigate("/")}
+                        className="group flex items-center gap-3 rounded-2xl border border-transparent bg-slate-900/70 px-3 py-2 text-left transition-colors hover:border-[#00D1FF]/40 hover:bg-slate-900/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    >
+                        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00D1FF]/80 to-[#7465A8]/70 text-base font-bold text-slate-950 shadow-[0_12px_35px_rgba(0,209,255,0.45)]">
+                            BM
+                        </span>
+                        <span className="flex flex-col leading-tight">
+                            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.38em] text-[#9CD8D6]">Bellingham</span>
+                            <span className="text-sm font-semibold text-white">Markets Platform</span>
+                        </span>
+                    </button>
                     <button
                         type="button"
                         onClick={closeMobile}
-                        className="inline-flex items-center justify-center rounded-full bg-slate-800 p-2 text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800/60 bg-slate-900/60 text-slate-300 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF] lg:hidden"
                     >
                         <span className="sr-only">Close navigation</span>
-                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
-                <nav className="flex flex-1 flex-col gap-6 overflow-y-auto pr-2">
+                <div className="mt-8 flex-1 space-y-8 overflow-y-auto pr-1">
                     {Array.from(groupedNavItems.entries()).map(([section, items]) => (
-                        <div key={section} className="flex flex-col gap-2">
-                            <p className="px-1 text-xs font-semibold uppercase tracking-widest text-slate-400/90">{section}</p>
-                            <div className="flex flex-col gap-1">
+                        <div key={section} className="space-y-3">
+                            <p className="px-1 text-[0.65rem] font-semibold uppercase tracking-[0.42em] text-slate-400/80">{section}</p>
+                            <div className="space-y-1.5">
                                 {items.map((item) => (
                                     <NavMenuItem key={item.path} item={item} layout="sidebar" onNavigate={handleNavigate} />
                                 ))}
                             </div>
                         </div>
                     ))}
-                </nav>
-                <div className="mt-6 flex flex-col space-y-2 border-t border-slate-800 pt-4">
-                    <Button
-                        variant="success"
-                        className="w-full"
-                        onClick={() => handleNavigate("/sell")}
-                    >
-                        New Listing
-                    </Button>
+                </div>
+
+                <div className="mt-8 space-y-3 border-t border-slate-800/70 pt-6">
+                    <div className="rounded-2xl border border-[#00D1FF]/25 bg-gradient-to-br from-[#00D1FF]/10 via-transparent to-[#7465A8]/20 p-4 text-sm text-slate-200 shadow-[0_12px_45px_rgba(0,209,255,0.35)]">
+                        <p className="font-semibold text-white">Need to move quickly?</p>
+                        <p className="mt-1 text-xs text-slate-300/80">
+                            Launch a new marketplace listing right from here.
+                        </p>
+                        <Button
+                            variant="primary"
+                            className="mt-4 w-full"
+                            onClick={() => handleNavigate("/sell")}
+                        >
+                            Create Listing
+                        </Button>
+                    </div>
                     {onLogout && (
                         <Button
-                            variant="danger"
-                            className="w-full"
+                            variant="ghost"
+                            className="w-full justify-center border border-slate-800/60 bg-slate-900/70 text-slate-200 hover:border-[#00D1FF]/50 hover:text-white"
                             onClick={() => {
                                 closeMobile();
                                 onLogout();
