@@ -4,9 +4,11 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -55,6 +57,8 @@ class AuthControllerTest {
         when(jwtUtil.generateToken("user")).thenReturn("token-value");
         when(jwtUtil.extractExpiration("token-value"))
                 .thenReturn(Date.from(FIXED_EXPIRY.truncatedTo(ChronoUnit.MILLIS)));
+        when(jwtUtil.validateToken("token-value")).thenReturn(true);
+        when(jwtUtil.extractUsername("token-value")).thenReturn("user");
     }
 
     @Test
@@ -77,6 +81,15 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=None")))
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Secure")));
+    }
+
+    @Test
+    void sessionFallsBackToAuthorizationHeader() throws Exception {
+        mockMvc.perform(get("/api/session")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer token-value"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("user"))
+                .andExpect(jsonPath("$.expiresAt").value(FIXED_EXPIRY.truncatedTo(ChronoUnit.MILLIS).toString()));
     }
 
     @TestConfiguration

@@ -238,14 +238,19 @@ public class AuthController {
 
     private String resolveTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            return null;
-        }
-        for (Cookie cookie : cookies) {
-            if (jwtProperties.getCookie().getName().equals(cookie.getName())) {
-                return cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (jwtProperties.getCookie().getName().equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
             }
         }
+
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+
         return null;
     }
 }
