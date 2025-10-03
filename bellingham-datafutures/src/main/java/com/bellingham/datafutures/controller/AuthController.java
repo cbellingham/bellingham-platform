@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.bellingham.datafutures.config.JwtProperties;
 import com.bellingham.datafutures.controller.dto.LoginRequest;
@@ -78,6 +79,9 @@ public class AuthController {
                     .body(response);
         } catch (AuthenticationException e) {
             logger.warn("Authentication failed for user: {}", creds.getUsername(), e);
+            if (e instanceof DisabledException) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account disabled", e);
+            }
             throw new BadCredentialsException("Invalid username or password");
         }
     }

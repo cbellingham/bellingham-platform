@@ -26,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -81,6 +82,17 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=None")))
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Secure")));
+    }
+
+    @Test
+    void loginReturnsForbiddenWhenAccountDisabled() throws Exception {
+        when(authenticationManager.authenticate(any(Authentication.class)))
+                .thenThrow(new DisabledException("Account disabled"));
+
+        mockMvc.perform(post("/api/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"user\",\"password\":\"pass\"}"))
+                .andExpect(status().isForbidden());
     }
 
     @Test
