@@ -3,23 +3,23 @@ import { NavLink } from "react-router-dom";
 
 const baseClasses = {
     header:
-        "group relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.22em] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+        "group relative inline-flex items-center gap-2 rounded-xl border border-transparent bg-transparent px-4 py-2 text-[0.66rem] font-semibold uppercase tracking-[0.22em] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]",
     sidebar:
-        "group relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+        "group relative flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050912]",
 };
 
 const activeClasses = {
     header:
-        "bg-gradient-to-r from-[#00D1FF]/20 via-[#7465A8]/20 to-transparent text-[#00D1FF] shadow-[0_18px_45px_rgba(0,209,255,0.25)]",
+        "border-[#294E86]/70 bg-[linear-gradient(140deg,rgba(34,64,109,0.45),rgba(22,38,70,0.35))] text-[#9BD8FF] shadow-[0_18px_45px_rgba(34,64,109,0.45)]",
     sidebar:
-        "bg-gradient-to-r from-[#00D1FF]/18 via-[#7465A8]/14 to-transparent text-white shadow-[inset_0_0_0_1px_rgba(0,209,255,0.35)]",
+        "border-[#294E86]/70 bg-[linear-gradient(120deg,rgba(34,64,109,0.35),rgba(22,38,70,0.28))] text-white shadow-[inset_0_0_0_1px_rgba(77,209,255,0.35)]",
 };
 
 const inactiveClasses = {
     header:
-        "text-slate-300 hover:text-[#9CD8D6]",
+        "text-slate-300 hover:text-[#9BD8FF] hover:bg-[rgba(20,36,70,0.25)]",
     sidebar:
-        "text-slate-300 hover:bg-slate-900/60 hover:text-white",
+        "text-slate-300 hover:border-[#2C4B7D]/50 hover:bg-[rgba(20,36,70,0.22)] hover:text-white",
 };
 
 const NavMenuItem = ({ item, layout = "header", onNavigate }) => {

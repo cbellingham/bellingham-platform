@@ -79,26 +79,26 @@ const Header = ({ onLogout, showNavigation = true }) => {
     };
 
     return (
-        <header className="sticky top-0 z-20 border-b border-slate-800/60 bg-gradient-to-b from-slate-950/80 via-slate-950/65 to-slate-950/40 backdrop-blur-xl">
-            <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-6 py-6 sm:px-8">
+        <header className="sticky top-0 z-20 border-b border-[#1B2543]/80 bg-[linear-gradient(180deg,rgba(24,34,61,0.95)_0%,rgba(10,16,30,0.9)_100%)] shadow-[0_38px_110px_rgba(5,9,20,0.7)] backdrop-blur-xl">
+            <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-6 py-7 sm:px-9">
                 <div className="flex flex-wrap items-start justify-between gap-6">
                     <div className="space-y-2">
                         <Link to="/" className="group flex flex-col leading-tight text-left">
-                            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.42em] text-[#00D1FF]/75">
+                            <span className="text-[0.6rem] font-semibold uppercase tracking-[0.48em] text-[#4DD1FF]/80">
                                 Bellingham Markets
                             </span>
-                            <span className="text-2xl font-semibold text-white">
+                            <span className="text-2xl font-semibold text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.45)]">
                                 {pageTitle}
                             </span>
                         </Link>
-                        <p className="max-w-xl text-sm text-slate-300/90">
+                        <p className="max-w-xl text-sm text-slate-200/85">
                             {pageDescription}
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
                         <Link
                             to="/notifications"
-                            className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-[#00D1FF]/40 bg-slate-900/70 text-[#00D1FF] shadow-[0_18px_48px_rgba(0,209,255,0.32)] transition-all hover:-translate-y-0.5 hover:bg-slate-900/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                            className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-[#21416F]/80 bg-[linear-gradient(145deg,rgba(34,64,109,0.95),rgba(19,35,64,0.85))] text-[#4DD1FF] shadow-[0_22px_48px_rgba(20,70,120,0.55)] transition-all hover:-translate-y-0.5 hover:shadow-[0_28px_60px_rgba(20,70,120,0.65)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]"
                             aria-label={
                                 unreadCount > 0
                                     ? `${unreadCount} unread notifications`
@@ -108,7 +108,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                             <NotificationBellIcon className="h-5 w-5" />
                             <span className="sr-only">Open notifications</span>
                             {unreadCount > 0 && (
-                                <span className="numeric-text absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#7465A8] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-white shadow-lg">
+                                <span className="numeric-text absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#7465A8] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-white shadow-[0_10px_30px_rgba(116,101,168,0.6)]">
                                     {unreadCount > 99 ? "99+" : unreadCount}
                                 </span>
                             )}
@@ -117,7 +117,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                         {username && (
                             <div className="flex items-center gap-4">
                                 <div className="text-right">
-                                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.38em] text-slate-400">
+                                    <p className="text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-slate-400">
                                         Logged in as
                                     </p>
                                     <p className="text-sm font-semibold text-white">{username}</p>
@@ -126,7 +126,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                                     <button
                                         type="button"
                                         onClick={onLogout}
-                                        className="rounded-2xl border border-[#3BAEAB]/50 bg-[#3BAEAB]/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-[#9CD8D6] transition-all hover:-translate-y-0.5 hover:bg-[#3BAEAB]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                                        className="rounded-2xl border border-[#2F4F78]/70 bg-[linear-gradient(145deg,rgba(30,60,95,0.85),rgba(24,42,70,0.7))] px-5 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[#9BD8FF] transition-all hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(47,79,120,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]"
                                     >
                                         Log Out
                                     </button>
@@ -137,9 +137,9 @@ const Header = ({ onLogout, showNavigation = true }) => {
                 </div>
 
                 {shouldRenderNavigation && (
-                    <div className="rounded-2xl border border-slate-800/60 bg-slate-950/60 px-3 py-4 shadow-[0_24px_60px_rgba(8,20,45,0.4)]">
+                    <div className="rounded-2xl border border-[#1E2F53]/70 bg-[linear-gradient(140deg,rgba(20,36,70,0.9),rgba(12,22,42,0.85))] px-3 py-4 shadow-[0_30px_70px_rgba(5,9,20,0.55)]">
                         <div className="flex items-center justify-between gap-4 lg:hidden">
-                            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-slate-400">
+                            <span className="text-[0.6rem] font-semibold uppercase tracking-[0.34em] text-slate-400">
                                 Navigation
                             </span>
                             <button
@@ -147,7 +147,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                                 onClick={toggleNavigation}
                                 aria-expanded={isNavOpen}
                                 aria-controls="primary-navigation"
-                                className="inline-flex items-center gap-2 rounded-xl border border-[#00D1FF]/40 bg-slate-900/70 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-[#00D1FF] transition-colors hover:bg-slate-900/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF]"
+                                className="inline-flex items-center gap-2 rounded-xl border border-[#294674]/70 bg-[#142543]/80 px-4 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.26em] text-[#9BD8FF] transition-colors hover:bg-[#1A3157]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF]"
                             >
                                 <span>{isNavOpen ? "Close" : "Menu"}</span>
                                 <svg
