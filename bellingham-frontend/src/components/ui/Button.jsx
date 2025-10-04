@@ -3,14 +3,15 @@ import React, { cloneElement, forwardRef, isValidElement } from 'react';
 const classNames = (...classes) => classes.filter(Boolean).join(' ');
 
 const baseClasses =
-  'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60';
+  'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2 text-sm font-semibold uppercase tracking-[0.22em] transition-transform transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60';
 
 const variantClasses = {
   primary:
-    'bg-[#00D1FF] text-slate-900 shadow-[0_10px_30px_rgba(0,209,255,0.35)] hover:bg-[#7465A8] hover:text-white focus-visible:ring-[#00D1FF] focus-visible:ring-offset-slate-900',
+    'border border-transparent bg-[linear-gradient(140deg,rgba(38,78,130,0.95),rgba(27,52,92,0.88))] text-[#9BD8FF] shadow-[0_22px_55px_rgba(22,42,78,0.55)] hover:shadow-[0_26px_70px_rgba(22,42,78,0.6)] hover:border-[#4DD1FF]/60 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-[#050912] hover:-translate-y-0.5',
   success: 'bg-green-600 text-white hover:bg-green-500 focus-visible:ring-green-500',
   danger: 'bg-red-600 text-white hover:bg-red-500 focus-visible:ring-red-500',
-  ghost: 'bg-gray-600 text-white hover:bg-gray-700 focus-visible:ring-gray-500',
+  ghost:
+    'border border-transparent bg-[rgba(14,24,44,0.75)] text-slate-200 shadow-[0_14px_32px_rgba(5,10,25,0.55)] hover:border-[#4DD1FF]/60 hover:bg-[rgba(20,36,70,0.65)] focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-[#050912]',
   link:
     'bg-transparent px-0 py-0 text-[#00D1FF] underline-offset-4 hover:text-[#3BAEAB] hover:underline focus-visible:ring-[#00D1FF] focus-visible:ring-offset-0 rounded-none',
 };
