@@ -7,7 +7,7 @@ const sidebarWidth = "clamp(220px, 11.111vw, 280px)";
 
 const Layout = ({ children, onLogout }) => (
     <div
-        className="relative min-h-screen overflow-hidden bg-[#050912] font-sans text-contrast"
+        className="relative min-h-screen overflow-hidden bg-[#050912] px-4 py-6 font-sans text-contrast sm:px-6 sm:py-8 lg:px-12 lg:py-12"
         style={{
             backgroundImage:
                 "radial-gradient(circle at 15% 20%, rgba(0, 209, 255, 0.16), transparent 55%), " +
