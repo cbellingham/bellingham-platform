@@ -142,13 +142,13 @@ const Header = ({ onLogout, showNavigation = true }) => {
 
                 <nav
                     aria-label="Quick links"
-                    className="grid grid-cols-2 gap-2 rounded-2xl border border-[#1E2F53]/60 bg-[linear-gradient(140deg,rgba(20,36,70,0.78),rgba(12,22,42,0.7))] p-2 shadow-[0_24px_60px_rgba(5,9,20,0.55)] sm:grid-cols-5 xl:grid-cols-10"
+                    className="flex flex-nowrap items-stretch gap-2 overflow-x-auto rounded-2xl border border-[#1E2F53]/60 bg-[linear-gradient(140deg,rgba(20,36,70,0.78),rgba(12,22,42,0.7))] p-2 shadow-[0_24px_60px_rgba(5,9,20,0.55)]"
                 >
                     {headerButtons.map((button) => (
                         <Link
                             key={button.path}
                             to={button.path}
-                            className="flex w-full items-center justify-center rounded-xl border border-[#2F4F78]/60 bg-[linear-gradient(145deg,rgba(30,60,95,0.78),rgba(20,38,68,0.68))] px-4 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-[#C7E7FF] transition-colors hover:border-[#4DD1FF]/80 hover:bg-[#4DD1FF]/80 hover:text-[#0A1222] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]"
+                            className="flex min-w-[6.5rem] flex-1 items-center justify-center rounded-xl border border-[#2F4F78]/60 bg-[linear-gradient(145deg,rgba(30,60,95,0.78),rgba(20,38,68,0.68))] px-3 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-[#C7E7FF] transition-colors hover:border-[#4DD1FF]/80 hover:bg-[#4DD1FF]/80 hover:text-[#0A1222] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]"
                         >
                             {button.label}
                         </Link>
