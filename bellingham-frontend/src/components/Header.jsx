@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { AuthContext, useNotifications } from "../context";
@@ -42,7 +42,6 @@ const pageDescriptions = {
 const Header = ({ onLogout, showNavigation = true }) => {
     const { username, permissions = [], role } = useContext(AuthContext);
     const { unreadCount } = useNotifications();
-    const [isNavOpen, setIsNavOpen] = useState(false);
     const location = useLocation();
 
     const filteredNavItems = useMemo(() => navItems.filter((item) => {
@@ -69,14 +68,6 @@ const Header = ({ onLogout, showNavigation = true }) => {
     const pageTitle = activeItem?.label || "Bellingham Markets Platform";
     const pageDescription = pageDescriptions[activeItem?.path ?? location.pathname] ||
         "A modern trading experience tailored for the Bellingham marketplace.";
-
-    const toggleNavigation = () => {
-        setIsNavOpen((prev) => !prev);
-    };
-
-    const handleNavigate = () => {
-        setIsNavOpen(false);
-    };
 
     return (
         <header className="sticky top-0 z-20 border-b border-[#1B2543]/80 bg-[linear-gradient(180deg,rgba(24,34,61,0.95)_0%,rgba(10,16,30,0.9)_100%)] shadow-[0_38px_110px_rgba(5,9,20,0.7)] backdrop-blur-xl">
@@ -137,43 +128,14 @@ const Header = ({ onLogout, showNavigation = true }) => {
                 </div>
 
                 {shouldRenderNavigation && (
-                    <div className="rounded-2xl border border-[#1E2F53]/70 bg-[linear-gradient(140deg,rgba(20,36,70,0.9),rgba(12,22,42,0.85))] px-3 py-4 shadow-[0_30px_70px_rgba(5,9,20,0.55)]">
-                        <div className="flex items-center justify-between gap-4 lg:hidden">
-                            <span className="text-[0.6rem] font-semibold uppercase tracking-[0.34em] text-slate-400">
-                                Navigation
-                            </span>
-                            <button
-                                type="button"
-                                onClick={toggleNavigation}
-                                aria-expanded={isNavOpen}
-                                aria-controls="primary-navigation"
-                                className="inline-flex items-center gap-2 rounded-xl border border-[#294674]/70 bg-[#142543]/80 px-4 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.26em] text-[#9BD8FF] transition-colors hover:bg-[#1A3157]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF]"
-                            >
-                                <span>{isNavOpen ? "Close" : "Menu"}</span>
-                                <svg
-                                    aria-hidden="true"
-                                    className={`h-4 w-4 transition-transform ${isNavOpen ? "rotate-180" : ""}`}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="currentColor"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                </svg>
-                            </button>
-                        </div>
-                        <nav
-                            id="primary-navigation"
-                            className={`${
-                                isNavOpen ? "flex" : "hidden"
-                            } flex-col items-stretch gap-3 pt-3 lg:flex lg:flex-row lg:flex-wrap lg:items-center lg:gap-4 lg:pt-0`}
-                        >
-                            {filteredNavItems.map((item) => (
-                                <NavMenuItem key={item.path} item={item} layout="header" onNavigate={handleNavigate} />
-                            ))}
-                        </nav>
-                    </div>
+                    <nav
+                        id="primary-navigation"
+                        className="flex flex-wrap items-center gap-3 overflow-x-auto rounded-2xl border border-[#1E2F53]/70 bg-[linear-gradient(140deg,rgba(20,36,70,0.9),rgba(12,22,42,0.85))] px-3 py-4 shadow-[0_30px_70px_rgba(5,9,20,0.55)]"
+                    >
+                        {filteredNavItems.map((item) => (
+                            <NavMenuItem key={item.path} item={item} layout="header" />
+                        ))}
+                    </nav>
                 )}
             </div>
         </header>
