@@ -41,7 +41,7 @@ const NotificationBellIcon = ({ className = "", ...props }) => (
 const pageDescriptions = {
     "/": "Live market intelligence and real-time execution metrics.",
     "/buy": "Discover opportunities that match your sourcing strategy.",
-    "/sell": "Craft competitive listings and reach active buyers instantly.",
+    "/sell": "The Forwards Data Contracts Market",
     "/reports": "Visualise platform performance and compliance insights.",
     "/sales": "Track pipeline health and completed market activity.",
     "/calendar": "Coordinate market events, closings, and settlement windows.",
@@ -89,7 +89,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                     <div className="space-y-2">
                         <Link to="/" className="group flex flex-col leading-tight text-left">
                             <span className="text-[0.6rem] font-semibold uppercase tracking-[0.48em] text-[#4DD1FF]/80">
-                                Bellingham Markets
+                                Bellingham Data Futures
                             </span>
                             <span className="text-2xl font-semibold text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.45)]">
                                 {pageTitle}
