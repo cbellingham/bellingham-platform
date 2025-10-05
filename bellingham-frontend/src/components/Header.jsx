@@ -88,7 +88,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                 <div className="flex flex-wrap items-start justify-between gap-6">
                     <div className="space-y-2">
                         <Link to="/" className="group flex flex-col leading-tight text-left">
-                            <span className="text-[0.6rem] font-semibold uppercase tracking-[0.48em] text-[#4DD1FF]/80">
+                            <span className="text-[1.2rem] font-semibold uppercase tracking-[0.48em] text-[#4DD1FF]/80">
                                 Bellingham Data Futures
                             </span>
                             <span className="text-2xl font-semibold text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.45)]">
