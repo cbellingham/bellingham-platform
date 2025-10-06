@@ -63,14 +63,15 @@ public class AuthController {
                             creds.getUsername(),
                             creds.getPassword()
                     ));
-            logger.info("Authentication successful for user: {}", creds.getUsername());
-            String token = jwtUtil.generateToken(creds.getUsername());
+            String authenticatedUsername = resolveAuthenticatedUsername(auth, creds.getUsername());
+            logger.info("Authentication successful for user: {}", authenticatedUsername);
+            String token = jwtUtil.generateToken(authenticatedUsername);
             Instant expiresAt = jwtUtil.extractExpiration(token).toInstant();
 
             ResponseCookie cookie = buildSessionCookie(token, Duration.ofMillis(jwtProperties.getExpirationMs()),
                     request.isSecure());
             Map<String, Object> response = new HashMap<>();
-            response.put("username", creds.getUsername());
+            response.put("username", authenticatedUsername);
             response.put("expiresAt", expiresAt.toString());
             response.put("token", token);
 
@@ -84,6 +85,29 @@ public class AuthController {
             }
             throw new BadCredentialsException("Invalid username or password");
         }
+    }
+
+    private String resolveAuthenticatedUsername(Authentication authentication, String fallback) {
+        if (authentication == null) {
+            return fallback;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
+            String username = userDetails.getUsername();
+            if (username != null && !username.isBlank()) {
+                return username;
+            }
+        } else if (principal instanceof String principalName && !principalName.isBlank()) {
+            return principalName;
+        }
+
+        String name = authentication.getName();
+        if (name != null && !name.isBlank()) {
+            return name;
+        }
+
+        return fallback;
     }
 
     @PostMapping("/logout")

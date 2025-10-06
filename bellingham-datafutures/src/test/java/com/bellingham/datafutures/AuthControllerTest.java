@@ -28,6 +28,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -82,6 +84,26 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=None")))
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Secure")));
+    }
+
+    @Test
+    void loginReturnsCanonicalUsernameFromAuthenticatedPrincipal() throws Exception {
+        UserDetails details = User.withUsername("CanonicalUser")
+                .password("pass")
+                .authorities(java.util.Collections.emptyList())
+                .build();
+        Authentication authResult = new UsernamePasswordAuthenticationToken(details, "pass", details.getAuthorities());
+
+        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(authResult);
+        when(jwtUtil.generateToken("CanonicalUser")).thenReturn("token-value");
+        when(jwtUtil.extractExpiration("token-value"))
+                .thenReturn(Date.from(FIXED_EXPIRY.truncatedTo(ChronoUnit.MILLIS)));
+
+        mockMvc.perform(post("/api/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"bellingham\",\"password\":\"pass\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("CanonicalUser"));
     }
 
     @Test
