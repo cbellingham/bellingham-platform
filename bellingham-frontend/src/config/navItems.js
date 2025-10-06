@@ -1,6 +1,6 @@
 const navItems = [
     { path: "/", label: "Home" },
-    { path: "/buy", label: "Buy", requiresPermission: "BUY" },
+    { path: "/buy", label: "Buy" },
     { path: "/reports", label: "Reports" },
     { path: "/sell", label: "Sell", requiresPermission: "SELL" },
     { path: "/sales", label: "Sales" },
