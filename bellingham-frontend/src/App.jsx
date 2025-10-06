@@ -57,7 +57,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route
                 path="/buy"
-                element={renderGuarded(Buy, { requiresPermission: "BUY" })}
+                element={renderGuarded(Buy)}
             />
             <Route
                 path="/sell"

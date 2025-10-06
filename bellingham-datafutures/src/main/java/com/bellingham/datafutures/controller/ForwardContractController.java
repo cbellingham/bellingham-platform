@@ -335,19 +335,10 @@ public class ForwardContractController {
                     }
                     String username = org.springframework.security.core.context.SecurityContextHolder
                             .getContext().getAuthentication().getName();
-                    User buyer = userRepository.findByUsername(username)
+                    userRepository.findByUsername(username)
                             .orElseThrow(() -> new ResponseStatusException(
                                     org.springframework.http.HttpStatus.FORBIDDEN, "User profile not found"));
-                    if (!buyer.hasPermission(UserPermission.BUY)) {
-                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
-                                .<ForwardContract>build();
-                    }
-                    Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext()
-                            .getAuthentication().getAuthorities();
-                    Set<String> authorityNames = authorities.stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .collect(Collectors.toSet());
-                    if (!contract.canProgress(authorityNames)) {
+                    if (username != null && username.equals(contract.getCreatorUsername())) {
                         return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
                                 .<ForwardContract>build();
                     }
