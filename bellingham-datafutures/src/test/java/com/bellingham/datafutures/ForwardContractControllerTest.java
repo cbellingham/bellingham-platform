@@ -195,6 +195,27 @@ class ForwardContractControllerTest {
     }
 
     @Test
+    void buyingContractWithoutBuyPermissionIsForbidden() throws Exception {
+        ForwardContract contract = new ForwardContract();
+        contract.setId(4L);
+        contract.setStatus("Available");
+        contract.setTitle("Restricted Contract");
+        contract.setCreatorUsername("seller");
+        given(repository.findById(4L)).willReturn(java.util.Optional.of(contract));
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken("buyer", "pass"));
+        given(userRepository.findByUsername("buyer"))
+                .willReturn(Optional.of(userWithPermissions("buyer")));
+
+        mockMvc.perform(post("/api/contracts/4/buy")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+
+        org.mockito.Mockito.verify(repository, org.mockito.Mockito.never()).save(any());
+        org.mockito.Mockito.verify(notificationService, org.mockito.Mockito.never()).notifyUser(any(), any(), any());
+    }
+
+    @Test
     void createContractWithoutSellPermissionIsForbidden() throws Exception {
         ForwardContractCreateRequest request = new ForwardContractCreateRequest();
         request.setTitle("Contract");
