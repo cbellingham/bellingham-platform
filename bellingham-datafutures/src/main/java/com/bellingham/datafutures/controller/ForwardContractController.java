@@ -326,25 +326,29 @@ public class ForwardContractController {
     }
 
     @PostMapping("/{id}/buy")
-    public ResponseEntity<ForwardContract> buy(@PathVariable Long id,
-                                               @RequestBody(required = false) SignatureRequest signature) {
+    public ResponseEntity<?> buy(@PathVariable Long id,
+                                 @RequestBody(required = false) SignatureRequest signature) {
         return repository.findById(id)
                 .map(contract -> {
                     if (!"Available".equalsIgnoreCase(contract.getStatus())) {
-                        return ResponseEntity.badRequest().<ForwardContract>build();
+                        return ResponseEntity.badRequest().body(
+                                java.util.Map.of("message", "This contract is no longer available for purchase."));
                     }
                     String username = org.springframework.security.core.context.SecurityContextHolder
                             .getContext().getAuthentication().getName();
                     User buyer = userRepository.findByUsername(username)
-                            .orElseThrow(() -> new ResponseStatusException(
-                                    org.springframework.http.HttpStatus.FORBIDDEN, "User profile not found"));
+                            .orElse(null);
+                    if (buyer == null) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                                .body(java.util.Map.of("message", "User profile not found."));
+                    }
                     if (!buyer.hasPermission(UserPermission.BUY)) {
                         return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
-                                .<ForwardContract>build();
+                                .body(java.util.Map.of("message", "User does not have permission to buy contracts."));
                     }
                     if (username != null && username.equals(contract.getCreatorUsername())) {
                         return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
-                                .<ForwardContract>build();
+                                .body(java.util.Map.of("message", "Contract creators cannot purchase their own listings."));
                     }
                     contract.setStatus("Purchased");
                     contract.setBuyerUsername(username);
@@ -366,7 +370,8 @@ public class ForwardContractController {
                     marketDataService.publishSnapshot();
                     return ResponseEntity.ok(saved);
                 })
-                .orElse(ResponseEntity.notFound().<ForwardContract>build());
+                .orElse(ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND)
+                        .body(java.util.Map.of("message", "Contract not found.")));
     }
 
     @PatchMapping("/{id}/pre-trade-policy")
