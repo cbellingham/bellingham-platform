@@ -437,7 +437,7 @@ const Buy = () => {
                     />
                 </div>
             </div>
-            {pendingContractId && (
+            {pendingContractId != null && (
                 <SignatureModal
                     onConfirm={handleSignatureConfirm}
                     onCancel={handleSignatureCancel}

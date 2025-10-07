@@ -115,4 +115,34 @@ describe('Buy component', () => {
       );
     });
   });
+
+  test('opens the signature modal for contracts with id 0', async () => {
+    api.get.mockImplementationOnce((url) => {
+      if (url === '/api/contracts/available') {
+        return Promise.resolve({
+          data: {
+            content: [
+              {
+                id: 0,
+                title: 'Contract Zero',
+                seller: 'Seller Zero',
+                price: 50,
+                deliveryDate: '2024-01-01',
+              },
+            ],
+          },
+        });
+      }
+      return Promise.resolve({ data: [] });
+    });
+
+    renderWithProviders(<Buy />);
+
+    await waitFor(() => expect(api.get).toHaveBeenCalledWith('/api/contracts/available'));
+
+    const buyButton = screen.getAllByRole('button', { name: 'Buy' })[0];
+    fireEvent.click(buyButton);
+
+    expect(await screen.findByTestId('signature-canvas')).toBeInTheDocument();
+  });
 });
