@@ -215,6 +215,17 @@ const Buy = () => {
         })?.id;
     }, [pinnedFilters, search, minPrice, maxPrice, sellerFilter]);
 
+    const STATUS_BADGE_STYLES = useMemo(
+        () => ({
+            available: "border-emerald-400/50 bg-emerald-500/10 text-emerald-300",
+            open: "border-[#00D1FF]/50 bg-[#00D1FF]/10 text-[#00D1FF]",
+            purchased: "border-[#7465A8]/50 bg-[#7465A8]/12 text-[#C5BEE4]",
+            closed: "border-slate-500/40 bg-slate-600/10 text-slate-200",
+            default: "border-slate-700/60 bg-slate-800/60 text-slate-200",
+        }),
+        []
+    );
+
     const filteredContracts = contracts.filter((contract) => {
         const term = search.toLowerCase();
         const matchesSearch =
@@ -381,12 +392,13 @@ const Buy = () => {
                                         <th className="px-4 py-3 md:px-5 md:py-3.5">Seller</th>
                                         <th className="px-4 py-3 md:px-5 md:py-3.5">Ask Price</th>
                                         <th className="px-4 py-3 md:px-5 md:py-3.5">Delivery</th>
+                                        <th className="px-4 py-3 md:px-5 md:py-3.5">Status</th>
                                         <th className="px-4 py-3 md:px-5 md:py-3.5">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-800/70">
                                     {isLoading ? (
-                                        <TableSkeleton columns={5} rows={5} />
+                                        <TableSkeleton columns={6} rows={5} />
                                     ) : (
                                         <>
                                             {filteredContracts.map((contract) => (
@@ -399,6 +411,16 @@ const Buy = () => {
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">{contract.seller}</td>
                                                     <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${contract.price}</td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{contract.deliveryDate}</td>
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5">
+                                                        <span
+                                                            className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
+                                                                STATUS_BADGE_STYLES[(contract.status || "").toLowerCase()] ||
+                                                                STATUS_BADGE_STYLES.default
+                                                            }`}
+                                                        >
+                                                            {contract.status || "Unknown"}
+                                                        </span>
+                                                    </td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                         <Button
                                                             variant="success"
@@ -415,7 +437,7 @@ const Buy = () => {
                                             ))}
                                         {filteredContracts.length === 0 && (
                                             <tr>
-                                                <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
+                                                <td colSpan="6" className="px-4 py-10 text-center text-slate-500">
                                                     No contracts match your current filters.
                                                 </td>
                                             </tr>
