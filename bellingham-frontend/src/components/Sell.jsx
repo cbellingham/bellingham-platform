@@ -31,8 +31,38 @@ const Sell = () => {
         agreementText: contractTemplate,
     });
     const steps = [
-        { id: "listing", title: "Listing & Seller" },
-        { id: "delivery", title: "Delivery & Terms" },
+        { id: "readiness", title: "Seller Readiness" },
+        { id: "sample", title: "Data Sample" },
+        { id: "listing", title: "Listing Details" },
+        { id: "delivery", title: "Delivery & Legal" },
+        { id: "review", title: "Review" },
+    ];
+    const flowStages = [
+        {
+            title: "Align with your buyer",
+            description:
+                "Confirm you have clean, sale-ready data and know the buyer needs you want to meet.",
+        },
+        {
+            title: "Share a safe sample",
+            description:
+                "Upload or reference a non-sensitive snippet so we can help verify quality before sale.",
+        },
+        {
+            title: "Describe the listing",
+            description:
+                "Give the offer a name, price, and narrative buyers can review before reaching out.",
+        },
+        {
+            title: "Set delivery & terms",
+            description:
+                "Clarify how the dataset will be transferred, when it’s due, and attach any supporting terms.",
+        },
+        {
+            title: "Publish & manage",
+            description:
+                "Review the summary, submit the contract, and monitor performance in your portfolio.",
+        },
     ];
     const [currentStep, setCurrentStep] = useState(0);
     const [snippet, setSnippet] = useState(null);
@@ -266,9 +296,15 @@ const Sell = () => {
     const renderStepContent = () => {
         const stepId = steps[currentStep]?.id;
         switch (stepId) {
-            case "listing":
+            case "readiness":
                 return (
                     <div className="space-y-6">
+                        <div className="rounded-xl border border-slate-800/70 bg-slate-950/40 p-4 text-sm text-slate-300">
+                            <p>
+                                Capture the essentials about you as the seller so the marketplace knows who is offering
+                                the data. These details stay attached to the contract you publish.
+                            </p>
+                        </div>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className={fieldGroupClasses}>
                                 <div className={controlStackClasses}>
@@ -296,42 +332,6 @@ const Sell = () => {
                                         type="text"
                                         name="platformName"
                                         value={form.platformName}
-                                        onChange={handleChange}
-                                        className={inputClasses}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className={fieldGroupClasses}>
-                                <div className={controlStackClasses}>
-                                    <label htmlFor="title" className={labelClasses}>
-                                        Listing Title
-                                    </label>
-                                    <input
-                                        id="title"
-                                        type="text"
-                                        name="title"
-                                        value={form.title}
-                                        onChange={handleChange}
-                                        className={inputClasses}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className={fieldGroupClasses}>
-                                <div className={controlStackClasses}>
-                                    <label htmlFor="price" className={labelClasses}>
-                                        Asking Price
-                                    </label>
-                                    <input
-                                        id="price"
-                                        type="number"
-                                        min="0"
-                                        step="0.01"
-                                        name="price"
-                                        value={form.price}
                                         onChange={handleChange}
                                         className={inputClasses}
                                         required
@@ -386,23 +386,85 @@ const Sell = () => {
                                 />
                             </div>
                         </div>
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
-                                Analyse Your Data Sample
-                            </h3>
-                            <p className="text-sm text-slate-400">
-                                Upload a representative slice of your dataset to automatically extract the fields buyers care about
-                                and pre-fill your contract description.
+                    </div>
+                );
+            case "sample":
+                return (
+                    <div className="space-y-6">
+                        <div className="rounded-xl border border-[#3BAEAB]/40 bg-[#3BAEAB]/5 p-4 text-sm text-slate-200">
+                            <p className="font-semibold uppercase tracking-[0.18em] text-[#3BAEAB]">
+                                Optional confidence boost
                             </p>
-                            <DataSampleAnalyzer
-                                selectedFile={snippet}
-                                onSelectFile={handleSampleSelect}
-                                onRemoveFile={() => handleSampleSelect(null)}
-                                onAnalyze={analyzeSample}
-                                isAnalyzing={isAnalyzingSample}
-                                analysisError={analysisError}
-                                report={analysisReport}
-                            />
+                            <p className="mt-2 text-slate-100">
+                                Upload a representative slice of your dataset. We will analyse it to highlight key fields
+                                and help you pre-fill the description buyers see.
+                            </p>
+                        </div>
+                        <DataSampleAnalyzer
+                            selectedFile={snippet}
+                            onSelectFile={handleSampleSelect}
+                            onRemoveFile={() => handleSampleSelect(null)}
+                            onAnalyze={analyzeSample}
+                            isAnalyzing={isAnalyzingSample}
+                            analysisError={analysisError}
+                            report={analysisReport}
+                        />
+                        {analysisReport && (
+                            <div className="rounded-xl border border-slate-800/70 bg-slate-950/40 p-4 text-sm text-slate-300">
+                                <p className="font-semibold text-slate-200">Analysis Summary</p>
+                                <p className="mt-1 text-slate-300">{analysisReport.summary}</p>
+                                {analysisReport.columns?.length ? (
+                                    <ul className="mt-3 list-inside list-disc space-y-1 text-slate-400">
+                                        {analysisReport.columns.slice(0, 5).map((column) => (
+                                            <li key={column?.name || column?.field}>
+                                                <span className="font-medium text-slate-200">{column?.name}</span>
+                                                {column?.description ? ` — ${column.description}` : ""}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : null}
+                            </div>
+                        )}
+                    </div>
+                );
+            case "listing":
+                return (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="title" className={labelClasses}>
+                                        Listing Title
+                                    </label>
+                                    <input
+                                        id="title"
+                                        type="text"
+                                        name="title"
+                                        value={form.title}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className={fieldGroupClasses}>
+                                <div className={controlStackClasses}>
+                                    <label htmlFor="price" className={labelClasses}>
+                                        Asking Price
+                                    </label>
+                                    <input
+                                        id="price"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        name="price"
+                                        value={form.price}
+                                        onChange={handleChange}
+                                        className={inputClasses}
+                                        required
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div className={fieldGroupClasses}>
                             <div className={controlStackClasses}>
@@ -424,6 +486,12 @@ const Sell = () => {
             case "delivery":
                 return (
                     <div className="space-y-6">
+                        <div className="rounded-xl border border-slate-800/70 bg-slate-950/40 p-4 text-sm text-slate-300">
+                            <p>
+                                Outline how you will deliver the dataset and provide any supporting documentation that helps
+                                a buyer complete due diligence quickly.
+                            </p>
+                        </div>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className={fieldGroupClasses}>
                                 <div className={controlStackClasses}>
@@ -496,6 +564,74 @@ const Sell = () => {
                         </div>
                     </div>
                 );
+            case "review":
+                return (
+                    <div className="space-y-6">
+                        <div className="rounded-xl border border-[#7465A8]/40 bg-[#7465A8]/10 p-4 text-sm text-slate-100">
+                            <p className="font-semibold uppercase tracking-[0.18em] text-[#C1B4FF]">Final review</p>
+                            <p className="mt-2 text-slate-200">
+                                Check every field before publishing. Use Back to make edits—the submit button will post the
+                                contract immediately to your marketplace portfolio.
+                            </p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            {[{
+                                label: "Listing Title",
+                                value: form.title || "Not provided",
+                            }, {
+                                label: "Asking Price",
+                                value: form.price ? `$${Number(form.price).toLocaleString()}` : "Not provided",
+                            }, {
+                                label: "Delivery Date",
+                                value: form.deliveryDate || "Not provided",
+                            }, {
+                                label: "Delivery Format",
+                                value: form.deliveryFormat || "Not provided",
+                            }, {
+                                label: "Effective Date",
+                                value: form.effectiveDate || "Not provided",
+                            }, {
+                                label: "Platform",
+                                value: form.platformName || "Not provided",
+                            }, {
+                                label: "Seller",
+                                value: form.sellerFullName || "Not provided",
+                            }, {
+                                label: "Entity Type",
+                                value: form.sellerEntityType || "Not provided",
+                            }].map((item) => (
+                                <div key={item.label} className="rounded-lg border border-slate-800/70 bg-slate-950/50 p-4">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{item.label}</p>
+                                    <p className="mt-2 text-sm text-slate-100">{item.value}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="space-y-4 rounded-xl border border-slate-800/70 bg-slate-950/40 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Data Description</p>
+                            <p className="text-sm text-slate-200 whitespace-pre-line">
+                                {form.dataDescription || "No description provided yet."}
+                            </p>
+                        </div>
+                        <div className="space-y-4 rounded-xl border border-slate-800/70 bg-slate-950/40 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Attachments</p>
+                            <ul className="space-y-2 text-sm text-slate-200">
+                                <li className="flex items-center justify-between gap-3">
+                                    <span>Data Sample</span>
+                                    <span className="text-slate-400">{snippet ? snippet.name : "Not attached"}</span>
+                                </li>
+                                <li className="flex items-center justify-between gap-3">
+                                    <span>Supporting Terms</span>
+                                    <span className="text-slate-400">
+                                        {supportingTermsFile ? supportingTermsFile.name : "Not attached"}
+                                    </span>
+                                </li>
+                            </ul>
+                            <Button type="button" onClick={openAgreementModal} className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                                Preview Agreement
+                            </Button>
+                        </div>
+                    </div>
+                );
             default:
                 return null;
         }
@@ -513,6 +649,30 @@ const Sell = () => {
                                 <p className="text-sm text-slate-400">
                                     Provide the core commercial terms, delivery requirements, and legal agreement to list a new contract.
                                 </p>
+                            </div>
+                            <div className="space-y-4">
+                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Flow Overview</p>
+                                <ol className="grid gap-4 md:grid-cols-5">
+                                    {flowStages.map((stage, index) => (
+                                        <li
+                                            key={stage.title}
+                                            className="relative flex h-full flex-col gap-2 rounded-xl border border-slate-800/70 bg-slate-950/40 p-4"
+                                        >
+                                            <div>
+                                                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00D1FF]">
+                                                    Step {index + 1}
+                                                </p>
+                                                <p className="mt-2 text-sm font-semibold text-white">{stage.title}</p>
+                                            </div>
+                                            <p className="text-xs text-slate-300">{stage.description}</p>
+                                            {index < flowStages.length - 1 && (
+                                                <span className="absolute right-[-12px] top-1/2 hidden -translate-y-1/2 text-lg text-slate-600 md:block">
+                                                    ➝
+                                                </span>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ol>
                             </div>
                             {message && (
                                 <p className="rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-3 text-sm text-slate-200">
