@@ -7,7 +7,7 @@ const sidebarWidth = "clamp(220px, 11.111vw, 280px)";
 
 const Layout = ({ children, onLogout }) => (
     <div
-        className="relative min-h-screen overflow-hidden bg-[#050912] px-4 py-6 font-sans text-contrast sm:px-6 sm:py-8 lg:px-12 lg:py-12"
+        className="relative min-h-screen overflow-hidden bg-[#050912] px-6 py-8 font-sans text-contrast sm:px-10 sm:py-12 lg:px-20 lg:py-20"
         style={{
             backgroundImage:
                 "radial-gradient(circle at 15% 20%, rgba(0, 209, 255, 0.16), transparent 55%), " +
@@ -20,7 +20,7 @@ const Layout = ({ children, onLogout }) => (
             Skip to main content
         </a>
         <div
-            className="relative mx-auto flex min-h-screen w-full max-w-[1620px] flex-col gap-6 px-4 py-8 lg:flex-row lg:gap-8 lg:px-10 lg:py-12"
+            className="relative mx-auto flex min-h-screen w-full max-w-[1620px] flex-col gap-6 px-6 py-12 lg:flex-row lg:gap-8 lg:px-16 lg:py-16"
             style={{ "--sidebar-width": sidebarWidth }}
         >
             <Sidebar onLogout={onLogout} sidebarWidth={sidebarWidth} />
@@ -28,7 +28,7 @@ const Layout = ({ children, onLogout }) => (
                 <Header onLogout={onLogout} showNavigation={false} />
                 <main id="main-content" tabIndex="-1" className="flex-1 overflow-y-auto">
                     <div
-                        className="w-full px-6 pb-12 pt-8 sm:px-9 lg:px-14 [&_.grid]:px-3 [&_.grid]:py-3 [&_.grid]:sm:px-4 [&_.grid]:sm:py-4 [&_.grid]:lg:px-6 [&_.grid]:lg:py-6"
+                        className="w-full px-8 pb-12 pt-8 sm:px-12 lg:px-20 [&_.grid]:px-3 [&_.grid]:py-3 [&_.grid]:sm:px-4 [&_.grid]:sm:py-4 [&_.grid]:lg:px-6 [&_.grid]:lg:py-6"
                     >
                         {children}
                     </div>
