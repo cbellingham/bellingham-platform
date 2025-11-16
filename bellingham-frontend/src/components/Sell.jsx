@@ -683,8 +683,8 @@ const Sell = () => {
                                 <div>
                                     <div className="flex flex-wrap items-center justify-between gap-3">
                                         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                                            Step <span className="numeric-text">{currentStep + 1}</span> of{' '}
-                                            <span className="numeric-text">{steps.length}</span>
+                                            Step <span className="font-mono tabular-nums">{currentStep + 1}</span> of{' '}
+                                            <span className="font-mono tabular-nums">{steps.length}</span>
                                         </p>
                                         <span className="text-sm font-semibold text-white">{steps[currentStep].title}</span>
                                     </div>
@@ -746,7 +746,7 @@ const Sell = () => {
                                             <tr key={c.id} className="bg-slate-950/40">
                                                 <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">{c.title}</td>
                                                 <td className="px-4 py-3 md:px-5 md:py-3.5">{c.buyerUsername || "-"}</td>
-                                                <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${c.price}</td>
+                                                <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB] font-mono tabular-nums">${c.price}</td>
                                                 <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{c.deliveryDate}</td>
                                                 <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                     <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">

@@ -65,7 +65,7 @@ const History = () => {
                                             <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">{c.title}</td>
                                             <td className="px-4 py-3 md:px-5 md:py-3.5">{c.seller}</td>
                                             <td className="px-4 py-3 md:px-5 md:py-3.5">{c.buyerUsername || "-"}</td>
-                                            <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${c.price}</td>
+                                            <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB] font-mono tabular-nums">${c.price}</td>
                                             <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{c.deliveryDate}</td>
                                         </tr>
                                     ))}

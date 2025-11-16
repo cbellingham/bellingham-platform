@@ -188,7 +188,7 @@ const Dashboard = () => {
                                                         {contract.title}
                                                     </td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">{contract.seller}</td>
-                                                    <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB] font-mono tabular-nums">
                                                         {formatContractPrice(contract)}
                                                     </td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">

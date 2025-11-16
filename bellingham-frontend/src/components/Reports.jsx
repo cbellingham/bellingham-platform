@@ -346,10 +346,10 @@ const Reports = () => {
                                                                 {contract.title || "Untitled Contract"}
                                                             </p>
                                                             <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
-                                                                <span className="numeric-text">{allocation}%</span> of portfolio
+                                                                <span className="font-mono tabular-nums">{allocation}%</span> of portfolio
                                                             </p>
                                                             <p className="text-xs text-slate-300">
-                                                                Value <span className="numeric-text">${price.toFixed(2)}</span>
+                                                                Value <span className="font-mono tabular-nums">${price.toFixed(2)}</span>
                                                             </p>
                                                         </div>
                                                     </div>
@@ -381,10 +381,10 @@ const Reports = () => {
                                                         <p className="text-base font-semibold text-white">{contract.title}</p>
                                                     </div>
                                                     <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
-                                                        Allocation <span className="numeric-text">{allocation}%</span>
+                                                        Allocation <span className="font-mono tabular-nums">{allocation}%</span>
                                                     </p>
                                                     <p className="text-sm text-slate-300">
-                                                        Value <span className="numeric-text">${price.toFixed(2)}</span>
+                                                        Value <span className="font-mono tabular-nums">${price.toFixed(2)}</span>
                                                     </p>
                                                     <p className="text-sm text-slate-300">Purchased {formatDate(contract.purchaseDate)}</p>
                                                     <p className="text-sm text-slate-300">Delivery {formatDate(contract.deliveryDate)}</p>
@@ -425,7 +425,7 @@ const Reports = () => {
                                                     >
                                                         <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">{contract.title}</td>
                                                         <td className="px-4 py-3 md:px-5 md:py-3.5">{contract.seller}</td>
-                                                        <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${contract.price}</td>
+                                                        <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB] font-mono tabular-nums">${contract.price}</td>
                                                         <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{contract.deliveryDate}</td>
                                                         <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                             <div className="flex flex-wrap gap-2">
@@ -466,7 +466,7 @@ const Reports = () => {
                             </div>
 
                             <p className="text-lg font-semibold text-[#00D1FF]">
-                                Portfolio Value <span className="numeric-text">${totalValue.toFixed(2)}</span>
+                                Portfolio Value <span className="font-mono tabular-nums">${totalValue.toFixed(2)}</span>
                             </p>
                         </div>
                         </div>
