@@ -22,6 +22,13 @@ cd bellingham-datafutures
 ./mvnw spring-boot:run
 ```
 
+To run the API without PostgreSQL (e.g., for controller testing) export
+`SPRING_PROFILES_ACTIVE=test` before starting. This reuses the same H2
+settings defined in `src/test/resources/application-test.properties` and
+auto-creates the schema so you can exercise endpoints without any
+external database. Remember to remove the environment variable when you
+need to point the service back to PostgreSQL.
+
 ### Frontend
 
 ```bash
