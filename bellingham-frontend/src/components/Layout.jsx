@@ -1,42 +1,107 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./Header";
 import NotificationPopup from "./NotificationPopup";
 import Sidebar from "./Sidebar";
 
 const sidebarWidth = "clamp(220px, 11.111vw, 280px)";
 
-const Layout = ({ children, onLogout }) => (
-    <div
-        className="relative min-h-screen overflow-hidden bg-[#050912] px-8 py-10 font-sans text-contrast sm:px-12 sm:py-16 lg:px-24 lg:py-24"
-        style={{
-            backgroundImage:
-                "radial-gradient(circle at 15% 20%, rgba(0, 209, 255, 0.16), transparent 55%), " +
-                "radial-gradient(circle at 85% 10%, rgba(116, 101, 168, 0.18), transparent 60%), " +
-                "radial-gradient(circle at 50% 75%, rgba(59, 174, 171, 0.12), transparent 65%), " +
-                "linear-gradient(180deg, #0A1021 0%, #050912 60%, #03050D 100%)",
-        }}
-    >
-        <a href="#main-content" className="skip-link">
-            Skip to main content
-        </a>
-        <div
-            className="relative mx-auto flex min-h-screen w-full max-w-[1620px] flex-col gap-6 px-6 py-12 lg:flex-row lg:gap-8 lg:px-16 lg:py-16"
-            style={{ "--sidebar-width": sidebarWidth }}
-        >
-            <Sidebar onLogout={onLogout} sidebarWidth={sidebarWidth} />
-            <div className="flex flex-1 flex-col rounded-[28px] border border-[#1B2543]/70 bg-[linear-gradient(160deg,rgba(23,34,58,0.95)_0%,rgba(9,14,27,0.92)_100%)] shadow-[0_50px_140px_rgba(5,9,20,0.55)] backdrop-blur-xl">
-                <Header onLogout={onLogout} showNavigation={false} />
-                <main id="main-content" tabIndex="-1" className="flex-1 overflow-y-auto">
-                    <div
-                        className="w-full px-8 pb-12 pt-8 sm:px-12 lg:px-20 [&_.grid]:px-3 [&_.grid]:py-3 [&_.grid]:sm:px-4 [&_.grid]:sm:py-4 [&_.grid]:lg:px-6 [&_.grid]:lg:py-6"
-                    >
-                        {children}
-                    </div>
-                </main>
+const layoutStyles = {
+    root: {
+        position: "relative",
+        minHeight: "100vh",
+        overflow: "hidden",
+        backgroundColor: "#050912",
+        color: "#E4EBFF",
+        fontFamily: "'Inter', 'Inter var', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        padding: "clamp(2rem, 4vw, 6rem)",
+        backgroundImage: [
+            "radial-gradient(circle at 15% 20%, rgba(0, 209, 255, 0.16), transparent 55%)",
+            "radial-gradient(circle at 85% 10%, rgba(116, 101, 168, 0.18), transparent 60%)",
+            "radial-gradient(circle at 50% 75%, rgba(59, 174, 171, 0.12), transparent 65%)",
+            "linear-gradient(180deg, #0A1021 0%, #050912 60%, #03050D 100%)",
+        ].join(", "),
+    },
+    skipLink: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        transform: "translateY(-120%)",
+        padding: "0.75rem 1.25rem",
+        backgroundColor: "rgba(27, 38, 59, 0.95)",
+        color: "inherit",
+        fontWeight: 600,
+        borderBottomRightRadius: "0.75rem",
+        boxShadow: "0 10px 30px rgba(13, 27, 42, 0.45)",
+        transition: "transform 0.2s ease",
+        zIndex: 50,
+        textDecoration: "none",
+    },
+    skipLinkFocused: {
+        transform: "translateY(0)",
+    },
+    shell: {
+        position: "relative",
+        margin: "0 auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+        minHeight: "100vh",
+        width: "100%",
+        maxWidth: "1620px",
+        padding: "clamp(2rem, 3vw, 4rem)",
+        boxSizing: "border-box",
+    },
+    cardWrapper: {
+        display: "flex",
+        flex: 1,
+        flexDirection: "column",
+        borderRadius: "28px",
+        border: "1px solid rgba(27, 37, 67, 0.7)",
+        backgroundImage: "linear-gradient(160deg, rgba(23,34,58,0.95) 0%, rgba(9,14,27,0.92) 100%)",
+        boxShadow: "0 50px 140px rgba(5, 9, 20, 0.55)",
+        backdropFilter: "blur(24px)",
+        minHeight: 0,
+    },
+    main: {
+        flex: 1,
+        overflowY: "auto",
+        outline: "none",
+    },
+    mainInner: {
+        width: "100%",
+        padding: "clamp(2rem, 3vw, 3.5rem) clamp(2rem, 4vw, 5rem) clamp(2.5rem, 4vw, 4.5rem)",
+        boxSizing: "border-box",
+    },
+};
+
+const Layout = ({ children, onLogout }) => {
+    const [skipLinkFocused, setSkipLinkFocused] = useState(false);
+
+    return (
+        <div style={layoutStyles.root}>
+            <a
+                href="#main-content"
+                style={{
+                    ...layoutStyles.skipLink,
+                    ...(skipLinkFocused ? layoutStyles.skipLinkFocused : {}),
+                }}
+                onFocus={() => setSkipLinkFocused(true)}
+                onBlur={() => setSkipLinkFocused(false)}
+            >
+                Skip to main content
+            </a>
+            <div style={{ ...layoutStyles.shell, "--sidebar-width": sidebarWidth }}>
+                <Sidebar onLogout={onLogout} sidebarWidth={sidebarWidth} />
+                <div style={layoutStyles.cardWrapper}>
+                    <Header onLogout={onLogout} showNavigation={false} />
+                    <main id="main-content" tabIndex="-1" style={layoutStyles.main}>
+                        <div style={layoutStyles.mainInner}>{children}</div>
+                    </main>
+                </div>
             </div>
+            <NotificationPopup />
         </div>
-        <NotificationPopup />
-    </div>
-);
+    );
+};
 
 export default Layout;

@@ -1,23 +1,200 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
 import { AuthContext } from "../context";
 
+const useIsDesktop = () => {
+    const getIsDesktop = () =>
+        typeof window === "undefined" ? true : window.matchMedia("(min-width: 1024px)").matches;
+
+    const [isDesktop, setIsDesktop] = useState(getIsDesktop);
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return undefined;
+        }
+
+        const mediaQuery = window.matchMedia("(min-width: 1024px)");
+        const handler = (event) => setIsDesktop(event.matches);
+
+        if (mediaQuery.addEventListener) {
+            mediaQuery.addEventListener("change", handler);
+        } else {
+            mediaQuery.addListener(handler);
+        }
+
+        return () => {
+            if (mediaQuery.removeEventListener) {
+                mediaQuery.removeEventListener("change", handler);
+            } else {
+                mediaQuery.removeListener(handler);
+            }
+        };
+    }, []);
+
+    return isDesktop;
+};
+
+const sidebarStyles = {
+    wrapper: (isDesktop) => ({
+        position: "relative",
+        zIndex: 40,
+        flexShrink: 0,
+        display: isDesktop ? "block" : "none",
+        width: "var(--sidebar-width)",
+    }),
+    aside: {
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+        borderRadius: "28px",
+        border: "1px solid rgba(27, 39, 68, 0.5)",
+        backgroundImage:
+            "linear-gradient(185deg, rgba(20,33,60,0.95) 0%, rgba(10,18,36,0.92) 100%)",
+        padding: "2.75rem 2rem",
+        color: "#F7FAFF",
+        boxShadow: "0 45px 120px rgba(5, 10, 25, 0.6)",
+        backdropFilter: "blur(24px)",
+        boxSizing: "border-box",
+    },
+    brandButton: {
+        display: "flex",
+        alignItems: "center",
+        gap: "0.75rem",
+        borderRadius: "20px",
+        border: "1px solid transparent",
+        backgroundImage: "linear-gradient(145deg, rgba(22,38,70,0.85), rgba(12,22,46,0.75))",
+        padding: "0.5rem 0.75rem",
+        cursor: "pointer",
+        textAlign: "left",
+        color: "inherit",
+        textDecoration: "none",
+    },
+    brandMark: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "2.75rem",
+        width: "2.75rem",
+        borderRadius: "20px",
+        backgroundImage:
+            "radial-gradient(circle at 30% 20%, rgba(77,209,255,0.85), rgba(116,101,168,0.65))",
+        fontSize: "1rem",
+        fontWeight: 700,
+        color: "#0B1426",
+        boxShadow: "0 16px 40px rgba(45, 130, 210, 0.6)",
+    },
+    brandText: {
+        display: "flex",
+        flexDirection: "column",
+        lineHeight: 1.1,
+    },
+    brandLabel: {
+        fontSize: "0.6rem",
+        fontWeight: 600,
+        letterSpacing: "0.42em",
+        textTransform: "uppercase",
+        color: "#8BB8FF",
+    },
+    brandName: {
+        fontSize: "0.95rem",
+        fontWeight: 600,
+        color: "#FFFFFF",
+    },
+    navSections: {
+        marginTop: "2rem",
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+        overflowY: "auto",
+        paddingRight: "0.25rem",
+    },
+    section: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.75rem",
+    },
+    sectionHeading: {
+        fontSize: "0.6rem",
+        fontWeight: 600,
+        letterSpacing: "0.44em",
+        textTransform: "uppercase",
+        color: "rgba(76, 111, 168, 0.8)",
+        paddingLeft: "0.25rem",
+    },
+    navGroup: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.4rem",
+    },
+    footer: {
+        marginTop: "2rem",
+        borderTop: "1px solid rgba(27, 39, 68, 0.5)",
+        paddingTop: "1.5rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.75rem",
+    },
+    ctaCard: {
+        borderRadius: "20px",
+        border: "1px solid rgba(47, 79, 120, 0.45)",
+        backgroundImage: "linear-gradient(150deg, rgba(34,64,109,0.28), rgba(25,44,78,0.2))",
+        padding: "1.25rem",
+        fontSize: "0.9rem",
+        color: "#E4EBFF",
+        boxShadow: "0 20px 60px rgba(10, 18, 36, 0.55)",
+    },
+    ctaTitle: {
+        margin: 0,
+        fontWeight: 600,
+        color: "#FFFFFF",
+    },
+    ctaBody: {
+        marginTop: "0.35rem",
+        marginBottom: 0,
+        fontSize: "0.8rem",
+        color: "rgba(226, 234, 255, 0.85)",
+    },
+    createListingButton: {
+        width: "100%",
+        border: "1px solid rgba(77, 209, 255, 0.3)",
+        backgroundImage: "linear-gradient(145deg, rgba(35,70,120,0.9), rgba(20,40,75,0.85))",
+        color: "#9BD8FF",
+        boxShadow: "0 20px 45px rgba(34, 64, 109, 0.45)",
+        marginTop: "1rem",
+    },
+    logoutButton: {
+        width: "100%",
+        justifyContent: "center",
+        border: "1px solid rgba(34, 54, 90, 0.7)",
+        backgroundColor: "rgba(17, 29, 54, 0.85)",
+        color: "#E4EBFF",
+    },
+};
+
 const Sidebar = ({ onLogout, sidebarWidth }) => {
     const navigate = useNavigate();
     const { permissions = [], role } = useContext(AuthContext);
+    const isDesktop = useIsDesktop();
 
-    const filteredNavItems = useMemo(() => navItems.filter((item) => {
-        if (item.requiresRole && item.requiresRole !== role) {
-            return false;
-        }
-        if (item.requiresPermission && !permissions.includes(item.requiresPermission)) {
-            return false;
-        }
-        return true;
-    }), [permissions, role]);
+    const filteredNavItems = useMemo(
+        () =>
+            navItems.filter((item) => {
+                if (item.requiresRole && item.requiresRole !== role) {
+                    return false;
+                }
+                if (item.requiresPermission && !permissions.includes(item.requiresPermission)) {
+                    return false;
+                }
+                return true;
+            }),
+        [permissions, role],
+    );
 
     const groupedNavItems = useMemo(() => {
         const sections = new Map();
@@ -38,35 +215,21 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
     };
 
     return (
-        <div
-            className="relative z-40 hidden flex-shrink-0 lg:block"
-            style={{ "--sidebar-width": sidebarWidth }}
-        >
-            <aside
-                className="fixed inset-y-0 left-0 z-50 flex h-full flex-col overflow-hidden border-r border-[#1B2744]/80 bg-[linear-gradient(185deg,rgba(20,33,60,0.95)_0%,rgba(10,18,36,0.92)_100%)] px-6 pb-9 pt-10 text-slate-100 shadow-[0_55px_140px_rgba(5,10,25,0.7)] backdrop-blur-2xl lg:static lg:z-auto lg:rounded-[28px] lg:border lg:border-[#1B2744]/80 lg:px-8 lg:py-11 lg:shadow-[0_45px_120px_rgba(5,10,25,0.6)]"
-                style={{ width: "var(--sidebar-width)", flexBasis: "var(--sidebar-width)" }}
-            >
-                <div className="flex items-center justify-between gap-3">
-                    <button
-                        type="button"
-                        onClick={() => handleNavigate("/")}
-                        className="group flex items-center gap-3 rounded-2xl border border-transparent bg-[linear-gradient(145deg,rgba(22,38,70,0.85),rgba(12,22,46,0.75))] px-3 py-2 text-left transition-colors hover:border-[#4DD1FF]/50 hover:bg-[rgba(22,38,70,0.95)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050912]"
-                    >
-                        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[radial-gradient(circle_at_30%_20%,rgba(77,209,255,0.85),rgba(116,101,168,0.65))] text-base font-bold text-slate-950 shadow-[0_16px_40px_rgba(45,130,210,0.6)]">
-                            BM
-                        </span>
-                        <span className="flex flex-col leading-tight">
-                            <span className="text-[0.6rem] font-semibold uppercase tracking-[0.42em] text-[#8BB8FF]">Bellingham</span>
-                            <span className="text-sm font-semibold text-white">Markets Platform</span>
-                        </span>
-                    </button>
-                </div>
+        <div style={{ ...sidebarStyles.wrapper(isDesktop), "--sidebar-width": sidebarWidth }}>
+            <aside style={sidebarStyles.aside}>
+                <button type="button" onClick={() => handleNavigate("/")} style={sidebarStyles.brandButton}>
+                    <span style={sidebarStyles.brandMark}>BM</span>
+                    <span style={sidebarStyles.brandText}>
+                        <span style={sidebarStyles.brandLabel}>Bellingham</span>
+                        <span style={sidebarStyles.brandName}>Markets Platform</span>
+                    </span>
+                </button>
 
-                <div className="mt-8 flex-1 space-y-8 overflow-y-auto pr-1">
+                <div style={sidebarStyles.navSections}>
                     {Array.from(groupedNavItems.entries()).map(([section, items]) => (
-                        <div key={section} className="space-y-3">
-                            <p className="px-1 text-[0.6rem] font-semibold uppercase tracking-[0.44em] text-[#4C6FA8]/80">{section}</p>
-                            <div className="space-y-1.5">
+                        <div key={section} style={sidebarStyles.section}>
+                            <p style={sidebarStyles.sectionHeading}>{section}</p>
+                            <div style={sidebarStyles.navGroup}>
                                 {items.map((item) => (
                                     <NavMenuItem key={item.path} item={item} layout="sidebar" onNavigate={handleNavigate} />
                                 ))}
@@ -75,26 +238,18 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
                     ))}
                 </div>
 
-                <div className="mt-8 space-y-3 border-t border-[#1B2744]/80 pt-6">
-                    <div className="rounded-2xl border border-[#2F4F78]/70 bg-[linear-gradient(150deg,rgba(34,64,109,0.28),rgba(25,44,78,0.2))] p-4 text-sm text-slate-200 shadow-[0_20px_60px_rgba(10,18,36,0.55)]">
-                        <p className="font-semibold text-white">Need to move quickly?</p>
-                        <p className="mt-1 text-xs text-slate-300/85">
+                <div style={sidebarStyles.footer}>
+                    <div style={sidebarStyles.ctaCard}>
+                        <p style={sidebarStyles.ctaTitle}>Need to move quickly?</p>
+                        <p style={sidebarStyles.ctaBody}>
                             Launch a new marketplace listing right from here.
                         </p>
-                        <Button
-                            variant="primary"
-                            className="mt-4 w-full border border-[#4DD1FF]/30 bg-[linear-gradient(145deg,rgba(35,70,120,0.9),rgba(20,40,75,0.85))] text-[#9BD8FF] shadow-[0_20px_45px_rgba(34,64,109,0.45)] hover:border-[#4DD1FF]/60"
-                            onClick={() => handleNavigate("/sell")}
-                        >
+                        <Button variant="primary" style={sidebarStyles.createListingButton} onClick={() => handleNavigate("/sell")}>
                             Create Listing
                         </Button>
                     </div>
                     {onLogout && (
-                        <Button
-                            variant="ghost"
-                            className="w-full justify-center border border-[#22365A]/70 bg-[#111D36]/85 text-slate-200 hover:border-[#4DD1FF]/60 hover:text-white"
-                            onClick={onLogout}
-                        >
+                        <Button variant="ghost" style={sidebarStyles.logoutButton} onClick={onLogout}>
                             Log Out
                         </Button>
                     )}
