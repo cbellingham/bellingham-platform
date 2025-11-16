@@ -16,7 +16,10 @@ const Layout = ({ children, onLogout }) => (
                 "linear-gradient(180deg, #0A1021 0%, #050912 60%, #03050D 100%)",
         }}
     >
-        <a href="#main-content" className="skip-link">
+        <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-0 focus:top-0 focus:z-50 focus:translate-y-0 focus:rounded-br-2xl focus:bg-[#1B263B]/95 focus:px-5 focus:py-3 focus:text-contrast focus:shadow-[0_18px_45px_rgba(5,9,20,0.45)]"
+        >
             Skip to main content
         </a>
         <div

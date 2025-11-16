@@ -3,170 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --bg-color: #0d1b2a;
-  --bg-surface: #1b263b;
-  --bg-gradient: linear-gradient(160deg, #0d1b2a 0%, #1b263b 100%);
-  --text-color: #e0e6ed;
-  --focus-ring: rgba(119, 141, 169, 0.65);
-  --section-spacing-xs: clamp(1.5rem, 3vw, 2.25rem);
-  --section-spacing-sm: clamp(2rem, 4vw, 3rem);
-  --section-spacing-md: clamp(2.5rem, 5vw, 3.75rem);
-  --section-spacing-lg: clamp(3rem, 6vw, 4.5rem);
-  --section-spacing-xl: clamp(4rem, 8vw, 6rem);
+  --bg-color: #03050d;
+  --bg-gradient:
+    radial-gradient(circle at 20% 20%, rgba(0, 209, 255, 0.16), transparent 55%),
+    radial-gradient(circle at 80% 5%, rgba(116, 101, 168, 0.2), transparent 60%),
+    radial-gradient(circle at 55% 75%, rgba(59, 174, 171, 0.16), transparent 65%),
+    linear-gradient(180deg, #0a1021 0%, #050912 60%, #03050d 100%);
 }
 
-a {
-  font-weight: 500;
-  text-decoration: inherit;
-  color: inherit;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-width: 320px;
   min-height: 100vh;
   background-color: var(--bg-color);
   background-image: var(--bg-gradient);
   background-attachment: fixed;
-  color: var(--text-color);
-  font-family: 'Inter', sans-serif;
+  color: #e0e6ed;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-.numeric-text {
-  font-family: 'Roboto Mono', 'JetBrains Mono', monospace;
-  font-variant-numeric: tabular-nums;
-}
-
-.skip-link {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translateY(-120%);
-  padding: 0.75rem 1.25rem;
-  background-color: rgba(27, 38, 59, 0.95);
-  color: var(--text-color);
-  font-weight: 600;
-  border-bottom-right-radius: 0.75rem;
-  box-shadow: 0 10px 30px rgba(13, 27, 42, 0.45);
-  transition: transform 0.2s ease;
-  z-index: 50;
-}
-
-.skip-link:focus,
-.skip-link:focus-visible {
-  transform: translateY(0);
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid rgba(119, 141, 169, 0.35);
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: rgba(27, 38, 59, 0.85);
-  color: var(--text-color);
-  box-shadow: 0 15px 35px rgba(13, 27, 42, 0.35);
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #778da9;
-  background-color: rgba(27, 38, 59, 0.95);
-}
-button:focus,
-button:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg-color: #f5f7fa;
-    --bg-surface: #e4ebf7;
-    --bg-gradient: linear-gradient(160deg, #f5f7fa 0%, #dfe7f5 100%);
-    --text-color: #1b263b;
-    --focus-ring: rgba(29, 78, 216, 0.55);
-  }
-  a:hover {
-    color: #1d4ed8;
-  }
-  button {
-    background-color: #1b263b;
-    color: #e0e6ed;
-    border-color: rgba(119, 141, 169, 0.45);
-  }
-}
-
-@layer utilities {
-  .section-spacing-xs {
-    padding-block: var(--section-spacing-xs);
-  }
-
-  .section-spacing-sm {
-    padding-block: var(--section-spacing-sm);
-  }
-
-  .section-spacing-md {
-    padding-block: var(--section-spacing-md);
-  }
-
-  .section-spacing-lg {
-    padding-block: var(--section-spacing-lg);
-  }
-
-  .section-spacing-xl {
-    padding-block: var(--section-spacing-xl);
-  }
-
-  .section-spacing-top-xs {
-    padding-top: var(--section-spacing-xs);
-  }
-
-  .section-spacing-top-sm {
-    padding-top: var(--section-spacing-sm);
-  }
-
-  .section-spacing-top-md {
-    padding-top: var(--section-spacing-md);
-  }
-
-  .section-spacing-top-lg {
-    padding-top: var(--section-spacing-lg);
-  }
-
-  .section-spacing-top-xl {
-    padding-top: var(--section-spacing-xl);
-  }
-
-  .section-spacing-bottom-xs {
-    padding-bottom: var(--section-spacing-xs);
-  }
-
-  .section-spacing-bottom-sm {
-    padding-bottom: var(--section-spacing-sm);
-  }
-
-  .section-spacing-bottom-md {
-    padding-bottom: var(--section-spacing-md);
-  }
-
-  .section-spacing-bottom-lg {
-    padding-bottom: var(--section-spacing-lg);
-  }
-
-  .section-spacing-bottom-xl {
-    padding-bottom: var(--section-spacing-xl);
-  }
 }

@@ -409,7 +409,7 @@ const Buy = () => {
                                                 >
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">{contract.title}</td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">{contract.seller}</td>
-                                                    <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${contract.price}</td>
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB] font-mono tabular-nums">${contract.price}</td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{contract.deliveryDate}</td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                         <span

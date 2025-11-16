@@ -208,7 +208,7 @@ const formatCurrency = (value) => {
         maximumFractionDigits: 2,
     }).format(numericValue);
 
-    return <span className="numeric-text">{formatted}</span>;
+    return <span className="font-mono tabular-nums">{formatted}</span>;
 };
 
 const formatDate = (value) => {
