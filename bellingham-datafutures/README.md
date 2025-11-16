@@ -74,6 +74,22 @@ Start the service with the Maven wrapper:
 ./mvnw spring-boot:run
 ```
 
+### Using the in-memory profile
+
+For controller testing or quick manual QA you can run the API against the
+same in-memory H2 database that backs the unit tests. Export the `test`
+profile before starting the service and Spring Boot will reuse the
+settings from `src/test/resources/application-test.properties`:
+
+```bash
+export SPRING_PROFILES_ACTIVE=test
+./mvnw spring-boot:run
+```
+
+This profile auto-creates the schema on startup so no PostgreSQL
+instance is required. Be sure to unset the environment variable when you
+are ready to point the service back at PostgreSQL.
+
 Or build a runnable jar and execute it manually:
 
 ```bash
