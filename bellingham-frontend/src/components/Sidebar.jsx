@@ -6,13 +6,18 @@ import NavMenuItem from "./ui/NavMenuItem";
 import { AuthContext } from "../context";
 
 const useIsDesktop = () => {
-    const getIsDesktop = () =>
-        typeof window === "undefined" ? true : window.matchMedia("(min-width: 1024px)").matches;
+    const getIsDesktop = () => {
+        if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+            return true;
+        }
+
+        return window.matchMedia("(min-width: 1024px)").matches;
+    };
 
     const [isDesktop, setIsDesktop] = useState(getIsDesktop);
 
     useEffect(() => {
-        if (typeof window === "undefined") {
+        if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
             return undefined;
         }
 
