@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Header from "./Header";
 import NotificationPopup from "./NotificationPopup";
 import Sidebar from "./Sidebar";
@@ -39,7 +39,6 @@ const Layout = ({ children, onLogout }) => (
             </div>
             <NotificationPopup />
         </div>
-    );
-};
-
+    </div>
+);
 export default Layout;
