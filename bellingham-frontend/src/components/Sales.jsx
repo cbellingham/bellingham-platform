@@ -145,7 +145,7 @@ const Sales = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">{c.buyerUsername}</td>
-                                                    <td className="numeric-text px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB]">${c.price}</td>
+                                                    <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB] font-mono tabular-nums">${c.price}</td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">{c.deliveryDate}</td>
                                                     <td className="px-4 py-3 md:px-5 md:py-3.5">
                                                         <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">

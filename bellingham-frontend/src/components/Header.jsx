@@ -287,7 +287,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                             <NotificationBellIcon />
                             <span style={srOnlyStyles}>Open notifications</span>
                             {unreadCount > 0 && (
-                                <span style={headerStyles.notificationBadge}>
+                                <span className="absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#7465A8] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-white shadow-[0_10px_30px_rgba(116,101,168,0.6)] font-mono tabular-nums">
                                     {unreadCount > 99 ? "99+" : unreadCount}
                                 </span>
                             )}
