@@ -15,7 +15,7 @@ import Logo from "./components/Logo";
 import Notifications from "./components/Notifications";
 import AdminUserAccess from "./components/AdminUserAccess";
 import Layout from "./components/Layout";
-import { AuthContext } from './context';
+import { AuthContext } from "./context";
 
 const App = () => {
     const { isAuthenticated, permissions, role, profile, isProfileLoading } = useContext(AuthContext);
