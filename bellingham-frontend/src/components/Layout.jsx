@@ -5,7 +5,7 @@ import Sidebar from "./Sidebar";
 
 const sidebarWidth = "clamp(220px, 11.111vw, 280px)";
 
-const Layout = ({ children, onLogout }) => (
+const Layout = ({ children, onLogout, showNavigation = true }) => (
     <div
         className="relative min-h-screen overflow-hidden bg-[#050912] px-8 py-10 font-sans text-contrast sm:px-12 sm:py-16 lg:px-24 lg:py-24"
         style={{
@@ -28,7 +28,7 @@ const Layout = ({ children, onLogout }) => (
         >
             <Sidebar onLogout={onLogout} sidebarWidth={sidebarWidth} />
             <div className="flex flex-1 flex-col rounded-[28px] border border-[#1B2543]/70 bg-[linear-gradient(160deg,rgba(23,34,58,0.95)_0%,rgba(9,14,27,0.92)_100%)] shadow-[0_50px_140px_rgba(5,9,20,0.55)] backdrop-blur-xl">
-                <Header onLogout={onLogout} showNavigation={false} />
+                <Header onLogout={onLogout} showNavigation={showNavigation} />
                 <main id="main-content" tabIndex="-1" className="flex-1 overflow-y-auto">
                     <div
                         className="w-full px-8 pb-12 pt-8 sm:px-12 lg:px-20 [&_.grid]:px-3 [&_.grid]:py-3 [&_.grid]:sm:px-4 [&_.grid]:sm:py-4 [&_.grid]:lg:px-6 [&_.grid]:lg:py-6"
