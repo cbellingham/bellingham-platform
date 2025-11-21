@@ -4,6 +4,7 @@ import React, {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from "react";
@@ -12,16 +13,9 @@ import ContractDetailsPanel from "./ContractDetailsPanel";
 import Layout from "./Layout";
 import api from "../utils/api";
 import { AuthContext } from "../context";
-import TableSkeleton from "./ui/TableSkeleton";
 import useMarketStream from "../hooks/useMarketStream";
 import { mockContractsSnapshot } from "../data/mock-contracts";
-import {
-    aiRecommendations,
-    marketStats,
-    priceHistory,
-    userPortfolio,
-    volumeData,
-} from "../data/dashboard";
+import Button from "./ui/Button";
 
 const parseNumeric = (value) => {
     if (value === null || value === undefined || value === "") {
@@ -185,265 +179,386 @@ const Dashboard = () => {
         []
     );
 
-    const maxVolume = Math.max(...volumeData.map((d) => d.value));
+    const activeContracts = useMemo(
+        () =>
+            contracts.filter(
+                (contract) => (contract.status || "").toLowerCase() !== "closed"
+            ),
+        [contracts]
+    );
+
+    const totalMarketValue = useMemo(
+        () =>
+            activeContracts.reduce((sum, contract) => {
+                const numeric = contract.numericPrice ?? parseNumeric(contract.price) ?? 0;
+                return sum + numeric;
+            }, 0),
+        [activeContracts]
+    );
+
+    const summaryCards = useMemo(
+        () => [
+            {
+                title: "Active Contracts",
+                value: activeContracts.length,
+                helper: "Live listings across your marketplace",
+                accent: "from-[#00D1FF] to-[#3BAEAB]",
+            },
+            {
+                title: "Total Market Value",
+                value: formatCurrencyValue(totalMarketValue, { maximumFractionDigits: 0 }),
+                helper: "Aggregate price across visible offers",
+                accent: "from-[#4F46E5] to-[#22D3EE]",
+            },
+            {
+                title: "Purchased",
+                value: activeContracts.filter(
+                    (contract) => (contract.status || "").toLowerCase() === "purchased"
+                ).length,
+                helper: "Ready for delivery handoff",
+                accent: "from-[#10B981] to-[#34D399]",
+            },
+        ],
+        [activeContracts, totalMarketValue]
+    );
+
+    const contractTrendPoints = useMemo(() => {
+        const pricedContracts = activeContracts
+            .map((contract, index) => ({
+                label: contract.seller || `Contract ${index + 1}`,
+                value: contract.numericPrice ?? parseNumeric(contract.price) ?? 0,
+            }))
+            .filter((point) => point.value > 0);
+
+        if (pricedContracts.length > 0) {
+            return pricedContracts.slice(0, 6);
+        }
+
+        return [
+            { label: "Week 1", value: 120000 },
+            { label: "Week 2", value: 148000 },
+            { label: "Week 3", value: 132000 },
+            { label: "Week 4", value: 160000 },
+            { label: "Week 5", value: 172500 },
+        ];
+    }, [activeContracts]);
+
+    const maxTrendValue = useMemo(
+        () =>
+            contractTrendPoints.reduce(
+                (max, point) => Math.max(max, point.value || 0),
+                1
+            ),
+        [contractTrendPoints]
+    );
+
+    const trendPointDenominator = Math.max(contractTrendPoints.length - 1, 1);
+    const trendPolyline = contractTrendPoints
+        .map((point, index) => {
+            const x = (index / trendPointDenominator) * 100;
+            const y = 100 - (point.value / maxTrendValue) * 100;
+            return `${x},${y}`;
+        })
+        .join(" ");
+    const trendArea = `0,100 ${trendPolyline} 100,100`;
+
+    const sectorVolumes = useMemo(() => {
+        const counts = activeContracts.reduce((acc, contract) => {
+            const sector = contract.sellerEntityType || "Independent";
+            acc[sector] = (acc[sector] || 0) + 1;
+            return acc;
+        }, {});
+
+        const entries = Object.entries(counts).map(([sector, count]) => ({ sector, count }));
+
+        if (entries.length === 0) {
+            return [
+                { sector: "Energy", count: 3 },
+                { sector: "Climate", count: 2 },
+                { sector: "Market Ops", count: 1 },
+            ];
+        }
+
+        return entries.sort((a, b) => b.count - a.count);
+    }, [activeContracts]);
+
+    const sectorMaxVolume = Math.max(
+        ...sectorVolumes.map((entry) => entry.count),
+        1
+    );
+
+    const featuredContracts = useMemo(
+        () => activeContracts.slice(0, 4),
+        [activeContracts]
+    );
+
+    const recommendations = useMemo(() => {
+        const topValued = [...activeContracts]
+            .filter((contract) => contract.numericPrice !== null)
+            .sort((a, b) => (b.numericPrice ?? 0) - (a.numericPrice ?? 0))[0];
+
+        return [
+            {
+                title: "AI deal flow",
+                detail:
+                    "Route high-signal contracts into pre-approval to compress diligence cycles.",
+                badge: "Strategy",
+            },
+            {
+                title: "Stabilize pricing",
+                detail:
+                    "Use rolling averages on volatile listings to anchor negotiations.",
+                badge: "Pricing",
+            },
+            {
+                title: "Focus on value",
+                detail:
+                    topValued
+                        ? `Prioritize ${topValued.title} while buyer interest is elevated.`
+                        : "Highlight the highest-value listing to accelerate buy-in.",
+                badge: "AI Assist",
+            },
+        ];
+    }, [activeContracts]);
+
+    const handleViewAllContracts = () => {
+        navigate("/buy");
+    };
+
+    const handleViewContract = (contract) => {
+        if (!contract) return;
+        navigate(`/buy?contractId=${encodeURIComponent(contract.id)}`);
+    };
 
     return (
         <Layout onLogout={handleLogout}>
-            <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:grid-cols-[minmax(0,1fr)_320px] xl:gap-8">
-                <main className="order-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6 md:p-7 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
-                    <div className="space-y-5 sm:space-y-6 lg:space-y-7">
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 sm:p-5">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#00D1FF]/80">
-                                            Portfolio
-                                        </p>
-                                        <h3 className="text-xl font-bold text-white">User Positions</h3>
-                                    </div>
-                                    <span className="rounded-full bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold text-[#00D1FF]">
-                                        {formatPercentValue(userPortfolio.dayChange, { maximumFractionDigits: 1 })} today
-                                    </span>
+            <div className="space-y-6 sm:space-y-7 lg:space-y-8">
+                <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h2 className="text-3xl font-bold text-white">Mission Control</h2>
+                            <p className="text-sm text-slate-400">
+                                Track live contracts, spot price shifts, and move on the most actionable recommendations.
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                            <Button variant="ghost" onClick={() => navigate("/sell")}>Create listing</Button>
+                            <Button onClick={() => navigate("/reports")}>View reports</Button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {summaryCards.map((card) => (
+                        <div
+                            key={card.title}
+                            className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-[0_18px_40px_rgba(5,10,25,0.55)]"
+                        >
+                            <div className={`absolute inset-y-0 right-0 w-1/3 bg-gradient-to-br ${card.accent} opacity-50 blur-3xl`} />
+                            <div className="relative space-y-2">
+                                <p className="text-xs uppercase tracking-[0.25em] text-slate-400">{card.title}</p>
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-3xl font-bold text-white">{card.value}</span>
+                                    <span className="text-xs uppercase tracking-[0.18em] text-emerald-300">Live</span>
                                 </div>
-                                <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-slate-200">
-                                    <div className="space-y-1">
-                                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Total Value</p>
-                                        <p className="text-xl font-semibold text-white">
-                                            {formatCurrencyValue(userPortfolio.totalValue)}
-                                        </p>
-                                        <p className="text-xs text-slate-400">Invested: {formatCurrencyValue(userPortfolio.investedCapital)}</p>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Available Cash</p>
-                                        <p className="text-xl font-semibold text-white">
-                                            {formatCurrencyValue(userPortfolio.availableCash)}
-                                        </p>
-                                        <p className="text-xs text-slate-400">Liquid for bids</p>
-                                    </div>
-                                </div>
-                                <div className="mt-5 space-y-3">
-                                    {userPortfolio.allocations.map((allocation) => (
-                                        <div key={allocation.segment} className="space-y-1">
-                                            <div className="flex items-center justify-between text-sm text-slate-200">
-                                                <span className="font-semibold">{allocation.segment}</span>
-                                                <span className="font-mono text-[#3BAEAB]">
-                                                    {formatPercentValue(allocation.weight, { maximumFractionDigits: 0 })}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-xs text-slate-400">
-                                                <span>{formatCurrencyValue(allocation.value)}</span>
-                                                <span className="text-[#00D1FF]">
-                                                    {formatPercentValue(allocation.returnRate, { maximumFractionDigits: 1 })} return
-                                                </span>
-                                            </div>
-                                            <div className="h-2 overflow-hidden rounded-full bg-slate-800">
-                                                <div
-                                                    className="h-full bg-gradient-to-r from-[#00D1FF] via-[#3BAEAB] to-[#00D1FF]"
-                                                    style={{ width: `${Math.min(Math.max(allocation.weight * 100, 0), 100)}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 sm:p-5 space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#00D1FF]/80">Market</p>
-                                        <h3 className="text-xl font-bold text-white">Live Stats</h3>
-                                    </div>
-                                    <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold text-[#00D1FF]">
-                                        Sentiment {formatPercentValue(marketStats.sentimentScore, { maximumFractionDigits: 0 })}
-                                    </span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-3 text-sm text-slate-200">
-                                    <div className="rounded-lg border border-slate-800/70 bg-slate-900/40 p-3 space-y-1">
-                                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Market Value</p>
-                                        <p className="text-lg font-semibold text-white">{formatCurrencyValue(marketStats.totalMarketValue)}</p>
-                                        <p className="text-xs text-slate-400">Across open energy contracts</p>
-                                    </div>
-                                    <div className="rounded-lg border border-slate-800/70 bg-slate-900/40 p-3 space-y-1">
-                                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Daily Volume</p>
-                                        <p className="text-lg font-semibold text-white">{formatCurrencyValue(marketStats.dailyVolume)}</p>
-                                        <p className="text-xs text-slate-400">Rolling 24h settlement</p>
-                                    </div>
-                                    <div className="rounded-lg border border-slate-800/70 bg-slate-900/40 p-3 space-y-1">
-                                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Open Interest</p>
-                                        <p className="text-lg font-semibold text-white">{formatCurrencyValue(marketStats.openInterest)}</p>
-                                        <p className="text-xs text-slate-400">Active positions</p>
-                                    </div>
-                                    <div className="rounded-lg border border-slate-800/70 bg-slate-900/40 p-3 space-y-1">
-                                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Avg. Yield</p>
-                                        <p className="text-lg font-semibold text-[#3BAEAB]">{formatPercentValue(marketStats.averageYield)}</p>
-                                        <p className="text-xs text-slate-400">Net of fees</p>
-                                    </div>
-                                </div>
-                                <div className="rounded-lg border border-[#00D1FF]/20 bg-[#00D1FF]/5 p-3 text-sm text-slate-100">
-                                    <p className="text-xs uppercase tracking-[0.18em] text-[#00D1FF]/90">Biggest Mover</p>
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-semibold">{marketStats.biggestMover.name}</span>
-                                        <span className="font-mono text-[#00D1FF]">
-                                            {formatPercentValue(marketStats.biggestMover.change, { maximumFractionDigits: 1 })}
-                                        </span>
-                                    </div>
-                                </div>
+                                <p className="text-sm text-slate-400">{card.helper}</p>
                             </div>
                         </div>
+                    ))}
+                </div>
 
-                        <div className="grid gap-4 lg:grid-cols-3">
-                            <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 sm:p-5 lg:col-span-2">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#00D1FF]/80">
-                                            Price History
-                                        </p>
-                                        <h3 className="text-xl font-bold text-white">Spot Curve</h3>
-                                    </div>
-                                    <span className="text-xs text-slate-400">6-session window</span>
-                                </div>
-                                <div className="mt-4 space-y-3 text-sm text-slate-200">
-                                    {priceHistory.map((entry) => (
-                                        <div
-                                            key={entry.date}
-                                            className="flex items-center justify-between rounded-lg border border-slate-800/70 bg-slate-900/40 px-3 py-2"
-                                        >
-                                            <span className="font-semibold">{formatDeliveryDate(entry.date)}</span>
-                                            <span className="font-mono text-[#3BAEAB]">{formatCurrencyValue(entry.price, { maximumFractionDigits: 1 })}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                <div className="grid gap-4 xl:grid-cols-3">
+                    <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6 shadow-[0_22px_50px_rgba(5,10,25,0.55)] xl:col-span-2">
+                        <div className="flex items-center justify-between gap-3">
+                            <div>
+                                <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Price Trend</p>
+                                <h3 className="text-xl font-semibold text-white">Marketplace heat</h3>
+                                <p className="text-sm text-slate-400">Smoothed view of current listings</p>
                             </div>
-                            <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 sm:p-5 space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#00D1FF]/80">Volume</p>
-                                        <h3 className="text-xl font-bold text-white">5-Day Flow</h3>
-                                    </div>
-                                    <span className="text-xs text-slate-400">Market depth</span>
-                                </div>
-                                <div className="space-y-3">
-                                    {volumeData.map((volumePoint) => (
-                                        <div key={volumePoint.label} className="space-y-1">
-                                            <div className="flex items-center justify-between text-sm text-slate-200">
-                                                <span className="font-semibold">{volumePoint.label}</span>
-                                                <span className="font-mono text-[#3BAEAB]">{formatCurrencyValue(volumePoint.value)}</span>
-                                            </div>
-                                            <div className="h-2 overflow-hidden rounded-full bg-slate-800">
-                                                <div
-                                                    className="h-full bg-[#00D1FF]"
-                                                    style={{
-                                                        width: `${Math.min(Math.max((volumePoint.value / maxVolume) * 100, 0), 100)}%`,
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                            <Button variant="ghost" onClick={() => navigate("/reports")}>Export</Button>
                         </div>
-
-                        <div className="grid gap-4 lg:grid-cols-3">
-                            <div className="lg:col-span-2 space-y-5">
-                                <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
-                                    <h2 className="text-3xl font-bold text-white">Open Contracts</h2>
-                                    <p className="text-sm text-slate-400">
-                                        Monitor current opportunities and select a contract to inspect the full trade details.
-                                    </p>
-                                </div>
-                                <div className="overflow-hidden rounded-xl border border-slate-800/80">
-                                    <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
-                                        <thead className="sticky top-0 z-10 bg-slate-900/90 text-xs uppercase tracking-[0.18em] text-slate-400 backdrop-blur">
-                                            <tr>
-                                                <th className="px-4 py-3 md:px-5 md:py-3.5">Title</th>
-                                                <th className="px-4 py-3 md:px-5 md:py-3.5">Seller</th>
-                                                <th className="px-4 py-3 md:px-5 md:py-3.5">Ask Price</th>
-                                                <th className="px-4 py-3 md:px-5 md:py-3.5">Status</th>
-                                                <th className="px-4 py-3 md:px-5 md:py-3.5">Delivery</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-800/70">
-                                            {isLoading ? (
-                                                <TableSkeleton columns={5} rows={5} />
-                                            ) : (
-                                                <>
-                                                    {contracts.map((contract) => (
-                                                        <tr
-                                                            key={contract.id}
-                                                            className="cursor-pointer bg-slate-950/40 transition-colors hover:bg-[#00D1FF]/10"
-                                                            onClick={() => setSelectedContract(contract)}
-                                                        >
-                                                            <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-slate-100">
-                                                                {contract.title}
-                                                            </td>
-                                                            <td className="px-4 py-3 md:px-5 md:py-3.5">{contract.seller}</td>
-                                                            <td className="px-4 py-3 md:px-5 md:py-3.5 font-semibold text-[#3BAEAB] font-mono tabular-nums">
-                                                                {formatContractPrice(contract)}
-                                                            </td>
-                                                            <td className="px-4 py-3 md:px-5 md:py-3.5">
-                                                                <span className="rounded-full border border-[#00D1FF]/40 bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
-                                                                    {contract.status}
-                                                                </span>
-                                                            </td>
-                                                            <td className="px-4 py-3 md:px-5 md:py-3.5 text-slate-300">
-                                                                {formatDeliveryDate(contract.deliveryDate)}
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    {contracts.length === 0 && (
-                                                        <tr>
-                                                            <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
-                                                                No contracts available at the moment.
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                </>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div className="space-y-4 rounded-xl border border-slate-800/80 bg-slate-950/60 p-4 sm:p-5">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#00D1FF]/80">AI Desk</p>
-                                        <h3 className="text-xl font-bold text-white">Recommendations</h3>
+                        <div className="mt-6 h-64 rounded-xl border border-slate-800/60 bg-gradient-to-b from-slate-900/60 to-slate-950/80 p-4">
+                            <svg viewBox="0 0 100 100" className="h-full w-full" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="trendGradient" x1="0" x2="0" y1="0" y2="1">
+                                        <stop offset="0%" stopColor="#00D1FF" stopOpacity="0.35" />
+                                        <stop offset="100%" stopColor="#0B1224" stopOpacity="0" />
+                                    </linearGradient>
+                                </defs>
+                                <polygon points={trendArea} fill="url(#trendGradient)" stroke="none" />
+                                <polyline
+                                    points={trendPolyline}
+                                    fill="none"
+                                    stroke="#00D1FF"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                                {contractTrendPoints.map((point, index) => {
+                                    const x = (index / trendPointDenominator) * 100;
+                                    const y = 100 - (point.value / maxTrendValue) * 100;
+                                    return (
+                                        <circle
+                                            key={`${point.label}-${index}`}
+                                            cx={x}
+                                            cy={y}
+                                            r="1.8"
+                                            fill="#3BAEAB"
+                                        />
+                                    );
+                                })}
+                            </svg>
+                            <div className="mt-4 grid grid-cols-2 gap-4 text-xs text-slate-300 sm:grid-cols-3">
+                                {contractTrendPoints.map((point) => (
+                                    <div key={point.label} className="flex items-center justify-between rounded-lg bg-slate-950/40 px-3 py-2">
+                                        <span className="font-semibold text-white/90">{point.label}</span>
+                                        <span className="font-mono text-[#00D1FF]">{formatCurrencyValue(point.value)}</span>
                                     </div>
-                                    <span className="text-xs text-slate-400">Model preview</span>
-                                </div>
-                                <div className="space-y-3">
-                                    {aiRecommendations.map((item) => (
-                                        <div key={item.title} className="rounded-lg border border-slate-800/70 bg-slate-900/40 p-3 space-y-2">
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="space-y-1">
-                                                    <p className="text-sm font-semibold text-white">{item.title}</p>
-                                                    <p className="text-xs text-slate-400">{item.summary}</p>
-                                                </div>
-                                                <span className="rounded-full bg-[#00D1FF]/10 px-3 py-1 text-[11px] font-semibold text-[#00D1FF]">
-                                                    {formatPercentValue(item.confidence, { maximumFractionDigits: 0 })} conf.
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-xs text-slate-300">
-                                                <span className="font-mono text-[#3BAEAB]">
-                                                    {formatPercentValue(item.expectedImpact, { maximumFractionDigits: 1 })} impact
-                                                </span>
-                                                <span>{item.action}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>
-                </main>
-                <aside className="order-2 xl:order-2">
-                    <ContractDetailsPanel
-                        inline
-                        inlineWidth="w-full"
-                        contract={selectedContract}
-                        onClose={() => setSelectedContract(null)}
-                    />
-                </aside>
+
+                    <div className="space-y-4">
+                        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-[0_18px_40px_rgba(5,10,25,0.55)]">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Sector volume</p>
+                                    <h3 className="text-lg font-semibold text-white">Where momentum is building</h3>
+                                </div>
+                                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                                    Live feed
+                                </span>
+                            </div>
+                            <div className="mt-4 space-y-3">
+                                {sectorVolumes.map((entry) => (
+                                    <div key={entry.sector} className="space-y-2">
+                                        <div className="flex items-center justify-between text-sm text-slate-300">
+                                            <span className="font-semibold text-white">{entry.sector}</span>
+                                            <span className="rounded-full bg-slate-800/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">
+                                                {entry.count} listings
+                                            </span>
+                                        </div>
+                                        <div className="h-2 rounded-full bg-slate-800/80">
+                                            <div
+                                                className="h-2 rounded-full bg-gradient-to-r from-[#00D1FF] to-[#3BAEAB]"
+                                                style={{ width: `${Math.max((entry.count / sectorMaxVolume) * 100, 6)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid gap-4 xl:grid-cols-[1.8fr_1.2fr]">
+                    <div className="space-y-4">
+                        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-[0_22px_55px_rgba(5,10,25,0.55)]">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                <div>
+                                    <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Your active contracts</p>
+                                    <h3 className="text-xl font-semibold text-white">Curated for action</h3>
+                                    <p className="text-sm text-slate-400">Mapped from the latest marketplace snapshot.</p>
+                                </div>
+                                <Button variant="ghost" onClick={handleViewAllContracts}>
+                                    View all contracts
+                                </Button>
+                            </div>
+                            <div className="mt-4 divide-y divide-slate-800/80">
+                                {isLoading ? (
+                                    <div className="space-y-3 py-2">
+                                        {Array.from({ length: 3 }).map((_, index) => (
+                                            <div key={index} className="h-16 animate-pulse rounded-xl bg-slate-800/40" />
+                                        ))}
+                                    </div>
+                                ) : featuredContracts.length > 0 ? (
+                                    featuredContracts.map((contract) => (
+                                        <div
+                                            key={contract.id}
+                                            className="flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between"
+                                        >
+                                            <div className="space-y-2">
+                                                <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-300">
+                                                    <span className={`inline-flex items-center rounded-full px-3 py-1 font-semibold ${
+                                                        (contract.status || "").toLowerCase() === "purchased"
+                                                            ? "border border-emerald-400/50 bg-emerald-500/10 text-emerald-200"
+                                                            : "border border-[#00D1FF]/40 bg-[#00D1FF]/10 text-[#00D1FF]"
+                                                    }`}>
+                                                        {contract.status || "Open"}
+                                                    </span>
+                                                    <span className="inline-flex items-center rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1 font-semibold text-slate-200">
+                                                        {formatDeliveryDate(contract.deliveryDate)}
+                                                    </span>
+                                                </div>
+                                                <h4 className="text-lg font-semibold text-white">{contract.title}</h4>
+                                                <p className="text-sm text-slate-400">Seller: {contract.seller || "Unlisted"}</p>
+                                                <div className="flex flex-wrap items-center gap-4 text-sm">
+                                                    <span className="font-mono text-[#3BAEAB]">{formatContractPrice(contract)}</span>
+                                                    <span className="rounded-full bg-slate-800/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">
+                                                        {contract.sellerEntityType || "Independent"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col gap-2 md:min-w-[200px]">
+                                                <Button variant="ghost" onClick={() => setSelectedContract(contract)}>
+                                                    Inspect inline
+                                                </Button>
+                                                <Button onClick={() => handleViewContract(contract)}>
+                                                    Open contract
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="py-6 text-sm text-slate-400">No active contracts available right now.</div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-[0_18px_40px_rgba(5,10,25,0.55)]">
+                            <h3 className="text-lg font-semibold text-white">AI recommendations</h3>
+                            <p className="text-sm text-slate-400">Guidance tuned to the latest market snapshot.</p>
+                            <div className="mt-4 space-y-3">
+                                {recommendations.map((rec) => (
+                                    <div
+                                        key={rec.title}
+                                        className="rounded-xl border border-slate-800/70 bg-slate-950/50 p-4 shadow-inner shadow-slate-950/70"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-base font-semibold text-white">{rec.title}</span>
+                                            <span className="rounded-full bg-[#00D1FF]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#00D1FF]">
+                                                {rec.badge}
+                                            </span>
+                                        </div>
+                                        <p className="mt-2 text-sm text-slate-300">{rec.detail}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <ContractDetailsPanel
+                            inline
+                            inlineWidth="w-full"
+                            contract={selectedContract}
+                            onClose={() => setSelectedContract(null)}
+                        />
+
+                        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-[0_18px_40px_rgba(5,10,25,0.55)]">
+                            <h3 className="text-lg font-semibold text-white">Take action</h3>
+                            <p className="text-sm text-slate-400">Move quickly on the insights above.</p>
+                            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                                <Button onClick={() => navigate("/buy")}>Open marketplace</Button>
+                                <Button variant="ghost" onClick={() => navigate("/notifications")}>Create alert</Button>
+                                <Button variant="ghost" onClick={() => navigate("/history")}>View audit trail</Button>
+                                <Button variant="ghost" onClick={() => navigate("/settings")}>Configure routing</Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </Layout>
     );
