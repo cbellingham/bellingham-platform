@@ -56,6 +56,12 @@ const pageDescriptions = {
 const shellClassName =
     "sticky top-0 z-20 border-b border-[rgba(27,37,67,0.8)] bg-[linear-gradient(180deg,rgba(24,34,61,0.95)_0%,rgba(10,16,30,0.9)_100%)] shadow-[0_38px_110px_rgba(5,9,20,0.7)] backdrop-blur-[20px]";
 
+const quickLinksClassName =
+    "flex flex-wrap items-center gap-3 rounded-3xl border border-[rgba(34,62,110,0.6)] bg-[linear-gradient(135deg,rgba(18,32,58,0.92),rgba(12,22,44,0.88))] px-4 py-3 text-sm text-slate-200 shadow-[0_22px_70px_rgba(5,9,20,0.55)]";
+
+const quickLinkClassName =
+    "rounded-2xl px-3 py-2 text-[13px] font-semibold uppercase tracking-[0.2em] text-slate-200 transition hover:text-[#4DD1FF] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]";
+
 const headerStyles = {
     root: {
         position: "sticky",
