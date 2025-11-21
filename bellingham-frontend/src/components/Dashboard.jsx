@@ -55,6 +55,18 @@ const formatCurrencyValue = (value, { maximumFractionDigits = 0 } = {}) => {
     }).format(numeric);
 };
 
+const formatPercentValue = (value, { maximumFractionDigits = 1 } = {}) => {
+    const numeric = parseNumeric(value);
+    if (numeric === null) {
+        return "—";
+    }
+
+    return new Intl.NumberFormat("en-US", {
+        style: "percent",
+        maximumFractionDigits,
+    }).format(numeric);
+};
+
 const formatDeliveryDate = (value) => {
     if (!value) {
         return "—";
