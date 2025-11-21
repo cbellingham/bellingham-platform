@@ -96,7 +96,6 @@ const App = () => {
                 element={renderGuarded(AdminUserAccess, { requiresRole: "ROLE_ADMIN" })}
             />
         </Routes>
-        <Logo />
         </>
     );
 };
