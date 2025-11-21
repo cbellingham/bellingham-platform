@@ -5,13 +5,15 @@ import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
 import { AuthContext } from "../context";
 
+const SIDEBAR_BREAKPOINT = 900;
+
 const useIsDesktop = () => {
     const getIsDesktop = () => {
         if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
             return true;
         }
 
-        return window.matchMedia("(min-width: 1024px)").matches;
+        return window.matchMedia(`(min-width: ${SIDEBAR_BREAKPOINT}px)`).matches;
     };
 
     const [isDesktop, setIsDesktop] = useState(getIsDesktop);
@@ -21,7 +23,7 @@ const useIsDesktop = () => {
             return undefined;
         }
 
-        const mediaQuery = window.matchMedia("(min-width: 1024px)");
+        const mediaQuery = window.matchMedia(`(min-width: ${SIDEBAR_BREAKPOINT}px)`);
         const handler = (event) => setIsDesktop(event.matches);
 
         if (mediaQuery.addEventListener) {
@@ -43,12 +45,17 @@ const useIsDesktop = () => {
 };
 
 const sidebarStyles = {
-    wrapper: (isDesktop) => ({
-        position: "relative",
+    wrapper: (isDesktop, isOpen) => ({
+        position: isDesktop ? "relative" : "fixed",
+        top: isDesktop ? undefined : "1.25rem",
+        left: isDesktop ? undefined : "1rem",
+        right: isDesktop ? undefined : "1rem",
+        maxHeight: isDesktop ? "none" : "calc(100vh - 2.5rem)",
         zIndex: 40,
         flexShrink: 0,
-        display: isDesktop ? "block" : "none",
-        width: "var(--sidebar-width)",
+        display: isDesktop || isOpen ? "block" : "none",
+        width: isDesktop ? "var(--sidebar-width)" : "min(90vw, 360px)",
+        margin: isDesktop ? undefined : "0 auto",
     }),
     aside: {
         position: "relative",
@@ -186,6 +193,11 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
     const navigate = useNavigate();
     const { permissions = [], role } = useContext(AuthContext);
     const isDesktop = useIsDesktop();
+    const [isOpen, setIsOpen] = useState(isDesktop);
+
+    useEffect(() => {
+        setIsOpen(isDesktop);
+    }, [isDesktop]);
 
     const filteredNavItems = useMemo(
         () =>
@@ -217,14 +229,60 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
 
     const handleNavigate = (path) => {
         navigate(path);
+        if (!isDesktop) {
+            setIsOpen(false);
+        }
     };
 
     return (
-        <div style={{ ...sidebarStyles.wrapper(isDesktop), "--sidebar-width": sidebarWidth }}>
-            <aside style={sidebarStyles.aside}>
-                <button type="button" onClick={() => handleNavigate("/")} style={sidebarStyles.brandButton}>
-                    <span style={sidebarStyles.brandMark}>BM</span>
-                    <span style={sidebarStyles.brandText}>
+        <>
+            {!isDesktop && !isOpen && (
+                <button
+                    type="button"
+                    onClick={() => setIsOpen(true)}
+                    style={{
+                        position: "fixed",
+                        top: "1.25rem",
+                        left: "1.25rem",
+                        zIndex: 45,
+                        padding: "0.65rem 1rem",
+                        borderRadius: "14px",
+                        border: "1px solid rgba(40, 68, 118, 0.7)",
+                        backgroundImage: "linear-gradient(140deg, rgba(20,34,68,0.92), rgba(8,16,32,0.9))",
+                        color: "#B7D8FF",
+                        fontWeight: 600,
+                        letterSpacing: "0.08em",
+                        boxShadow: "0 18px 42px rgba(6, 12, 28, 0.65)",
+                    }}
+                >
+                    Open navigation
+                </button>
+            )}
+            <div style={{ ...sidebarStyles.wrapper(isDesktop, isOpen), "--sidebar-width": sidebarWidth }}>
+                <aside style={sidebarStyles.aside}>
+                    {!isDesktop && (
+                        <button
+                            type="button"
+                            onClick={() => setIsOpen(false)}
+                            style={{
+                                alignSelf: "flex-end",
+                                marginBottom: "1rem",
+                                padding: "0.35rem 0.75rem",
+                                borderRadius: "12px",
+                                border: "1px solid rgba(34, 54, 90, 0.65)",
+                                backgroundColor: "rgba(10, 18, 36, 0.8)",
+                                color: "#9BD8FF",
+                                cursor: "pointer",
+                                fontSize: "0.85rem",
+                                letterSpacing: "0.04em",
+                            }}
+                        >
+                            Close
+                        </button>
+                    )}
+                    <button type="button" onClick={() => handleNavigate("/")} style={sidebarStyles.brandButton}>
+                        <span style={sidebarStyles.brandMark}>BM</span>
+                        <span style={sidebarStyles.brandText}>
                         <span style={sidebarStyles.brandLabel}>Bellingham</span>
                         <span style={sidebarStyles.brandName}>Markets Platform</span>
                     </span>
@@ -260,7 +318,8 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
                     )}
                 </div>
             </aside>
-        </div>
+            </div>
+        </>
     );
 };
 
