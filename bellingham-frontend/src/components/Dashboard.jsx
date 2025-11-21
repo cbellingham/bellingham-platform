@@ -82,7 +82,7 @@ const formatDeliveryDate = (value) => {
     });
 };
 
-const Dashboard = () => {
+const Dashboard = ({ onViewChange }) => {
     const [contracts, setContracts] = useState([]);
     const contractsRef = useRef([]);
     const [selectedContract, setSelectedContract] = useState(null);
@@ -129,10 +129,22 @@ const Dashboard = () => {
         setIsLoading(false);
     }, [resolveSnapshot]);
 
+    const routeTo = useCallback(
+        (path) => {
+            if (typeof onViewChange === "function") {
+                onViewChange(path);
+                return;
+            }
+
+            navigate(path);
+        },
+        [navigate, onViewChange]
+    );
+
     useEffect(() => {
         const fetchContracts = async () => {
             if (!isAuthenticated) {
-                navigate("/login");
+                routeTo("/login");
                 return;
             }
 
@@ -145,7 +157,7 @@ const Dashboard = () => {
                 if (err?.response?.status === 401) {
                     setIsLoading(false);
                     logout();
-                    navigate("/login");
+                    routeTo("/login");
                     return;
                 }
 
@@ -154,7 +166,7 @@ const Dashboard = () => {
         };
 
         fetchContracts();
-    }, [applySnapshot, isAuthenticated, logout, navigate, resolveSnapshot]);
+    }, [applySnapshot, isAuthenticated, logout, resolveSnapshot, routeTo]);
 
     useMarketStream({
         enabled: isAuthenticated,
@@ -163,7 +175,11 @@ const Dashboard = () => {
 
     const handleLogout = () => {
         logout();
-        navigate("/login");
+        routeTo("/login");
+    };
+
+    const handleViewContracts = () => {
+        routeTo("/contracts");
     };
 
     const formatContractPrice = useCallback(
