@@ -15,6 +15,18 @@ import { AuthContext } from "../context";
 import TableSkeleton from "./ui/TableSkeleton";
 import useMarketStream from "../hooks/useMarketStream";
 import { mockContractsSnapshot } from "../data/mock-contracts";
+import {
+    Area,
+    AreaChart,
+    Bar,
+    BarChart,
+    CartesianGrid,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
+import { TrendingDown, TrendingUp } from "lucide-react";
 
 const parseNumeric = (value) => {
     if (value === null || value === undefined || value === "") {
@@ -166,6 +178,40 @@ const Dashboard = () => {
         []
     );
 
+    const numericContracts = contracts.filter(
+        (contract) => contract.numericPrice !== null
+    );
+    const averagePrice =
+        numericContracts.length > 0
+            ? numericContracts.reduce(
+                  (total, contract) => total + contract.numericPrice,
+                  0
+              ) / numericContracts.length
+            : null;
+    const priceMomentum =
+        numericContracts.length > 1
+            ? numericContracts[numericContracts.length - 1].numericPrice -
+              numericContracts[0].numericPrice
+            : null;
+
+    const sparklineData =
+        numericContracts.length > 0
+            ? numericContracts.slice(0, 8).map((contract, index) => ({
+                  name: contract.title || `Contract ${index + 1}`,
+                  price: contract.numericPrice,
+              }))
+            : [];
+
+    const sellerVolumes = contracts.reduce((acc, contract) => {
+        const seller = contract.seller || "Unknown";
+        acc[seller] = (acc[seller] || 0) + 1;
+        return acc;
+    }, {});
+
+    const sellerVolumeData = Object.entries(sellerVolumes)
+        .map(([seller, total]) => ({ seller, total }))
+        .slice(0, 6);
+
     return (
         <Layout onLogout={handleLogout}>
             <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:grid-cols-[minmax(0,1fr)_320px] xl:gap-8">
@@ -177,6 +223,104 @@ const Dashboard = () => {
                             <p className="text-sm text-slate-400">
                                 Monitor current opportunities and select a contract to inspect the full trade details.
                             </p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1.1fr]">
+                            <div className="rounded-xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-5 shadow-[0_15px_40px_rgba(2,12,32,0.45)]">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Average Ask</p>
+                                        <p className="text-2xl font-semibold text-white">
+                                            {formatCurrencyValue(averagePrice, {
+                                                maximumFractionDigits: 2,
+                                            })}
+                                        </p>
+                                        <div className="mt-2 flex items-center gap-2 text-sm font-medium">
+                                            {priceMomentum !== null && priceMomentum >= 0 ? (
+                                                <span className="flex items-center gap-1 text-emerald-400">
+                                                    <TrendingUp className="h-4 w-4" />
+                                                    Trending Up
+                                                </span>
+                                            ) : (
+                                                <span className="flex items-center gap-1 text-rose-400">
+                                                    <TrendingDown className="h-4 w-4" />
+                                                    Trending Down
+                                                </span>
+                                            )}
+                                            <span className="text-slate-500">• live market curve</span>
+                                        </div>
+                                    </div>
+                                    <div className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                                        {numericContracts.length} Active
+                                    </div>
+                                </div>
+                                <div className="mt-6 h-52">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={sparklineData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                                            <defs>
+                                                <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.55} />
+                                                    <stop offset="60%" stopColor="#2563eb" stopOpacity={0.18} />
+                                                    <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0} />
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
+                                            <XAxis dataKey="name" hide tick={{ fill: "#94a3b8" }} tickLine={false} axisLine={{ stroke: "#1f2937" }} />
+                                            <YAxis tick={{ fill: "#94a3b8" }} tickLine={false} axisLine={{ stroke: "#1f2937" }} tickFormatter={(value) => `$${value}`} />
+                                            <Tooltip
+                                                contentStyle={{
+                                                    backgroundColor: "#0f172a",
+                                                    border: "1px solid #1e293b",
+                                                    borderRadius: "12px",
+                                                    color: "#e2e8f0",
+                                                    boxShadow: "0 12px 24px rgba(0,0,0,0.35)",
+                                                }}
+                                                labelStyle={{ color: "#94a3b8", fontSize: "12px" }}
+                                                formatter={(value) => formatCurrencyValue(value, { maximumFractionDigits: 2 })}
+                                            />
+                                            <Area type="monotone" dataKey="price" stroke="#22d3ee" strokeWidth={2.5} fill="url(#priceGradient)" />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                            <div className="rounded-xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-5 shadow-[0_15px_40px_rgba(2,12,32,0.45)]">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Seller Activity</p>
+                                        <p className="text-2xl font-semibold text-white">Top Contributors</p>
+                                    </div>
+                                    <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                                        Live
+                                    </span>
+                                </div>
+                                <div className="mt-6 h-52">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={sellerVolumeData} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+                                            <defs>
+                                                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stopColor="#22c55e" stopOpacity={0.8} />
+                                                    <stop offset="70%" stopColor="#10b981" stopOpacity={0.5} />
+                                                    <stop offset="100%" stopColor="#0f172a" stopOpacity={0.1} />
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
+                                            <XAxis dataKey="seller" tick={{ fill: "#94a3b8" }} tickLine={false} axisLine={{ stroke: "#1f2937" }} />
+                                            <YAxis allowDecimals={false} tick={{ fill: "#94a3b8" }} tickLine={false} axisLine={{ stroke: "#1f2937" }} />
+                                            <Tooltip
+                                                cursor={{ fill: "rgba(16,185,129,0.08)" }}
+                                                contentStyle={{
+                                                    backgroundColor: "#0f172a",
+                                                    border: "1px solid #1e293b",
+                                                    borderRadius: "12px",
+                                                    color: "#e2e8f0",
+                                                    boxShadow: "0 12px 24px rgba(0,0,0,0.35)",
+                                                }}
+                                                labelStyle={{ color: "#94a3b8", fontSize: "12px" }}
+                                            />
+                                            <Bar dataKey="total" radius={[10, 10, 8, 8]} fill="url(#barGradient)" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
                         </div>
                         <div className="overflow-hidden rounded-xl border border-slate-800/80">
                             <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
