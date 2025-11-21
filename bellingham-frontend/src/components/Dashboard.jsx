@@ -69,7 +69,7 @@ const formatDeliveryDate = (value) => {
     });
 };
 
-const Dashboard = () => {
+const Dashboard = ({ onViewChange }) => {
     const [contracts, setContracts] = useState([]);
     const contractsRef = useRef([]);
     const [selectedContract, setSelectedContract] = useState(null);
@@ -116,10 +116,22 @@ const Dashboard = () => {
         setIsLoading(false);
     }, [resolveSnapshot]);
 
+    const routeTo = useCallback(
+        (path) => {
+            if (typeof onViewChange === "function") {
+                onViewChange(path);
+                return;
+            }
+
+            navigate(path);
+        },
+        [navigate, onViewChange]
+    );
+
     useEffect(() => {
         const fetchContracts = async () => {
             if (!isAuthenticated) {
-                navigate("/login");
+                routeTo("/login");
                 return;
             }
 
@@ -132,7 +144,7 @@ const Dashboard = () => {
                 if (err?.response?.status === 401) {
                     setIsLoading(false);
                     logout();
-                    navigate("/login");
+                    routeTo("/login");
                     return;
                 }
 
@@ -141,7 +153,7 @@ const Dashboard = () => {
         };
 
         fetchContracts();
-    }, [applySnapshot, isAuthenticated, logout, navigate, resolveSnapshot]);
+    }, [applySnapshot, isAuthenticated, logout, resolveSnapshot, routeTo]);
 
     useMarketStream({
         enabled: isAuthenticated,
@@ -150,7 +162,11 @@ const Dashboard = () => {
 
     const handleLogout = () => {
         logout();
-        navigate("/login");
+        routeTo("/login");
+    };
+
+    const handleViewContracts = () => {
+        routeTo("/contracts");
     };
 
     const formatContractPrice = useCallback(
@@ -171,12 +187,34 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:grid-cols-[minmax(0,1fr)_320px] xl:gap-8">
                 <main className="order-1 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 sm:p-6 md:p-7 lg:p-8 shadow-[0_20px_45px_rgba(2,12,32,0.55)]">
                     <div className="space-y-5 sm:space-y-6 lg:space-y-7">
-                        <div className="flex flex-col gap-2 border-b border-slate-800 pb-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
-                            <h2 className="text-3xl font-bold text-white">Open Contracts</h2>
-                            <p className="text-sm text-slate-400">
-                                Monitor current opportunities and select a contract to inspect the full trade details.
-                            </p>
+                        <div className="flex flex-col gap-2 border-b border-slate-800 pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                            <div className="flex-1 space-y-2">
+                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#00D1FF]/80">Market Overview</p>
+                                <h2 className="text-3xl font-bold text-white">Open Contracts</h2>
+                                <p className="text-sm text-slate-400">
+                                    Monitor current opportunities and select a contract to inspect the full trade details.
+                                </p>
+                            </div>
+                            <div className="pt-2 sm:pt-0">
+                                <button
+                                    type="button"
+                                    onClick={handleViewContracts}
+                                    className="inline-flex items-center gap-2 rounded-xl border border-[#00D1FF]/50 bg-[#00D1FF]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#00D1FF] transition hover:border-[#00D1FF]/70 hover:bg-[#00D1FF]/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+                                >
+                                    View Contracts
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        className="h-4 w-4"
+                                        aria-hidden
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         <div className="overflow-hidden rounded-xl border border-slate-800/80">
                             <table className="w-full table-auto divide-y divide-slate-800 text-left text-sm text-slate-200">
