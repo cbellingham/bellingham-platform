@@ -74,6 +74,12 @@ Start the service with the Maven wrapper:
 ./mvnw spring-boot:run
 ```
 
+If you see `Could not find or load main class com.bellingham.datafutures.BellinghamApplication`
+when launching from an IDE or raw `java` command, make sure the project has
+been compiled first. Running either `./mvnw compile` (for an IDE launch) or
+`./mvnw spring-boot:run` (which compiles automatically) recreates the
+`target/classes` directory that the application classloader needs.
+
 ### Using the in-memory profile
 
 For controller testing or quick manual QA you can run the API against the
