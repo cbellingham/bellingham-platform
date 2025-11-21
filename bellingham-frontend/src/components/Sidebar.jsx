@@ -188,6 +188,21 @@ const sidebarStyles = {
     },
 };
 
+const navSectionsClass =
+    "mt-8 flex flex-1 flex-col gap-8 overflow-y-auto pr-1 text-slate-100";
+const sectionHeadingClass =
+    "pl-1 text-[0.6rem] font-semibold uppercase tracking-[0.44em] text-slate-400/80";
+const navGroupClass = "flex flex-col gap-2";
+const footerClass = "mt-8 flex flex-col gap-4 border-t border-slate-800/60 pt-6";
+const ctaCardClass =
+    "rounded-2xl border border-slate-700/50 bg-gradient-to-br from-[#223f6c]/30 to-[#182c4c]/25 p-5 text-sm text-slate-100 shadow-[0_20px_60px_rgba(10,18,36,0.55)]";
+const ctaTitleClass = "text-base font-semibold text-white";
+const ctaBodyClass = "mt-1 text-sm text-slate-200/80";
+const createListingButtonClass =
+    "mt-4 w-full border border-[#4dd1ff]/30 bg-gradient-to-br from-[#234678]/90 to-[#14284b]/85 text-[#9bd8ff] shadow-[0_20px_45px_rgba(34,64,109,0.45)]";
+const logoutButtonClass =
+    "w-full justify-center border border-slate-700/70 bg-slate-900/70 text-slate-100";
+
 const Sidebar = ({ onLogout, sidebarWidth }) => {
     const navigate = useNavigate();
     const { permissions = [], role } = useContext(AuthContext);
@@ -234,7 +249,7 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
     };
 
     return (
-        <div style={{ ...sidebarStyles.wrapper(isDesktop), "--sidebar-width": sidebarWidth }}>
+        <div style={{ ...sidebarStyles.wrapper(isDesktop, isOpen), "--sidebar-width": sidebarWidth }}>
             <aside style={sidebarStyles.aside}>
                 <button type="button" onClick={() => handleNavigate("/")} style={sidebarStyles.brandButton}>
                     <span style={sidebarStyles.brandMark} aria-hidden>
