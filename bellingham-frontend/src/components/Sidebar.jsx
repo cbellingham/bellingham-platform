@@ -6,13 +6,15 @@ import NavMenuItem from "./ui/NavMenuItem";
 import { AuthContext } from "../context";
 import Logo from "./Logo";
 
+const SIDEBAR_BREAKPOINT = 900;
+
 const useIsDesktop = () => {
     const getIsDesktop = () => {
         if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
             return true;
         }
 
-        return window.matchMedia("(min-width: 1024px)").matches;
+        return window.matchMedia(`(min-width: ${SIDEBAR_BREAKPOINT}px)`).matches;
     };
 
     const [isDesktop, setIsDesktop] = useState(getIsDesktop);
@@ -22,7 +24,7 @@ const useIsDesktop = () => {
             return undefined;
         }
 
-        const mediaQuery = window.matchMedia("(min-width: 1024px)");
+        const mediaQuery = window.matchMedia(`(min-width: ${SIDEBAR_BREAKPOINT}px)`);
         const handler = (event) => setIsDesktop(event.matches);
 
         if (mediaQuery.addEventListener) {
@@ -44,12 +46,17 @@ const useIsDesktop = () => {
 };
 
 const sidebarStyles = {
-    wrapper: (isDesktop) => ({
-        position: "relative",
+    wrapper: (isDesktop, isOpen) => ({
+        position: isDesktop ? "relative" : "fixed",
+        top: isDesktop ? undefined : "1.25rem",
+        left: isDesktop ? undefined : "1rem",
+        right: isDesktop ? undefined : "1rem",
+        maxHeight: isDesktop ? "none" : "calc(100vh - 2.5rem)",
         zIndex: 40,
         flexShrink: 0,
-        display: isDesktop ? "block" : "none",
-        width: "var(--sidebar-width)",
+        display: isDesktop || isOpen ? "block" : "none",
+        width: isDesktop ? "var(--sidebar-width)" : "min(90vw, 360px)",
+        margin: isDesktop ? undefined : "0 auto",
     }),
     aside: {
         position: "relative",
@@ -185,6 +192,11 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
     const navigate = useNavigate();
     const { permissions = [], role } = useContext(AuthContext);
     const isDesktop = useIsDesktop();
+    const [isOpen, setIsOpen] = useState(isDesktop);
+
+    useEffect(() => {
+        setIsOpen(isDesktop);
+    }, [isDesktop]);
 
     const filteredNavItems = useMemo(
         () =>
@@ -216,6 +228,9 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
 
     const handleNavigate = (path) => {
         navigate(path);
+        if (!isDesktop) {
+            setIsOpen(false);
+        }
     };
 
     return (
@@ -261,7 +276,8 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
                     )}
                 </div>
             </aside>
-        </div>
+            </div>
+        </>
     );
 };
 
