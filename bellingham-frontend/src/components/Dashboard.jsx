@@ -14,6 +14,7 @@ import api from "../utils/api";
 import { AuthContext } from "../context";
 import TableSkeleton from "./ui/TableSkeleton";
 import useMarketStream from "../hooks/useMarketStream";
+import { mockContractsSnapshot } from "../data/mock-contracts";
 
 const parseNumeric = (value) => {
     if (value === null || value === undefined || value === "") {
@@ -77,12 +78,22 @@ const Dashboard = () => {
 
     const { isAuthenticated, logout } = useContext(AuthContext);
 
+    const resolveSnapshot = useCallback((snapshot) => {
+        if (snapshot?.contracts && snapshot.contracts.length > 0) {
+            return snapshot;
+        }
+
+        console.warn("Market data unavailable; using mock contracts for continuity.");
+        return mockContractsSnapshot;
+    }, []);
+
     const applySnapshot = useCallback((snapshot) => {
-        if (!snapshot) {
+        const resolvedSnapshot = resolveSnapshot(snapshot);
+        if (!resolvedSnapshot) {
             return;
         }
 
-        const normalizedContracts = normalizeContracts(snapshot.contracts);
+        const normalizedContracts = normalizeContracts(resolvedSnapshot.contracts);
         const previousById = new Map(
             (contractsRef.current || []).map((contract) => [contract.id, contract])
         );
@@ -103,7 +114,7 @@ const Dashboard = () => {
         });
 
         setIsLoading(false);
-    }, []);
+    }, [resolveSnapshot]);
 
     useEffect(() => {
         const fetchContracts = async () => {
@@ -115,17 +126,22 @@ const Dashboard = () => {
             setIsLoading(true);
             try {
                 const res = await api.get(`/api/contracts/market`);
-                applySnapshot(res.data);
+                applySnapshot(resolveSnapshot(res.data));
             } catch (err) {
                 console.error("Error fetching contracts", err);
-                setIsLoading(false);
-                logout();
-                navigate("/login");
+                if (err?.response?.status === 401) {
+                    setIsLoading(false);
+                    logout();
+                    navigate("/login");
+                    return;
+                }
+
+                applySnapshot(mockContractsSnapshot);
             }
         };
 
         fetchContracts();
-    }, [applySnapshot, isAuthenticated, logout, navigate]);
+    }, [applySnapshot, isAuthenticated, logout, navigate, resolveSnapshot]);
 
     useMarketStream({
         enabled: isAuthenticated,

@@ -4,6 +4,9 @@ import Button from "./ui/Button";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
 import { AuthContext } from "../context";
+import Logo from "./Logo";
+
+const SIDEBAR_BREAKPOINT = 900;
 
 const useIsDesktop = () => {
     const getIsDesktop = () => {
@@ -11,7 +14,7 @@ const useIsDesktop = () => {
             return true;
         }
 
-        return window.matchMedia("(min-width: 1024px)").matches;
+        return window.matchMedia(`(min-width: ${SIDEBAR_BREAKPOINT}px)`).matches;
     };
 
     const [isDesktop, setIsDesktop] = useState(getIsDesktop);
@@ -21,7 +24,7 @@ const useIsDesktop = () => {
             return undefined;
         }
 
-        const mediaQuery = window.matchMedia("(min-width: 1024px)");
+        const mediaQuery = window.matchMedia(`(min-width: ${SIDEBAR_BREAKPOINT}px)`);
         const handler = (event) => setIsDesktop(event.matches);
 
         if (mediaQuery.addEventListener) {
@@ -42,40 +45,158 @@ const useIsDesktop = () => {
     return isDesktop;
 };
 
-const sidebarShellClass =
-    "relative z-40 hidden w-[var(--sidebar-width)] flex-shrink-0 lg:block";
-
-const asideClass =
-    "relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[rgba(27,39,68,0.5)] bg-[linear-gradient(185deg,rgba(20,33,60,0.95)_0%,rgba(10,18,36,0.92)_100%)] px-8 py-11 text-[#F7FAFF] shadow-[0_45px_120px_rgba(5,10,25,0.6)] backdrop-blur-[24px]";
-
-const brandButtonClass =
-    "flex items-center gap-3 rounded-[20px] border border-transparent bg-[linear-gradient(145deg,rgba(22,38,70,0.85),rgba(12,22,46,0.75))] px-3.5 py-2 text-left text-inherit no-underline transition-colors hover:border-[#4DD1FF]/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050912]";
-
-const brandMarkClass =
-    "flex h-11 w-11 items-center justify-center rounded-[20px] bg-[radial-gradient(circle_at_30%_20%,rgba(77,209,255,0.85),rgba(116,101,168,0.65))] text-[16px] font-bold text-[#0B1426] shadow-[0_16px_40px_rgba(45,130,210,0.6)]";
-
-const brandLabelClass = "text-[10px] font-semibold uppercase tracking-[0.42em] text-[#8BB8FF]";
-const brandNameClass = "text-[15px] font-semibold text-white";
-
-const navSectionsClass = "mt-8 flex flex-1 flex-col gap-8 overflow-y-auto pr-1";
-const sectionHeadingClass = "pl-1 text-[10px] font-semibold uppercase tracking-[0.32em] text-[rgba(76,111,168,0.8)]";
-const navGroupClass = "flex flex-col gap-1.5";
-
-const footerClass = "mt-8 flex flex-col gap-3 border-t border-[rgba(27,39,68,0.5)] pt-6";
-
-const ctaCardClass =
-    "rounded-[20px] border border-[rgba(47,79,120,0.45)] bg-[linear-gradient(150deg,rgba(34,64,109,0.28),rgba(25,44,78,0.2))] p-5 text-[14px] text-[#E4EBFF] shadow-[0_20px_60px_rgba(10,18,36,0.55)]";
-const ctaTitleClass = "m-0 text-[15px] font-semibold text-white";
-const ctaBodyClass = "mb-0 mt-1.5 text-[13px] text-[rgba(226,234,255,0.85)]";
-
-const createListingButtonClass =
-    "mt-4 w-full border border-[rgba(77,209,255,0.3)] bg-[linear-gradient(145deg,rgba(35,70,120,0.9),rgba(20,40,75,0.85))] text-[#9BD8FF] shadow-[0_20px_45px_rgba(34,64,109,0.45)]";
-const logoutButtonClass = "w-full justify-center border border-[rgba(34,54,90,0.7)] bg-[rgba(17,29,54,0.85)] text-[#E4EBFF]";
+const sidebarStyles = {
+    wrapper: (isDesktop, isOpen) => ({
+        position: isDesktop ? "relative" : "fixed",
+        top: isDesktop ? undefined : "1.25rem",
+        left: isDesktop ? undefined : "1rem",
+        right: isDesktop ? undefined : "1rem",
+        maxHeight: isDesktop ? "none" : "calc(100vh - 2.5rem)",
+        zIndex: 40,
+        flexShrink: 0,
+        display: isDesktop || isOpen ? "block" : "none",
+        width: isDesktop ? "var(--sidebar-width)" : "min(90vw, 360px)",
+        margin: isDesktop ? undefined : "0 auto",
+    }),
+    aside: {
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+        borderRadius: "28px",
+        border: "1px solid rgba(27, 39, 68, 0.5)",
+        backgroundImage:
+            "linear-gradient(185deg, rgba(20,33,60,0.95) 0%, rgba(10,18,36,0.92) 100%)",
+        padding: "2.75rem 2rem",
+        color: "#F7FAFF",
+        boxShadow: "0 45px 120px rgba(5, 10, 25, 0.6)",
+        backdropFilter: "blur(24px)",
+        boxSizing: "border-box",
+    },
+    brandButton: {
+        display: "flex",
+        alignItems: "center",
+        gap: "0.8rem",
+        borderRadius: "20px",
+        border: "1px solid transparent",
+        backgroundImage: "linear-gradient(145deg, rgba(22,38,70,0.85), rgba(12,22,46,0.75))",
+        padding: "0.55rem 0.9rem",
+        cursor: "pointer",
+        textAlign: "left",
+        color: "inherit",
+        textDecoration: "none",
+    },
+    brandMark: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "3rem",
+        width: "3rem",
+        borderRadius: "20px",
+        backgroundImage:
+            "radial-gradient(circle at 30% 20%, rgba(77,209,255,0.85), rgba(116,101,168,0.65))",
+        boxShadow: "0 16px 40px rgba(45, 130, 210, 0.6)",
+        padding: "0.35rem",
+    },
+    brandText: {
+        display: "flex",
+        flexDirection: "column",
+        lineHeight: 1.1,
+    },
+    brandLabel: {
+        fontSize: "0.6rem",
+        fontWeight: 600,
+        letterSpacing: "0.42em",
+        textTransform: "uppercase",
+        color: "#8BB8FF",
+    },
+    brandName: {
+        fontSize: "0.95rem",
+        fontWeight: 600,
+        color: "#FFFFFF",
+    },
+    navSections: {
+        marginTop: "2rem",
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+        overflowY: "auto",
+        paddingRight: "0.25rem",
+    },
+    section: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.75rem",
+    },
+    sectionHeading: {
+        fontSize: "0.6rem",
+        fontWeight: 600,
+        letterSpacing: "0.44em",
+        textTransform: "uppercase",
+        color: "rgba(76, 111, 168, 0.8)",
+        paddingLeft: "0.25rem",
+    },
+    navGroup: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.4rem",
+    },
+    footer: {
+        marginTop: "2rem",
+        borderTop: "1px solid rgba(27, 39, 68, 0.5)",
+        paddingTop: "1.5rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.75rem",
+    },
+    ctaCard: {
+        borderRadius: "20px",
+        border: "1px solid rgba(47, 79, 120, 0.45)",
+        backgroundImage: "linear-gradient(150deg, rgba(34,64,109,0.28), rgba(25,44,78,0.2))",
+        padding: "1.25rem",
+        fontSize: "0.9rem",
+        color: "#E4EBFF",
+        boxShadow: "0 20px 60px rgba(10, 18, 36, 0.55)",
+    },
+    ctaTitle: {
+        margin: 0,
+        fontWeight: 600,
+        color: "#FFFFFF",
+    },
+    ctaBody: {
+        marginTop: "0.35rem",
+        marginBottom: 0,
+        fontSize: "0.8rem",
+        color: "rgba(226, 234, 255, 0.85)",
+    },
+    createListingButton: {
+        width: "100%",
+        border: "1px solid rgba(77, 209, 255, 0.3)",
+        backgroundImage: "linear-gradient(145deg, rgba(35,70,120,0.9), rgba(20,40,75,0.85))",
+        color: "#9BD8FF",
+        boxShadow: "0 20px 45px rgba(34, 64, 109, 0.45)",
+        marginTop: "1rem",
+    },
+    logoutButton: {
+        width: "100%",
+        justifyContent: "center",
+        border: "1px solid rgba(34, 54, 90, 0.7)",
+        backgroundColor: "rgba(17, 29, 54, 0.85)",
+        color: "#E4EBFF",
+    },
+};
 
 const Sidebar = ({ onLogout, sidebarWidth }) => {
     const navigate = useNavigate();
     const { permissions = [], role } = useContext(AuthContext);
     const isDesktop = useIsDesktop();
+    const [isOpen, setIsOpen] = useState(isDesktop);
+
+    useEffect(() => {
+        setIsOpen(isDesktop);
+    }, [isDesktop]);
 
     const filteredNavItems = useMemo(
         () =>
@@ -107,16 +228,21 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
 
     const handleNavigate = (path) => {
         navigate(path);
+        if (!isDesktop) {
+            setIsOpen(false);
+        }
     };
 
     return (
-        <div className={isDesktop ? sidebarShellClass : "hidden"} style={{ "--sidebar-width": sidebarWidth }}>
-            <aside className={asideClass}>
-                <button type="button" onClick={() => handleNavigate("/")} className={brandButtonClass}>
-                    <span className={brandMarkClass}>BM</span>
-                    <span className="flex flex-col leading-none">
-                        <span className={brandLabelClass}>Bellingham</span>
-                        <span className={brandNameClass}>Markets Platform</span>
+        <div style={{ ...sidebarStyles.wrapper(isDesktop), "--sidebar-width": sidebarWidth }}>
+            <aside style={sidebarStyles.aside}>
+                <button type="button" onClick={() => handleNavigate("/")} style={sidebarStyles.brandButton}>
+                    <span style={sidebarStyles.brandMark} aria-hidden>
+                        <Logo size={40} />
+                    </span>
+                    <span style={sidebarStyles.brandText}>
+                        <span style={sidebarStyles.brandLabel}>Bellingham</span>
+                        <span style={sidebarStyles.brandName}>Markets Platform</span>
                     </span>
                 </button>
 
@@ -154,7 +280,8 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
                     )}
                 </div>
             </aside>
-        </div>
+            </div>
+        </>
     );
 };
 
