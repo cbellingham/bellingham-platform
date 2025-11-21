@@ -4,6 +4,7 @@ import Button from "./ui/Button";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
 import { AuthContext } from "../context";
+import Logo from "./Logo";
 
 const useIsDesktop = () => {
     const getIsDesktop = () => {
@@ -69,11 +70,11 @@ const sidebarStyles = {
     brandButton: {
         display: "flex",
         alignItems: "center",
-        gap: "0.75rem",
+        gap: "0.8rem",
         borderRadius: "20px",
         border: "1px solid transparent",
         backgroundImage: "linear-gradient(145deg, rgba(22,38,70,0.85), rgba(12,22,46,0.75))",
-        padding: "0.5rem 0.75rem",
+        padding: "0.55rem 0.9rem",
         cursor: "pointer",
         textAlign: "left",
         color: "inherit",
@@ -83,15 +84,13 @@ const sidebarStyles = {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: "2.75rem",
-        width: "2.75rem",
+        height: "3rem",
+        width: "3rem",
         borderRadius: "20px",
         backgroundImage:
             "radial-gradient(circle at 30% 20%, rgba(77,209,255,0.85), rgba(116,101,168,0.65))",
-        fontSize: "1rem",
-        fontWeight: 700,
-        color: "#0B1426",
         boxShadow: "0 16px 40px rgba(45, 130, 210, 0.6)",
+        padding: "0.35rem",
     },
     brandText: {
         display: "flex",
@@ -223,7 +222,9 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
         <div style={{ ...sidebarStyles.wrapper(isDesktop), "--sidebar-width": sidebarWidth }}>
             <aside style={sidebarStyles.aside}>
                 <button type="button" onClick={() => handleNavigate("/")} style={sidebarStyles.brandButton}>
-                    <span style={sidebarStyles.brandMark}>BM</span>
+                    <span style={sidebarStyles.brandMark} aria-hidden>
+                        <Logo size={40} />
+                    </span>
                     <span style={sidebarStyles.brandText}>
                         <span style={sidebarStyles.brandLabel}>Bellingham</span>
                         <span style={sidebarStyles.brandName}>Markets Platform</span>

@@ -1,0 +1,24 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="18" y1="8" x2="110" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4DD1FF" stop-opacity="0.94"/>
+      <stop offset="0.45" stop-color="#6CA9F8" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#7465A8" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="strokeGradient" x1="32" y1="22" x2="102" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E8F6FF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#A1C7FF" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="innerGlow" x1="48" y1="28" x2="92" y2="98" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4DD1FF" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#76B6FF" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="28" fill="#0A1021"/>
+  <rect x="10" y="10" width="108" height="108" rx="28" fill="url(#bgGradient)" fill-opacity="0.12"/>
+  <rect x="12" y="12" width="104" height="104" rx="26" stroke="url(#strokeGradient)" stroke-width="2.5"/>
+  <path d="M42 34.5H66.5C82 34.5 93.5 43 93.5 56.2C93.5 68.6 83.4 76.9 70.1 76.9H56.8V92H42V34.5ZM66.2 62.4C72 62.4 75.9 59 75.9 54C75.9 49 71.8 45.7 65.8 45.7H56.8V62.4H66.2Z" fill="#EAF6FF"/>
+  <path d="M54 28C73 28 88 40.5 88 58C88 75.5 73 88 54 88" stroke="url(#innerGlow)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="48" cy="52" r="6" fill="#0B1426" stroke="#4DD1FF" stroke-width="2"/>
+  <circle cx="80" cy="74" r="7" fill="#0B1426" stroke="#7465A8" stroke-width="2"/>
+</svg>

@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { AuthContext, useNotifications } from "../context";
 import navItems from "../config/navItems";
 import NavMenuItem from "./ui/NavMenuItem";
+import Logo from "./Logo";
 
 const headerButtons = [
     { label: "Home", path: "/" },
@@ -96,6 +97,12 @@ const headerStyles = {
         flexDirection: "column",
         gap: "0.35rem",
         textAlign: "left",
+    },
+    brandGroup: {
+        display: "flex",
+        alignItems: "center",
+        gap: "0.75rem",
+        minHeight: "3.5rem",
     },
     brandLabel: {
         fontSize: "1.2rem",
@@ -268,10 +275,13 @@ const Header = ({ onLogout, showNavigation = true }) => {
             <div style={headerStyles.inner}>
                 <div style={headerStyles.topRow}>
                     <div style={headerStyles.brandBlock}>
-                        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-                            <p style={headerStyles.brandLabel}>Bellingham Data Futures</p>
-                            <p style={headerStyles.brandTitle}>{pageTitle}</p>
-                        </Link>
+                        <div style={headerStyles.brandGroup}>
+                            <Logo size={60} style={{ flexShrink: 0 }} />
+                            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+                                <p style={headerStyles.brandLabel}>Bellingham Data Futures</p>
+                                <p style={headerStyles.brandTitle}>{pageTitle}</p>
+                            </Link>
+                        </div>
                         <p style={headerStyles.brandDescription}>{pageDescription}</p>
                     </div>
                     <div style={headerStyles.actions}>
