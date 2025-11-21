@@ -3,9 +3,9 @@ import { NavLink } from "react-router-dom";
 
 const baseClasses = {
     header:
-        "group relative inline-flex items-center gap-2 rounded-xl border border-transparent bg-transparent px-4 py-2 text-[0.66rem] font-semibold uppercase tracking-[0.22em] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]",
+        "group relative inline-flex items-center gap-2 rounded-2xl border border-transparent bg-transparent px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]",
     sidebar:
-        "group relative flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050912]",
+        "group relative flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm font-medium tracking-[0.02em] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050912]",
 };
 
 const activeClasses = {
