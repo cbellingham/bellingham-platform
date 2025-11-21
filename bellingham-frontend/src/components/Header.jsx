@@ -53,17 +53,8 @@ const pageDescriptions = {
     "/admin/users": "Curate access controls for your organisation.",
 };
 
-const srOnlyStyles = {
-    position: "absolute",
-    width: "1px",
-    height: "1px",
-    padding: 0,
-    margin: "-1px",
-    overflow: "hidden",
-    clip: "rect(0, 0, 0, 0)",
-    whiteSpace: "nowrap",
-    border: 0,
-};
+const shellClassName =
+    "sticky top-0 z-20 border-b border-[rgba(27,37,67,0.8)] bg-[linear-gradient(180deg,rgba(24,34,61,0.95)_0%,rgba(10,16,30,0.9)_100%)] shadow-[0_38px_110px_rgba(5,9,20,0.7)] backdrop-blur-[20px]";
 
 const headerStyles = {
     root: {
@@ -284,10 +275,10 @@ const Header = ({ onLogout, showNavigation = true }) => {
                         </div>
                         <p style={headerStyles.brandDescription}>{pageDescription}</p>
                     </div>
-                    <div style={headerStyles.actions}>
+                    <div className="flex items-center gap-4">
                         <Link
                             to="/notifications"
-                            style={headerStyles.notificationButton}
+                            className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgba(33,65,111,0.8)] bg-[linear-gradient(145deg,rgba(34,64,109,0.95),rgba(19,35,64,0.85))] text-[#4DD1FF] shadow-[0_22px_48px_rgba(20,70,120,0.55)] transition-colors hover:border-[#4DD1FF]/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]"
                             aria-label={
                                 unreadCount > 0
                                     ? `${unreadCount} unread notifications`
@@ -295,7 +286,7 @@ const Header = ({ onLogout, showNavigation = true }) => {
                             }
                         >
                             <NotificationBellIcon />
-                            <span style={srOnlyStyles}>Open notifications</span>
+                            <span className="sr-only">Open notifications</span>
                             {unreadCount > 0 && (
                                 <span className="absolute -right-1 -top-1 min-w-[1.5rem] rounded-full bg-[#7465A8] px-1.5 py-0.5 text-center text-[0.65rem] font-semibold leading-none text-white shadow-[0_10px_30px_rgba(116,101,168,0.6)] font-mono tabular-nums">
                                     {unreadCount > 99 ? "99+" : unreadCount}
@@ -304,13 +295,17 @@ const Header = ({ onLogout, showNavigation = true }) => {
                         </Link>
 
                         {username && (
-                            <div style={headerStyles.accountBlock}>
-                                <div style={headerStyles.accountMeta}>
-                                    <p style={headerStyles.accountLabel}>Logged in as</p>
-                                    <p style={headerStyles.accountName}>{username}</p>
+                            <div className="flex items-center gap-4">
+                                <div className="text-right">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-slate-300">Logged in as</p>
+                                    <p className="text-[15px] font-semibold text-white">{username}</p>
                                 </div>
                                 {onLogout && (
-                                    <button type="button" onClick={onLogout} style={headerStyles.logoutButton}>
+                                    <button
+                                        type="button"
+                                        onClick={onLogout}
+                                        className="rounded-2xl border border-[rgba(47,79,120,0.7)] bg-[linear-gradient(145deg,rgba(30,60,95,0.85),rgba(24,42,70,0.7))] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#9BD8FF] shadow-[0_16px_38px_rgba(24,42,70,0.45)] transition-colors hover:border-[#4DD1FF]/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DD1FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1222]"
+                                    >
                                         Log Out
                                     </button>
                                 )}
@@ -319,16 +314,19 @@ const Header = ({ onLogout, showNavigation = true }) => {
                     </div>
                 </div>
 
-                <nav aria-label="Quick links" style={headerStyles.quickLinks}>
+                <nav aria-label="Quick links" className={quickLinksClassName}>
                     {headerButtons.map((button) => (
-                        <Link key={button.path} to={button.path} style={headerStyles.quickLink}>
+                        <Link key={button.path} to={button.path} className={quickLinkClassName}>
                             {button.label}
                         </Link>
                     ))}
                 </nav>
 
                 {shouldRenderNavigation && (
-                    <nav id="primary-navigation" style={headerStyles.navBar}>
+                    <nav
+                        id="primary-navigation"
+                        className="flex flex-wrap items-center gap-3 overflow-x-auto rounded-3xl border border-[rgba(30,47,83,0.7)] bg-[linear-gradient(140deg,rgba(20,36,70,0.9),rgba(12,22,42,0.85))] px-4 py-3 shadow-[0_30px_70px_rgba(5,9,20,0.55)]"
+                    >
                         {filteredNavItems.map((item) => (
                             <NavMenuItem key={item.path} item={item} layout="header" />
                         ))}

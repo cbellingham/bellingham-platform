@@ -246,11 +246,11 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
                     </span>
                 </button>
 
-                <div style={sidebarStyles.navSections}>
+                <div className={navSectionsClass}>
                     {Array.from(groupedNavItems.entries()).map(([section, items]) => (
-                        <div key={section} style={sidebarStyles.section}>
-                            <p style={sidebarStyles.sectionHeading}>{section}</p>
-                            <div style={sidebarStyles.navGroup}>
+                        <div key={section} className="flex flex-col gap-3">
+                            <p className={sectionHeadingClass}>{section}</p>
+                            <div className={navGroupClass}>
                                 {items.map((item) => (
                                     <NavMenuItem key={item.path} item={item} layout="sidebar" onNavigate={handleNavigate} />
                                 ))}
@@ -259,18 +259,22 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
                     ))}
                 </div>
 
-                <div style={sidebarStyles.footer}>
-                    <div style={sidebarStyles.ctaCard}>
-                        <p style={sidebarStyles.ctaTitle}>Need to move quickly?</p>
-                        <p style={sidebarStyles.ctaBody}>
+                <div className={footerClass}>
+                    <div className={ctaCardClass}>
+                        <p className={ctaTitleClass}>Need to move quickly?</p>
+                        <p className={ctaBodyClass}>
                             Launch a new marketplace listing right from here.
                         </p>
-                        <Button variant="primary" style={sidebarStyles.createListingButton} onClick={() => handleNavigate("/sell")}>
+                        <Button
+                            variant="primary"
+                            className={createListingButtonClass}
+                            onClick={() => handleNavigate("/sell")}
+                        >
                             Create Listing
                         </Button>
                     </div>
                     {onLogout && (
-                        <Button variant="ghost" style={sidebarStyles.logoutButton} onClick={onLogout}>
+                        <Button variant="ghost" className={logoutButtonClass} onClick={onLogout}>
                             Log Out
                         </Button>
                     )}
