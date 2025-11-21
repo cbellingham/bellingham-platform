@@ -280,8 +280,7 @@ const Sidebar = ({ onLogout, sidebarWidth }) => {
                     )}
                 </div>
             </aside>
-            </div>
-        </>
+        </div>
     );
 };
 
