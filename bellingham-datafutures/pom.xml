@@ -118,6 +118,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Explicitly declare the entrypoint class so the packaged jar
+                         and IDE run configurations point at the correct Spring Boot
+                         application. This prevents "Could not find or load main
+                         class com.bellingham.datafutures.BellinghamApplication" when
+                         launching from a raw java command or custom classpath. -->
+                    <mainClass>com.bellingham.datafutures.BellinghamApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
