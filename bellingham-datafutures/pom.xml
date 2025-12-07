@@ -24,6 +24,12 @@
              instead of guessing and occasionally failing with
              "Could not find or load main class com.bellingham.datafutures.BellinghamApplication". -->
         <start-class>com.bellingham.datafutures.BellinghamApplication</start-class>
+
+        <!-- IntelliJ delegates spring-boot:run properties differently than
+             the CLI. Setting the dedicated property prevents the IDE from
+             launching with an empty/incorrect main class even when "Build
+             before run" is disabled. -->
+        <spring-boot.run.main-class>com.bellingham.datafutures.BellinghamApplication</spring-boot.run.main-class>
     </properties>
 
     <dependencies>

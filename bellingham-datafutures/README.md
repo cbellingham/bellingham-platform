@@ -85,6 +85,11 @@ exists even after a fresh clone:
 ./run-local.sh
 ```
 
+If IntelliJ continues to report the missing main class, double-check that
+the `datafutures` module is marked as a Maven project and run a one-time
+`./mvnw clean compile` so the IDE has a compiled
+`BellinghamApplication.class` on disk before launching.
+
 The script rebuilds `target/classes` before execution so the application
 classloader always finds `BellinghamApplication`.
 
