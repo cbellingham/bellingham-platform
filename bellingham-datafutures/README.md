@@ -68,6 +68,14 @@ The following environment variables can be used to configure the runtime:
   provide the same value via the Spring property
   `app.bootstrap.admin-password`.
 
+You can also set the more common `PORT` or `SERVER_PORT` environment
+variables to avoid conflicts if something else is already bound to 8080.
+For example:
+
+```bash
+PORT=8081 ./mvnw spring-boot:run
+```
+
 Start the service with the Maven wrapper:
 
 ```bash
