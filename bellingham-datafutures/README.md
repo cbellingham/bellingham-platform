@@ -76,8 +76,10 @@ Start the service with the Maven wrapper:
 
 If you prefer to run the packaged jar or see `Could not find or load main
 class com.bellingham.datafutures.BellinghamApplication` when launching from
-an IDE/raw `java` command, use the helper script that compiles and runs the
-bundle in one step:
+an IDE/raw `java` command, use the helper script that cleans, compiles, and
+repackages the bundle in one step. The clean step ensures
+`target/classes/com/bellingham/datafutures/BellinghamApplication.class`
+exists even after a fresh clone:
 
 ```bash
 ./run-local.sh
